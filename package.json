@@ -1,0 +1,29 @@
+{
+  "name": "yugrow-platform",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.0.0",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "test": "turbo test",
+    "lint": "turbo lint",
+    "format": "prettier --write .",
+    "dev:fallback": "pnpm run --parallel --recursive dev",
+    "db:generate": "pnpm --filter @database exec prisma generate",
+    "db:migrate": "pnpm --filter @database exec prisma migrate dev",
+    "db:push": "pnpm --filter @database exec prisma db push",
+    "db:studio": "pnpm --filter @database exec prisma studio",
+    "docker:up": "docker compose -f infrastructure/docker/docker-compose.yml up -d",
+    "docker:down": "docker compose -f infrastructure/docker/docker-compose.yml down",
+    "setup": "pnpm install && pnpm db:generate && pnpm db:push"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.0",
+    "prettier": "^3.4.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

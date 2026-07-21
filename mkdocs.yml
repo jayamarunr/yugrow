@@ -1,0 +1,89 @@
+# Yugrow Documentation Site
+# Built with MkDocs Material
+# https://squidfunk.github.io/mkdocs-material/
+
+site_name: Yugrow Documentation
+site_description: Engineering knowledge base for the Yugrow Platform
+site_url: https://docs.yugrow.com
+repo_url: https://github.com/yugrow/yugrow
+repo_name: yugrow/yugrow
+
+theme:
+  name: material
+  logo: assets/logo/yugrow.svg
+  favicon: assets/logo/favicon.ico
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+
+plugins:
+  - search
+  - tags
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+nav:
+  - Home: README.md
+  - Constitution: YUGROW-CONSTITUTION.md
+  - Product Charter:
+      - Overview: docs/00-Product-Charter/README.md
+      - Executive Summary: docs/00-Product-Charter/01-Executive-Summary.md
+      - Vision: docs/00-Product-Charter/02-Vision.md
+      - Mission: docs/00-Product-Charter/03-Mission.md
+      - Problem Statement: docs/00-Product-Charter/04-Problem-Statement.md
+      - Market Opportunity: docs/00-Product-Charter/05-Market-Opportunity.md
+      - Product Philosophy: docs/00-Product-Charter/06-Product-Philosophy.md
+      - Strategic Goals: docs/00-Product-Charter/07-Strategic-Goals.md
+      - Product Scope: docs/00-Product-Charter/08-Product-Scope.md
+      - Product Boundaries: docs/00-Product-Charter/09-Product-Boundaries.md
+      - Success Metrics: docs/00-Product-Charter/10-Success-Metrics.md
+      - Roadmap: docs/00-Product-Charter/11-Roadmap.md
+      - Decision Log: docs/00-Product-Charter/00-Decisions.md
+  - Product Requirements: docs/01-Product-Requirements/
+  - Architecture: docs/02-Enterprise-Architecture/
+  - Database: docs/08-Database/
+  - API: docs/09-API/
+  - Security: docs/07-Security/
+  - AI: docs/05-AI/
+  - Playbooks: playbooks/
+  - ADRs: adr/
+  - Backlog: backlog/
+  - Governance: governance/
+  - Roadmap: docs/00-Product-Charter/11-Roadmap.md

@@ -1,0 +1,78 @@
+/* ─── Yugrow Design Language — Global Styles ─────────────────────── */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens as CSS variables — set by ThemeContext */
+:root {
+  --y-brand-primary: #2563EB;
+  --y-brand-secondary: #7C3AED;
+  --y-bg: #FFFFFF;
+  --y-surface: #F8FAFC;
+  --y-elevated: #FFFFFF;
+  --y-text-primary: #0F172A;
+  --y-text-secondary: #475569;
+  --y-text-disabled: #94A3B8;
+  --y-border: #E2E8F0;
+  --y-border-hover: #CBD5E1;
+  --y-success: #059669;
+  --y-warning: #D97706;
+  --y-error: #DC2626;
+}
+
+.yugrow-theme-dark {
+  --y-brand-primary: #60A5FA;
+  --y-brand-secondary: #A78BFA;
+  --y-bg: #0F172A;
+  --y-surface: #1E293B;
+  --y-elevated: #334155;
+  --y-text-primary: #F1F5F9;
+  --y-text-secondary: #94A3B8;
+  --y-text-disabled: #64748B;
+  --y-border: #334155;
+  --y-border-hover: #475569;
+  --y-success: #34D399;
+  --y-warning: #FBBF24;
+  --y-error: #F87171;
+}
+
+/* Base styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--y-bg);
+  color: var(--y-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--y-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--y-border-hover);
+}
+
+/* Animations */
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up {
+  animation: slide-up 0.2s ease-out;
+}
