@@ -14,12 +14,11 @@ import { EventBus as EventBusInstance } from '@core/event-bus';
 
 @Injectable()
 export class WorkspaceService {
+  private readonly eventBus = EventBusInstance;
+
   constructor(
     @Inject(PRISMA) private readonly prisma: PrismaClient,
-    private readonly eventBus: typeof EventBusInstance,
-  ) {
-    this.eventBus = EventBusInstance;
-  }
+  ) {}
 
   // ─── CRUD ──────────────────────────────────────────────────────
 

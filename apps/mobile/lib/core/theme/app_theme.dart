@@ -2,27 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static const _primaryColor = Color(0xFF2563EB);
-  static const _secondaryColor = Color(0xFF7C3AED);
-  static const _successColor = Color(0xFF10B981);
+  static const _primaryColor = Color(0xFF0F766E);   // Deep Emerald
+  static const _secondaryColor = Color(0xFF4338CA);  // Soft Indigo
+  static const _successColor = Color(0xFF16A34A);
   static const _warningColor = Color(0xFFF59E0B);
-  static const _errorColor = Color(0xFFEF4444);
-  static const _surfaceColor = Color(0xFFF8FAFC);
+  static const _errorColor = Color(0xFFDC2626);
+  static const _bgColor = Color(0xFFF8F9FB);
   static const _cardColor = Color(0xFFFFFFFF);
-  static const _textPrimary = Color(0xFF0F172A);
-  static const _textSecondary = Color(0xFF64748B);
-  static const _borderColor = Color(0xFFE2E8F0);
+  static const _textPrimary = Color(0xFF111827);
+  static const _textSecondary = Color(0xFF6B7280);
+  static const _borderColor = Color(0xFFE5E7EB);
 
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
       primaryColor: _primaryColor,
-      scaffoldBackgroundColor: _surfaceColor,
+      scaffoldBackgroundColor: _bgColor,
       colorScheme: const ColorScheme.light(
         primary: _primaryColor,
         secondary: _secondaryColor,
-        surface: _surfaceColor,
+        surface: _cardColor,
         error: _errorColor,
       ),
       textTheme: GoogleFonts.interTextTheme().copyWith(
@@ -39,8 +39,9 @@ class AppTheme {
         foregroundColor: _textPrimary,
         elevation: 0,
         centerTitle: true,
+        surfaceTintColor: _cardColor,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: _cardColor,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -55,6 +56,7 @@ class AppTheme {
           minimumSize: const Size(double.infinity, 52),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          elevation: 0,
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -62,22 +64,22 @@ class AppTheme {
           foregroundColor: _primaryColor,
           minimumSize: const Size(double.infinity, 52),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          side: const BorderSide(color: _primaryColor),
+          side: const BorderSide(color: _borderColor),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white,
+        fillColor: _cardColor,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: _borderColor),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: _borderColor),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: _primaryColor, width: 2),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -87,7 +89,7 @@ class AppTheme {
         selectedItemColor: _primaryColor,
         unselectedItemColor: _textSecondary,
         type: BottomNavigationBarType.fixed,
-        elevation: 8,
+        elevation: 0,
       ),
     );
   }

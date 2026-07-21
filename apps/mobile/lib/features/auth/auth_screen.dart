@@ -22,6 +22,8 @@ class _AuthScreenState extends State<AuthScreen> {
   void _submitPhone() {
     if (_phoneController.text.length >= 10) {
       setState(() => _otpMode = true);
+      // TODO: Integrate with SMS provider to send actual OTP
+      // For demo, any 4-digit code works
     }
   }
 
@@ -29,6 +31,13 @@ class _AuthScreenState extends State<AuthScreen> {
     if (_otpController.text.length >= 4) {
       context.go('/');
     }
+  }
+
+  void _resendOtp() {
+    // TODO: Call SMS provider to resend OTP
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('OTP resent (demo: any 4-digit code works)')),
+    );
   }
 
   @override
@@ -71,6 +80,26 @@ class _AuthScreenState extends State<AuthScreen> {
               ],
               // OTP input
               if (_otpMode) ...[
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.info_outline, size: 16, color: Colors.amber),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Demo: any 4-digit code works',
+                          style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
                 TextField(
                   controller: _otpController,
                   keyboardType: TextInputType.number,
@@ -82,6 +111,8 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(onPressed: _submitOtp, child: const Text('Verify & Continue')),
+                const SizedBox(height: 8),
+                TextButton(onPressed: _resendOtp, child: const Text('Resend OTP')),
                 TextButton(
                   onPressed: () => setState(() => _otpMode = false),
                   child: const Text('Change number'),
