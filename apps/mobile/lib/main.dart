@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'core/routing/app_router.dart';
+import 'core/theme/app_theme.dart';
 
 void main() {
-  runApp(const YugrowApp());
+  runApp(const ProviderScope(child: YugrowApp()));
 }
 
-class YugrowApp extends StatelessWidget {
+class YugrowApp extends ConsumerWidget {
   const YugrowApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  Widget build(BuildContext context, WidgetRef ref) {
+    return MaterialApp.router(
       title: 'Yugrow',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-        useMaterial3: true,
-      ),
-      home: const Scaffold(
-        appBar: AppBar(title: Text('Yugrow Mobile')),
-        body: Center(child: Text('Yugrow Mobile Running')),
-      ),
+      theme: AppTheme.lightTheme,
+      routerConfig: appRouter,
+      debugShowCheckedModeBanner: false,
     );
   }
 }
