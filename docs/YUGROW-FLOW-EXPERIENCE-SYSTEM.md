@@ -1,6 +1,6 @@
 ---
 Title: Yugrow Flow — Experience System
-Version: 1.0
+Version: 2.0
 Status: Approved
 Owner: Founder / CPO
 Last Updated: 2026-07-22
@@ -13,7 +13,7 @@ Related Documents:
   - Volume-2-Architecture/BUSINESS-OBJECT-BIBLE.md
 ---
 
-# Yugrow Flow — Experience System v1.0
+# Yugrow Flow — Experience System v2.0
 
 > **This document is frozen after review. Every Flutter screen and every Next.js page must follow it.**
 >
@@ -471,9 +471,197 @@ Think in layers, not shadows. Surfaces sit at different heights in the interface
 
 ---
 
-## Part 7 — Component Library
+## Part 7 — Icons
 
-### 7.1 Buttons
+### 7.1 Chosen Set
+
+**Lucide** — one set, never mixed.
+
+### 7.2 Rules
+
+- Use only Lucide icons. Never mix with Phosphor, FontAwesome, or any other set.
+- Prefer outline variants over filled. Filled icons used only for active tab bar states.
+- Stroke width: 1.5px (Lucide default). Never change.
+- Icon size follows text: 16px (caption/label), 20px (body/button), 24px (title/heading).
+- Always pair icons with text labels (exception: tab bar icons may stand alone).
+- Never use animated icons (spinning, pulsing, changing).
+- Icon color inherits from text color of the container.
+
+### 7.3 Common Icons
+
+| Context | Icon | Note |
+|---------|------|------|
+| Home / Live | `users` | — |
+| Connections | `link-2` or `handshake` | — |
+| Messages | `message-square` | — |
+| Profile | `user` | — |
+| Check In | `map-pin` | "I'm Here" |
+| Connect | `user-plus` | — |
+| Connected | `check-circle` | Filled variant, Deep Emerald |
+| Broadcast | `radio` | — |
+| Search | `search` | — |
+| Settings | `settings` | — |
+| Add | `plus` | — |
+| Close | `x` | — |
+| Back | `chevron-left` | — |
+| More | `more-horizontal` | — |
+| Workspace | `building-2` | — |
+| Event | `calendar` | — |
+| Venue | `map-pin` | — |
+| Notification | `bell` | — |
+
+---
+
+## Part 8 — Photography & Imagery
+
+### 8.1 Philosophy
+
+Yugrow is about people. Therefore the imagery is about people.
+
+**No generic illustrations.** No abstract geometric patterns. No blob shapes. No isometric 3D renders of office buildings.
+
+**Real human interactions.** Professional portraits. Business environments. Conferences. Coffee meetings. Factories. Offices. Trade expos. Workshops. Handshakes. Conversations.
+
+### 8.2 Photography Style
+
+| Attribute | Standard |
+|-----------|----------|
+| **Subjects** | Real professionals in real environments |
+| **Lighting** | Natural light preferred. Warm tones. |
+| **Composition** | Candid over posed. Context matters — show the environment. |
+| **Color grade** | Desaturated slightly. Warm tint. Not Instagram-filtered. |
+| **Diversity** | Must reflect real business world diversity — roles, industries, regions. |
+| **No stock clichés** | No staged boardroom laughs. No chin-stroking thinkers. No arrow-up graphs. |
+
+### 8.3 Where Photography Appears
+
+| Location | Usage |
+|----------|-------|
+| **Onboarding** | Full-bleed hero images showing business interactions |
+| **Empty states** | Warm, contextual photography (see Part 9) |
+| **Event cards** | Venue/event photography |
+| **Profile** | Avatar photos, not illustrations |
+| **Marketing site** | Real team photos, real customer stories |
+| **App store screenshots** | Show the app in context — a hand holding the phone at a conference |
+
+### 8.4 What We Never Use
+
+- ❌ Abstract gradients as hero imagery
+- ❌ 3D isometric illustrations
+- ❌ Blob shapes or organic abstract forms
+- ❌ Stock photos of people laughing at salad
+- ❌ Generic "team collaboration" illustrations
+- ❌ AI-generated impossible architecture
+
+---
+
+## Part 9 — Empty States
+
+Empty states are not afterthoughts. They are the user's first experience with every screen. They must be delightful, contextual, and encouraging.
+
+### 9.1 Structure
+
+Every empty state follows this structure:
+
+```
+┌──────────────────────────────┐
+│                              │
+│       [Contextual Image]     │
+│                              │
+│    You're early.             │
+│                              │
+│    The first people will     │
+│    appear as they check in.  │
+│                              │
+│         [Action Button]      │
+│                              │
+└──────────────────────────────┘
+```
+
+### 9.2 Empty States by Screen
+
+| Screen | Image | Title | Description | Action |
+|--------|-------|-------|-------------|--------|
+| **Live** (no attendees) | Beautiful photo of an empty conference hall with morning light | You're early. | The first people will appear as they check in. | Be the first to check in |
+| **Live** (no check-in) | Professional holding phone at event entrance | Not checked in yet. | Check in at an event to see who's here. | Check in now |
+| **Connections** | Two professionals shaking hands at a cafe | No connections yet. | Your network starts with a single connection. | Find people to meet |
+| **Messages** | Person smiling at their phone | No conversations. | Say hello to a connection and start the conversation. | View connections |
+| **Events** | Calendar with a conference pin | No events yet. | Events near you will appear here. | Create an event |
+| **Broadcast** | Person speaking at a podium | No broadcasts yet. | Share an opportunity with the right people. | Create broadcast |
+| **Profile** (empty) | Person at a desk with notebook | Complete your profile. | Help others know who you are. | Complete profile |
+
+### 9.3 Image Guidelines
+
+- Use the photography style defined in Part 8
+- Images should feel aspirational, not empty/depressing
+- Warm lighting preferred
+- Avoid generic "empty box" illustrations
+- Dark mode: lower brightness on images (0.7 opacity overlay)
+
+### 9.4 Emotional Principle
+
+The empty state should make the user feel:
+
+> **"Something good is about to happen."**
+
+Not:
+> "This is empty and sad."
+
+---
+
+## Part 10 — Sound & Haptics
+
+You may laugh. Users will remember.
+
+Sound and haptics are not decorations — they are feedback channels that make interactions feel complete. Used sparingly, they create moments of delight that users subconsciously associate with the product.
+
+### 10.1 When Sound Plays
+
+| Moment | Sound | Haptic | Rationale |
+|--------|-------|--------|-----------|
+| **Connected** ✓ | Single soft chime (C major, 200ms) | Light tap | The most important moment — deserves sensory feedback |
+| **Check-in success** | Quick ascending tone (150ms) | Light tap | Confirmation that presence is live |
+| **Message received** | None (notification sound from OS) | Subtle thud | Avoid alert fatigue |
+| **Broadcast sent** | Whoosh (250ms) | Medium tap | Confirmation of distribution |
+| **Error** | None | Error buzz | Standard OS error feedback |
+
+### 10.2 Sound Design Principles
+
+- **All sounds under 250ms.** Instant feedback, not musical loops.
+- **Use system haptics where possible** (`HapticFeedbackType.lightImpact` on iOS, `VibrationEffect` on Android).
+- **Never require sound** for critical feedback. Sound is enhancement, not necessity.
+- **Respect system settings:** Silent mode = no sounds. Reduce motion = no haptics.
+- **No notification spam.** Only the moments above trigger sound. Not new followers, not likes, not system alerts.
+
+### 10.3 Implementation
+
+```dart
+// Flutter — Haptic feedback for connection
+HapticFeedback.lightImpact();
+```
+
+```dart
+// Flutter — Sound playback (minimal, 200ms audio files)
+final player = AudioPlayer();
+await player.setSourceAsset('sounds/connected_chime.mp3');
+await player.play();
+```
+
+### 10.4 Future
+
+As Yugrow grows, sound may expand to:
+- Workspace switch (subtle ambient shift)
+- Broadcast match found
+- Opportunity accepted
+- Video call connect tone (Phase 3+)
+
+Every new sound must be approved through the same process as a new component.
+
+---
+
+## Part 11 — Component Library
+
+### 11.1 Buttons
 
 | Variant | Background | Text | Border | Usage |
 |---------|-----------|------|--------|-------|
@@ -487,7 +675,7 @@ Think in layers, not shadows. Surfaces sit at different heights in the interface
 
 **Sizes:** `sm` (32px height), `md` (44px height), `lg` (52px height), `xl` (64px height for "I'm Here").
 
-### 7.2 Inputs
+### 11.2 Inputs
 
 - Height: 48px default
 - Border: 1px `color-border`
@@ -497,7 +685,7 @@ Think in layers, not shadows. Surfaces sit at different heights in the interface
 - Placeholder: `color-text-secondary` at `opacity-hint`
 - Disabled: `opacity-disabled`
 
-### 7.3 Cards
+### 11.3 Cards
 
 | Component | Padding | Radius | Elevation | Usage |
 |-----------|---------|--------|-----------|-------|
@@ -510,7 +698,7 @@ Think in layers, not shadows. Surfaces sit at different heights in the interface
 
 **All cards share:** white background (light), `#1A1A1A` (dark), 1px `color-border` stroke, no elevation in dark mode.
 
-### 7.4 Person Card Pattern
+### 11.4 Person Card Pattern
 
 ```
 ┌──────────────────────────────────────┐
@@ -529,7 +717,7 @@ Think in layers, not shadows. Surfaces sit at different heights in the interface
 - Mutual connections: `text-caption`, `color-primary`
 - Connect button: always `outline` variant
 
-### 7.5 Connection Request Card
+### 11.5 Connection Request Card
 
 ```
 ┌──────────────────────────────────────┐
@@ -544,38 +732,31 @@ Think in layers, not shadows. Surfaces sit at different heights in the interface
 - Context line: `text-caption`, `color-text-secondary`
 - Accept: primary button. Decline: ghost button with error color.
 
-### 7.6 Empty States
+### 11.6 Empty States
 
-Every empty state has:
-- Icon (48px, `color-text-disabled`)
-- Title (`text-title`, `color-text-primary`)
-- Description (`text-body-small`, `color-text-secondary`)
-- Optional action button (only if there's a clear next step)
+See **[Part 9 — Empty States](#part-9--empty-states)** for full empty state specifications including photography, copy, and emotional principles.
 
-**Examples:**
+Component-level specifications:
+- Icon: Lucide icon, 48px, `color-text-disabled`
+- Title: `text-title`, `color-text-primary`
+- Description: `text-body-small`, `color-text-secondary`
+- Action: Optional button (only if there's a clear next step)
 
-| Screen | Icon | Title | Description |
-|--------|------|-------|-------------|
-| Live attendees | 👥 | No one here yet | Be the first to check in and invite others |
-| Connections | 🔗 | No connections yet | Connect with people at events to build your network |
-| Messages | 💬 | No conversations | Connect with someone to start chatting |
-| Events | 📅 | No active events | Events near you will appear here |
-
-### 7.7 Loading States
+### 11.7 Loading States
 
 - Full page: centered spinner (40px, `color-primary`)
 - Card/partial: skeleton shimmer (animated gradient)
 - Action: inline spinner on button, disable interaction
 - Pull-to-refresh: standard platform implementation
 
-### 7.8 Snackbars
+### 11.8 Snackbars
 
 - Position: bottom (mobile), bottom-center (desktop)
 - Duration: 3s for success, persistent for errors
 - Action button optional (max 12 chars)
 - Slide up animation, `motion-normal`
 
-### 7.9 Avatars
+### 11.9 Avatars
 
 | Size | Pixels | Usage |
 |------|--------|-------|
@@ -586,7 +767,7 @@ Every empty state has:
 
 Fallback: first letter of name on `color-primary-soft` background.
 
-### 7.10 Status Chips
+### 11.10 Status Chips
 
 | Variant | Background | Text Color | Icon |
 |---------|-----------|------------|------|
@@ -597,26 +778,26 @@ Fallback: first letter of name on `color-primary-soft` background.
 
 ---
 
-## Part 8 — Mobile Navigation
+## Part 12 — Mobile Navigation
 
-### 8.1 Structure
+### 12.1 Structure
 
 ```
 Bottom Tab Bar (always visible)
-┌──────────┬──────────┬──────────┬──────────┐
-│  Live    │  Connections │ Messages │ Profile │
-│  👥      │  🔗         │ 💬       │ 👤     │
-└──────────┴──────────┴──────────┴──────────┘
+┌────────────┬──────────────┬────────────┬──────────┐
+│  Live      │  Connections │ Messages   │ Profile  │
+│  `users`   │  `link-2`    │ `messages` │ `user`   │
+└────────────┴──────────────┴────────────┴──────────┘
 ```
 
-### 8.2 Principles
+### 12.2 Principles
 
 - **No hamburger menus.** Four tabs is the maximum. If a fifth is needed, one becomes a "more" tab.
 - **No deep nesting.** Max 2 levels deep from any tab.
 - **Back behavior:** Swipe right to go back (iOS), hardware back (Android), back arrow in app bar.
 - **Tab persistence:** Switching tabs preserves scroll position. Re-tapping the active tab scrolls to top.
 
-### 8.3 Screen Hierarchy
+### 12.3 Screen Hierarchy
 
 ```
 Auth
@@ -643,7 +824,7 @@ Main (Tab Bar)
 
 ---
 
-## Part 9 — Web Navigation
+## Part 13 — Web Navigation
 
 ### 9.1 Structure
 
@@ -655,37 +836,41 @@ Main (Tab Bar)
 │  │      │  [Workspace ▼]  [Search...]  [🔔👤]  ││
 │  │ Nav  ├──────────────────────────────────────┤│
 │  │      │                                      ││
-│  │ [🎯] │  Content area                        ││
-│  │ [📦] │                                      ││
-│  │ [👥] │                                      ││
-│  │ [💬] │                                      ││
+│  │ [target]│  Content area                     ││
+│  │ [package]│                                   ││
+│  │ [users]  │                                   ││
+│  │ [message-square]│                             ││
 │  │      │                                      ││
 │  │ [WS] │                                      ││
 │  └──────┴──────────────────────────────────────┘│
 └─────────────────────────────────────────────────┘
 ```
 
-### 9.2 Sidebar Items
+### 13.2 Sidebar Items
 
 | Icon | Label | Route |
 |------|-------|-------|
-| 🎯 | Dashboard | `/dashboard` |
-| 📦 | Apps | Product Launcher |
-| 👥 | Connections | `/connections` |
-| 💬 | Messages | `/messages` |
-| 🌐 | Websites | `/sites` |
-| ✍️ | Content | `/content` |
-| 📢 | Broadcast | `/broadcast` |
+| `target` | Dashboard | `/dashboard` |
+| `package` | Apps | Product Launcher |
+| `users` | Connections | `/connections` |
+| `message-square` | Messages | `/messages` |
+| `globe` | Websites | `/sites` |
+| `edit-3` | Content | `/content` |
+| `radio` | Broadcast | `/broadcast` |
 
-### 9.3 Workspace Switcher
+### 13.3 Workspace Switcher
 
 Top-right of sidebar. Dropdown showing all workspaces. Current workspace highlighted with checkmark. "Create workspace" at bottom.
 
 ---
 
-## Part 10 — Motion
+## Part 14 — Motion
 
-### 10.1 Philosophy
+### 14.1 Philosophy
+
+**Everything under 250ms.** Linear's animations feel amazing because they're almost invisible. That's the standard.
+
+**Fast is premium.** Every animation completes in 250ms or less. No exceptions. Speed communicates confidence. Slow animations feel hesitant.
 
 **Animate only what matters.** Most AI UIs animate everything. Yugrow animates only meaningful state changes.
 
@@ -697,16 +882,16 @@ Top-right of sidebar. Dropdown showing all workspaces. Current workspace highlig
 
 **Everything else is static.** No parallax, no hover animations on cards, no loading spinners that dance. Restraint is the goal.
 
-| State | Animation | Duration |
-|-------|-----------|----------|
-| Connect success | Heartbeat pulse on avatar + "Connected ✓" fade | 300ms |
-| Check-in success | Ripple from "I'm Here" button + card transition | 400ms |
-| Message received | Gentle slide-in of new message bubble | 200ms |
-| Page transition | Slide left/right | 300ms |
-| Button press | Scale to 0.97 | 100ms |
-| Modal open | Fade backdrop + scale content | 200ms |
+| State | Animation | Duration | Easing |
+|-------|-----------|----------|--------|
+| Connect success | Heartbeat pulse on avatar + "Connected ✓" fade | 200ms | ease-out |
+| Check-in success | Ripple from "I'm Here" button + card transition | 250ms | ease-out |
+| Message received | Gentle slide-in of new message bubble | 150ms | ease-out |
+| Page transition | Slide left/right | 200ms | ease-out |
+| Button press | Scale to 0.97 | 100ms | ease-out |
+| Modal open | Fade backdrop + scale content | 200ms | ease-out |
 
-### 10.2 Connection Success Animation
+### 14.2 Connection Success Animation
 
 The most important microinteraction:
 
@@ -719,16 +904,16 @@ No confetti. No fireworks. A premium, subtle acknowledgment.
 
 ---
 
-## Part 11 — Accessibility
+## Part 15 — Accessibility
 
-### 11.1 Standards
+### 15.1 Standards
 
 - WCAG 2.1 Level AA minimum
 - All interactive elements keyboard-navigable
 - Screen reader support (semantic labels on all elements)
 - Touch targets minimum 44x44px
 
-### 11.2 Implementation
+### 15.2 Implementation
 
 | Requirement | Implementation |
 |-------------|---------------|
@@ -740,9 +925,9 @@ No confetti. No fireworks. A premium, subtle acknowledgment.
 
 ---
 
-## Part 12 — Product-Specific Patterns
+## Part 16 — Product-Specific Patterns
 
-### 12.1 CheckIN Pattern
+### 16.1 CheckIN Pattern
 
 ```
 1. Auth → Phone → OTP
@@ -757,7 +942,7 @@ No confetti. No fireworks. A premium, subtle acknowledgment.
 10. Message → Text input → Send
 ```
 
-### 12.2 Broadcast Pattern (Future)
+### 16.2 Broadcast Pattern (Future)
 
 ```
 1. Create → Title, description, skills required, geographic scope
@@ -767,7 +952,7 @@ No confetti. No fireworks. A premium, subtle acknowledgment.
 5. Connect → Reply leads to connection request
 ```
 
-### 12.3 Relationship Pattern
+### 16.3 Relationship Pattern
 
 ```
 1. Request → Intent + context auto-attached
@@ -776,7 +961,7 @@ No confetti. No fireworks. A premium, subtle acknowledgment.
 4. Strength → Signals accumulate over time
 ```
 
-### 12.4 CRM Pattern (Future)
+### 16.4 CRM Pattern (Future)
 
 ```
 1. People → List of connections with relationship strength
@@ -787,9 +972,9 @@ No confetti. No fireworks. A premium, subtle acknowledgment.
 
 ---
 
-## Part 13 — Flutter Implementation
+## Part 17 — Flutter Implementation
 
-### 13.1 Theme Configuration
+### 17.1 Theme Configuration
 
 ```dart
 // ColorScheme
@@ -819,7 +1004,7 @@ TextTheme(
 )
 ```
 
-### 13.2 Widget Mapping
+### 17.2 Widget Mapping
 
 | Flow Component | Flutter Widget |
 |----------------|---------------|
@@ -839,9 +1024,9 @@ TextTheme(
 
 ---
 
-## Part 14 — Next.js Implementation
+## Part 18 — Next.js Implementation
 
-### 14.1 CSS Variables
+### 18.1 CSS Variables
 
 ```css
 :root {
@@ -898,7 +1083,7 @@ TextTheme(
 }
 ```
 
-### 14.2 Tailwind Extension
+### 18.2 Tailwind Extension
 
 ```js
 // tailwind.config.js
@@ -932,7 +1117,7 @@ module.exports = {
 };
 ```
 
-### 14.3 Component Mapping
+### 18.3 Component Mapping
 
 | Flow Component | Next.js Component |
 |----------------|-------------------|
@@ -945,9 +1130,9 @@ module.exports = {
 
 ---
 
-## Part 15 — Design Governance
+## Part 19 — Design Governance
 
-### 15.1 How New Products Adopt Flow
+### 19.1 How New Products Adopt Flow
 
 Every new product must:
 1. Reference this document in its PRD
@@ -955,21 +1140,22 @@ Every new product must:
 3. Reuse existing components before creating new ones
 4. Pass a visual audit before release
 
-### 15.2 Versioning
+### 19.2 Versioning
 
 | Version | Status |
 |---------|--------|
-| v1.0 | ✅ Approved (current) |
-| v1.x | Minor additions (new components, tokens) |
-| v2.0 | Major revision (requires full review) |
+| v1.0 | ✅ Approved |
+| v2.0 | ✅ Approved (current) — Warm Professional, 19 parts, "Relationships are the color" |
+| v2.x | Minor additions (new components, tokens) |
+| v3.0 | Major revision (requires full review) |
 
-### 15.3 Component Approval
+### 19.3 Component Approval
 
 - New components require approval from CPO
 - Component variants must be justified (why can't the existing component work?)
 - Deprecated components get a 90-day removal notice
 
-### 15.4 Change Management
+### 19.4 Change Management
 
 - This document is frozen after approval
 - Changes require an RFC in `docs/design-rfcs/`
