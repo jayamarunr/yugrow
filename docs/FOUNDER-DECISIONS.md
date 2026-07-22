@@ -119,6 +119,12 @@ Information can come from only four places: the user, their organization, Yugrow
 
 Every corner of a card has a job. Top-left: identity (avatar). Top-right: status (Checked in). Bottom-left: context (time, mutuals). Bottom-right: action (Quick Connect). No duplicate navigation hints, no competing elements in the same corner. A card should never have two arrows pointing in the same direction. If the entire card is tappable, no chevron is needed.
 
+### FD-019 — Every sprint must leave Yugrow usable.
+
+After every sprint, ask: *"Would I use Yugrow at a real event today?"* If the answer is no, don't start the next sprint. Features are not milestones. Usability is the only milestone. A promising architecture is worthless if the product can't be handed to someone at a venue entrance.
+
 ---
+
+*Decisions are numbered sequentially. New decisions are added as the product evolves. Decisions are never deleted — only superseded by later decisions with clear rationale.*
 
 *Decisions are numbered sequentially. New decisions are added as the product evolves. Decisions are never deleted — only superseded by later decisions with clear rationale.*
