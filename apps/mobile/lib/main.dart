@@ -15,6 +15,8 @@ class YugrowApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'Yugrow',
       theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
       routerConfig: appRouter,
       debugShowCheckedModeBanner: false,
     );
