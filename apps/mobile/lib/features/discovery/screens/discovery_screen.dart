@@ -20,7 +20,7 @@ class DiscoveryScreen extends StatefulWidget {
   State<DiscoveryScreen> createState() => _DiscoveryScreenState();
 }
 
-class _DiscoveryScreenState extends State<DiscoveryScreen> {
+class _DiscoveryScreenState extends State<DiscoveryScreen> with WidgetsBindingObserver {
   final _engine = PresenceEngine();
 
   List<Professional> _professionals = [];
@@ -30,11 +30,16 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
   String? _heartbeatMessage;
   StreamSubscription<PresenceEvent>? _subscription;
 
+  // Re-entry tracking
+  int _arrivalsSinceLastView = 0;
+  String? _reentryMessage;
+
   static const int _initialDisplayCount = 15;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _subscription = _engine.events.listen(_onPresenceEvent);
     _engine.start();
     _startHeartbeat();
@@ -42,10 +47,34 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _subscription?.cancel();
     _heartbeatTimer?.cancel();
     _engine.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && _arrivalsSinceLastView > 0) {
+      _showReentryMessage();
+    }
+  }
+
+  void _showReentryMessage() {
+    if (!mounted) return;
+    final count = _arrivalsSinceLastView;
+    setState(() {
+      _reentryMessage = count == 1
+          ? '1 new professional arrived while you were away'
+          : '$count new professionals arrived while you were away';
+    });
+    _arrivalsSinceLastView = 0;
+    Future.delayed(const Duration(seconds: 4), () {
+      if (mounted) {
+        setState(() => _reentryMessage = null);
+      }
+    });
   }
 
   void _onPresenceEvent(PresenceEvent event) {
@@ -54,12 +83,12 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
       _professionals = Presence.onlyProfessionals(event.presences);
       _isLoading = false;
 
-      // Animate counter on arrival/expiry
       if (event is PresenceArrival) {
+        // Track arrivals even while away
+        _arrivalsSinceLastView++;
         HapticFeedback.lightImpact();
         _showHeartbeat(_engine.generateHeartbeatMessage());
       }
-      // TimeTick just triggers rebuild — relative times update automatically
     });
   }
 
@@ -159,6 +188,41 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
                                     color: AppColors.primary,
                                   ),
                                   overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+
+                // Re-entry banner — arrivals while away
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 400),
+                  transitionBuilder: (child, animation) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                  child: _reentryMessage != null
+                      ? Container(
+                          key: ValueKey(_reentryMessage),
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.screenMobile,
+                            vertical: 10,
+                          ),
+                          color: AppColors.success.withValues(alpha: 0.08),
+                          child: Row(
+                            children: [
+                              Icon(LucideIcons.sparkles, size: 14, color: AppColors.success),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  _reentryMessage!,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.success,
+                                  ),
                                 ),
                               ),
                             ],
