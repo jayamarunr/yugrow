@@ -127,6 +127,10 @@ After every sprint, ask: *"Would I use Yugrow at a real event today?"* If the an
 
 You don't meet a company. You meet Rajesh from ABB Robotics. The organization anchors the relationship — it answers who he is, why he's here, and whether to continue the relationship. The presence engine supports multiple entity types (Professional, Organization, Booth, Session, Product, Sponsor), but the relationship graph is always between people.
 
+### FD-021 — Relationships belong to moments. Moments belong to events.
+
+Every relationship should answer four questions: Who did I meet? Where did I meet them? When did we meet? What happened next? Events are memory capsules — inside them live the people met, the organizations discovered, the conversations started, and the opportunities created. An event without memory is just a calendar entry.
+
 ---
 
 *Decisions are numbered sequentially. New decisions are added as the product evolves. Decisions are never deleted — only superseded by later decisions with clear rationale.*
