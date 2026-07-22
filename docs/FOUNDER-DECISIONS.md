@@ -131,9 +131,9 @@ You don't meet a company. You meet Rajesh from ABB Robotics. The organization an
 
 Every relationship should answer four questions: Who did I meet? Where did I meet them? When did we meet? What happened next? Events are memory capsules — inside them live the people met, the organizations discovered, the conversations started, and the opportunities created. An event without memory is just a calendar entry.
 
-### FD-022 — Relationships require evidence. Never record physical interactions without an intentional user action or a verifiable signal.
+### FD-022 — The best automation is invisible.
 
-The graph must be trustworthy. A booth visit requires a QR scan or an explicit "I'm at this booth" tap. An organization discovery requires viewing the org profile or following it. A session attendance requires a check-in or QR scan. Inferring proximity from GPS, Bluetooth, or AI is not acceptable. It's better to accurately say "You discovered ABC Robotics and met Rajesh" than to incorrectly claim "You visited Booth A12."
+Never ask users to perform extra steps purely so the app can collect data. Organizations should not check in — their presence emerges naturally when their representatives check in. A booth was "visited" when someone connected with its representative, followed the organization, or sent a message. Organization discovery is derived from meaningful interactions (connections, conversations, follows, introductions), not explicit scans. If a feature exists solely to feed the graph, the design is wrong. The graph should observe genuine behavior, not request it.
 
 ---
 
