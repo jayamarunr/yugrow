@@ -48,45 +48,45 @@ class ProfessionalCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Top row: avatar + info + status
-                  SizedBox(
-                    height: 52,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Avatar
-                        Container(
-                          width: 52,
-                          height: 52,
-                          decoration: BoxDecoration(
-                            color: AppColors.primarySoft,
-                            borderRadius: BorderRadius.circular(AppRadius.full),
-                          ),
-                          child: Center(
-                            child: Text(
-                              p.name.isNotEmpty ? p.name[0].toUpperCase() : '?',
-                              style: AppTypography.avatarInitial,
-                            ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Avatar
+                      Container(
+                        width: 52,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          color: AppColors.primarySoft,
+                          borderRadius: BorderRadius.circular(AppRadius.full),
+                        ),
+                        child: Center(
+                          child: Text(
+                            p.name.isNotEmpty ? p.name[0].toUpperCase() : '?',
+                            style: AppTypography.avatarInitial,
                           ),
                         ),
-                        const SizedBox(width: AppSpacing.md),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
 
-                        // Name + title + company
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      p.name,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: isDark ? AppTypography.cardNameDark : AppTypography.cardName,
-                                    ),
+                      // Name + title + company
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    p.name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: isDark ? AppTypography.cardNameDark : AppTypography.cardName,
                                   ),
-                                  if (p.isRecentlyArrived)
-                                    Row(
+                                ),
+                                if (p.isRecentlyArrived)
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8),
+                                    child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Container(
@@ -104,27 +104,27 @@ class ProfessionalCard extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                ],
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                p.title,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: AppTypography.cardTitle,
-                              ),
-                              const SizedBox(height: 1),
-                              Text(
-                                p.company,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: AppTypography.cardCompany,
-                              ),
-                            ],
-                          ),
+                                  ),
+                              ],
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              p.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTypography.cardTitle,
+                            ),
+                            const SizedBox(height: 1),
+                            Text(
+                              p.company,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTypography.cardCompany,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
 
                   // Looking for — user-sourced intent
@@ -157,10 +157,8 @@ class ProfessionalCard extends StatelessWidget {
                   const SizedBox(height: AppSpacing.md),
 
                   // Bottom row: time + mutuals + checked in + quick connect
-                  SizedBox(
-                    height: 40,
-                    child: Row(
-                      children: [
+                  Row(
+                    children: [
                         Icon(LucideIcons.clock, size: 12, color: AppColors.textDisabled),
                         const SizedBox(width: 4),
                         Text(
@@ -207,7 +205,6 @@ class ProfessionalCard extends StatelessWidget {
                           ),
                       ],
                     ),
-                  ),
                 ],
               ),
             ),

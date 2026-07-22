@@ -12,15 +12,17 @@ class AppTypography {
   // ── Card Name ─────────────────────────────────────
   /// 16sp, SemiBold, max 1 line, ellipsis
   static TextStyle get cardName => GoogleFonts.inter(
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimary,
+        height: 1.2,
       );
 
   static TextStyle get cardNameDark => GoogleFonts.inter(
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimaryDark,
+        height: 1.2,
       );
 
   // ── Card Title ────────────────────────────────────
