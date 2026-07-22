@@ -123,6 +123,10 @@ Every corner of a card has a job. Top-left: identity (avatar). Top-right: status
 
 After every sprint, ask: *"Would I use Yugrow at a real event today?"* If the answer is no, don't start the next sprint. Features are not milestones. Usability is the only milestone. A promising architecture is worthless if the product can't be handed to someone at a venue entrance.
 
+### FD-020 — Organizations don't create relationships. People do. Organizations provide context and continuity.
+
+Users will never say "I connected with ABC Robotics." They'll say "I met Rajesh from ABC Robotics." The person creates the relationship. The organization gives it business context. The presence engine must support multiple entity types (Professional, Organization, Booth, Session), but the relationship graph is always between people.
+
 ---
 
 *Decisions are numbered sequentially. New decisions are added as the product evolves. Decisions are never deleted — only superseded by later decisions with clear rationale.*

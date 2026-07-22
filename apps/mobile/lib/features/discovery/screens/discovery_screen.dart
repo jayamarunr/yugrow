@@ -7,7 +7,7 @@ import 'package:yugrow_mobile/core/theme/app_colors.dart';
 import 'package:yugrow_mobile/core/theme/app_spacing.dart';
 import 'package:yugrow_mobile/core/theme/app_radius.dart';
 import '../models/professional.dart';
-import '../engine/presence_engine.dart';
+import '../engine/presence_engine.dart' show PresenceEngine, PresenceEvent, PresenceArrival, Presence;
 import '../widgets/professional_card.dart';
 import 'profile_preview_screen.dart';
 
@@ -51,7 +51,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
   void _onPresenceEvent(PresenceEvent event) {
     if (!mounted) return;
     setState(() {
-      _professionals = event.professionals;
+      _professionals = Presence.onlyProfessionals(event.presences);
       _isLoading = false;
 
       // Animate counter on arrival/expiry

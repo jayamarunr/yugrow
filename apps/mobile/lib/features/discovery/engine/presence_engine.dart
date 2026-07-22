@@ -3,15 +3,64 @@ import 'dart:math';
 import '../models/professional.dart';
 import '../repository/discovery_repository.dart';
 
+/// Types of entities that can have presence at an event.
+enum PresenceType { professional, organization, booth, session }
+
+/// A generic presence entry — any entity type at any time.
+class Presence {
+  final PresenceType type;
+  final String id;
+  final String displayName;
+  final DateTime checkedInAt;
+  final Professional? professional;
+  // Future: organization, booth, session data
+
+  const Presence({
+    required this.type,
+    required this.id,
+    required this.displayName,
+    required this.checkedInAt,
+    this.professional,
+  });
+
+  /// Filter to only professional-type presences
+  static List<Professional> onlyProfessionals(List<Presence> presences) {
+    return presences
+        .where((p) => p.type == PresenceType.professional && p.professional != null)
+        .map((p) => p.professional!)
+        .toList();
+  }
+
+  /// Create a professional presence entry
+  factory Presence.fromProfessional(Professional p, DateTime checkedInAt) {
+    return Presence(
+      type: PresenceType.professional,
+      id: p.id,
+      displayName: p.name,
+      checkedInAt: checkedInAt,
+      professional: p,
+    );
+  }
+
+  String get timeAgo {
+    final diff = DateTime.now().difference(checkedInAt);
+    if (diff.inSeconds < 60) return 'Just now';
+    if (diff.inMinutes == 1) return '1 min ago';
+    if (diff.inMinutes < 60) return '${diff.inMinutes} mins ago';
+    if (diff.inHours == 1) return '1 hour ago';
+    return '${diff.inHours} hours ago';
+  }
+}
+
 /// Central engine that makes the event feel alive.
 ///
 /// Emits events: arrivals, expiries, count changes, time ticks.
-/// The Discovery screen subscribes to it — it does not own presence state.
+/// Supports multiple presence types (Professional, Organization, Booth, Session).
 class PresenceEngine {
   final DiscoveryRepository _repository;
   final Random _random = Random();
 
-  List<Professional> _active = [];
+  List<Presence> _active = [];
   Timer? _arrivalTimer;
   Timer? _tickTimer;
   bool _running = false;
@@ -20,11 +69,15 @@ class PresenceEngine {
   final _controller = StreamController<PresenceEvent>.broadcast();
   Stream<PresenceEvent> get events => _controller.stream;
 
-  /// Current active count
+  /// Current active count across all types
   int get activeCount => _active.length;
 
   /// Current active list (sorted: newest first)
-  List<Professional> get active => List.unmodifiable(_active);
+  List<Presence> get active => List.unmodifiable(_active);
+
+  /// Convenience: active professionals only
+  List<Professional> get activeProfessionals =>
+      Presence.onlyProfessionals(_active);
 
   PresenceEngine({DiscoveryRepository? repository})
       : _repository = repository ?? DiscoveryRepository();
@@ -37,8 +90,9 @@ class PresenceEngine {
     // Load initial professionals
     _repository.getProfessionals().then((pros) {
       if (!_running) return;
-      _active = pros;
-      _controller.add(PresenceInitial(pros));
+      final now = DateTime.now();
+      _active = pros.map((p) => Presence.fromProfessional(p, now)).toList();
+      _controller.add(PresenceInitial(List.from(_active)));
     });
 
     // Periodic new arrivals every 20-40 seconds
@@ -77,69 +131,36 @@ class PresenceEngine {
 
     // Add with a checkedInAt timestamp
     final now = DateTime.now();
-    final timedArrival = Professional(
-      id: arrival.id,
-      name: arrival.name,
-      title: arrival.title,
-      company: arrival.company,
-      industry: arrival.industry,
-      photoUrl: arrival.photoUrl,
-      mutualConnections: arrival.mutualConnections,
-      relevanceReason: arrival.relevanceReason,
-      isRecentlyArrived: true,
-      minutesAgo: 0,
-      about: arrival.about,
-      skills: arrival.skills,
-      lookingFor: arrival.lookingFor,
-      recentActivity: arrival.recentActivity,
-      broadcastsThisMonth: arrival.broadcastsThisMonth,
-      checkedInAt: now,
-    );
+    final presence = Presence.fromProfessional(arrival, now);
 
-    _active = [timedArrival, ..._active];
-    _controller.add(PresenceArrival(timedArrival, List.from(_active)));
+    _active = [presence, ..._active];
+    _controller.add(PresenceArrival(presence, List.from(_active)));
 
     // Schedule expiry after 60 minutes
     Timer(const Duration(minutes: 60), () {
       if (!_running) return;
-      _active.removeWhere((p) => p.id == timedArrival.id);
-      _controller.add(PresenceExpiry(timedArrival, List.from(_active)));
+      _active.removeWhere((p) => p.id == presence.id);
+      _controller.add(PresenceExpiry(presence, List.from(_active)));
     });
   }
 
   /// Manually check in a professional (from the Arrival flow)
   void checkIn(Professional professional) {
     final now = DateTime.now();
-    final timed = Professional(
-      id: professional.id,
-      name: professional.name,
-      title: professional.title,
-      company: professional.company,
-      industry: professional.industry,
-      photoUrl: professional.photoUrl,
-      mutualConnections: professional.mutualConnections,
-      relevanceReason: professional.relevanceReason,
-      isRecentlyArrived: true,
-      minutesAgo: 0,
-      about: professional.about,
-      skills: professional.skills,
-      lookingFor: professional.lookingFor,
-      recentActivity: professional.recentActivity,
-      broadcastsThisMonth: professional.broadcastsThisMonth,
-      checkedInAt: now,
-    );
+    final presence = Presence.fromProfessional(professional, now);
 
-    _active = [timed, ..._active];
-    _controller.add(PresenceArrival(timed, List.from(_active)));
+    _active = [presence, ..._active];
+    _controller.add(PresenceArrival(presence, List.from(_active)));
   }
 
   /// Generate a heartbeat message based on current state
   String generateHeartbeatMessage() {
-    if (_active.isEmpty) return 'Waiting for professionals to arrive...';
+    final pros = activeProfessionals;
+    if (pros.isEmpty) return 'Waiting for professionals to arrive...';
 
     // Pick a recently arrived professional (from the first few)
-    final recent = _active.take(5).toList();
-    if (recent.isEmpty) return '${_active.length} professionals nearby';
+    final recent = pros.take(5).toList();
+    if (recent.isEmpty) return '${pros.length} professionals nearby';
 
     final pick = recent[_random.nextInt(recent.length)];
     final msgType = _random.nextInt(5);
@@ -157,7 +178,7 @@ class PresenceEngine {
         final roles = ['Founder', 'Engineer', 'Investor', 'Designer', 'Product Manager'];
         return 'A ${roles[_random.nextInt(roles.length)]} just checked in';
       case 3:
-        return '${_active.length} ${_active.length == 1 ? 'professional is' : 'professionals are'} nearby';
+        return '${pros.length} ${pros.length == 1 ? 'professional is' : 'professionals are'} nearby';
       case 4:
         return 'A company matching your interests is now here';
       default:
@@ -173,24 +194,24 @@ class PresenceEngine {
 
 /// Events emitted by the PresenceEngine
 sealed class PresenceEvent {
-  final List<Professional> professionals;
-  const PresenceEvent(this.professionals);
+  final List<Presence> presences;
+  const PresenceEvent(this.presences);
 }
 
 class PresenceInitial extends PresenceEvent {
-  const PresenceInitial(super.professionals);
+  const PresenceInitial(super.presences);
 }
 
 class PresenceArrival extends PresenceEvent {
-  final Professional arrival;
-  const PresenceArrival(this.arrival, super.professionals);
+  final Presence arrival;
+  const PresenceArrival(this.arrival, super.presences);
 }
 
 class PresenceExpiry extends PresenceEvent {
-  final Professional expired;
-  const PresenceExpiry(this.expired, super.professionals);
+  final Presence expired;
+  const PresenceExpiry(this.expired, super.presences);
 }
 
 class PresenceTimeTick extends PresenceEvent {
-  const PresenceTimeTick(super.professionals);
+  const PresenceTimeTick(super.presences);
 }
