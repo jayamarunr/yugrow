@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 /// Yugrow Typography System
 ///
 /// Every text style in the app comes from here.
 /// Never hardcode font sizes inside widgets.
+/// Uses TextStyle with fontFamily 'Inter' — loaded via CSS link in index.html.
 class AppTypography {
   AppTypography._();
 
   // ── Card Name ─────────────────────────────────────
-  /// 16sp, SemiBold, max 1 line, ellipsis
-  static TextStyle get cardName => GoogleFonts.inter(
+  static TextStyle get cardName => const TextStyle(
+        fontFamily: 'Inter',
         fontSize: 15,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimary,
         height: 1.2,
       );
 
-  static TextStyle get cardNameDark => GoogleFonts.inter(
+  static TextStyle get cardNameDark => const TextStyle(
+        fontFamily: 'Inter',
         fontSize: 15,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimaryDark,
@@ -26,94 +27,101 @@ class AppTypography {
       );
 
   // ── Card Title ────────────────────────────────────
-  /// 14sp, Medium, max 1 line
-  static TextStyle get cardTitle => GoogleFonts.inter(
+  static TextStyle get cardTitle => const TextStyle(
+        fontFamily: 'Inter',
         fontSize: 14,
         fontWeight: FontWeight.w500,
         color: AppColors.textSecondary,
       );
 
   // ── Card Company ──────────────────────────────────
-  /// 13sp, Regular, max 1 line
-  static TextStyle get cardCompany => GoogleFonts.inter(
+  static TextStyle get cardCompany => const TextStyle(
+        fontFamily: 'Inter',
         fontSize: 13,
         fontWeight: FontWeight.w400,
         color: AppColors.textSecondary,
       );
 
   // ── Looking For ──────────────────────────────────
-  /// 12sp, Medium for the chip
-  static TextStyle get lookingFor => GoogleFonts.inter(
+  static TextStyle get lookingFor => TextStyle(
+        fontFamily: 'Inter',
         fontSize: 12,
         fontWeight: FontWeight.w500,
         color: AppColors.primary.withValues(alpha: 0.7),
       );
 
   // ── Card Metadata ────────────────────────────────
-  /// 12sp, Regular for time, mutuals, status
-  static TextStyle get cardMetadata => GoogleFonts.inter(
+  static TextStyle get cardMetadata => const TextStyle(
+        fontFamily: 'Inter',
         fontSize: 12,
         fontWeight: FontWeight.w400,
         color: AppColors.textDisabled,
       );
 
-  /// 12sp, Medium for mutual count (emerald)
-  static TextStyle get cardMutual => GoogleFonts.inter(
+  static TextStyle get cardMutual => const TextStyle(
+        fontFamily: 'Inter',
         fontSize: 12,
         fontWeight: FontWeight.w500,
         color: AppColors.primary,
       );
 
-  /// 12sp, SemiBold for Checked in (success green)
-  static TextStyle get cardCheckedIn => GoogleFonts.inter(
+  static TextStyle get cardCheckedIn => const TextStyle(
+        fontFamily: 'Inter',
         fontSize: 12,
         fontWeight: FontWeight.w600,
         color: AppColors.success,
       );
 
   // ── Avatar Initial ───────────────────────────────
-  static TextStyle get avatarInitial => GoogleFonts.inter(
+  static TextStyle get avatarInitial => const TextStyle(
+        fontFamily: 'Inter',
         fontSize: 20,
         fontWeight: FontWeight.w600,
         color: AppColors.primary,
       );
 
   // ── Checked In badge (top-right) ─────────────────
-  static TextStyle get checkedInBadge => GoogleFonts.inter(
+  static TextStyle get checkedInBadge => const TextStyle(
+        fontFamily: 'Inter',
         fontSize: 11,
         fontWeight: FontWeight.w600,
         color: AppColors.success,
       );
 
   // ── Screen Title ─────────────────────────────────
-  static TextStyle get screenTitle => GoogleFonts.inter(
+  static TextStyle get screenTitle => const TextStyle(
+        fontFamily: 'Inter',
         fontSize: 16,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimary,
       );
 
   // ── Counter ──────────────────────────────────────
-  static TextStyle get counter => GoogleFonts.inter(
+  static TextStyle get counter => const TextStyle(
+        fontFamily: 'Inter',
         fontSize: 15,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimary,
       );
 
-  static TextStyle get counterDark => GoogleFonts.inter(
+  static TextStyle get counterDark => const TextStyle(
+        fontFamily: 'Inter',
         fontSize: 15,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimaryDark,
       );
 
   // ── Section Title ────────────────────────────────
-  static TextStyle get sectionTitle => GoogleFonts.inter(
+  static TextStyle get sectionTitle => const TextStyle(
+        fontFamily: 'Inter',
         fontSize: 13,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimary,
       );
 
   // ── Body Text ────────────────────────────────────
-  static TextStyle get body => GoogleFonts.inter(
+  static TextStyle get body => TextStyle(
+        fontFamily: 'Inter',
         fontSize: 14,
         fontWeight: FontWeight.w400,
         color: AppColors.textSecondary,
@@ -121,7 +129,8 @@ class AppTypography {
       );
 
   // ── Button Label ─────────────────────────────────
-  static TextStyle get buttonLabel => GoogleFonts.inter(
+  static TextStyle get buttonLabel => const TextStyle(
+        fontFamily: 'Inter',
         fontSize: 16,
         fontWeight: FontWeight.w600,
         color: AppColors.textInverse,
