@@ -194,26 +194,6 @@ class ProfessionalCard extends StatelessWidget {
                           ),
                         ),
                       ],
-                      if (p.isRecentlyArrived) ...[
-                        const SizedBox(width: AppSpacing.lg),
-                        Container(
-                          width: 6,
-                          height: 6,
-                          decoration: const BoxDecoration(
-                            color: AppColors.success,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Checked in',
-                          style: GoogleFonts.inter(
-                            fontSize: 12,
-                            color: AppColors.success,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
                       const Spacer(),
 
                       // Quick Connect
