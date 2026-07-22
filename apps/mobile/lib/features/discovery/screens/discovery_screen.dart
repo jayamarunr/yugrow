@@ -7,7 +7,7 @@ import 'package:yugrow_mobile/core/theme/app_colors.dart';
 import 'package:yugrow_mobile/core/theme/app_spacing.dart';
 import 'package:yugrow_mobile/core/theme/app_radius.dart';
 import '../models/professional.dart';
-import '../repository/discovery_repository.dart';
+import '../engine/presence_engine.dart';
 import '../widgets/professional_card.dart';
 import 'profile_preview_screen.dart';
 
@@ -21,84 +21,61 @@ class DiscoveryScreen extends StatefulWidget {
 }
 
 class _DiscoveryScreenState extends State<DiscoveryScreen> {
-  final _repository = DiscoveryRepository();
+  final _engine = PresenceEngine();
 
   List<Professional> _professionals = [];
   bool _isLoading = true;
   bool _showAll = false;
   Timer? _heartbeatTimer;
   String? _heartbeatMessage;
+  StreamSubscription<PresenceEvent>? _subscription;
 
   static const int _initialDisplayCount = 15;
 
   @override
   void initState() {
     super.initState();
-    _loadProfessionals();
+    _subscription = _engine.events.listen(_onPresenceEvent);
+    _engine.start();
     _startHeartbeat();
   }
 
   @override
   void dispose() {
+    _subscription?.cancel();
     _heartbeatTimer?.cancel();
+    _engine.dispose();
     super.dispose();
   }
 
-  Future<void> _loadProfessionals() async {
-    final pros = await _repository.getProfessionals();
-    if (mounted) {
-      setState(() {
-        _professionals = pros;
-        _isLoading = false;
-      });
-    }
+  void _onPresenceEvent(PresenceEvent event) {
+    if (!mounted) return;
+    setState(() {
+      _professionals = event.professionals;
+      _isLoading = false;
+
+      // Animate counter on arrival/expiry
+      if (event is PresenceArrival) {
+        HapticFeedback.lightImpact();
+        _showHeartbeat(_engine.generateHeartbeatMessage());
+      }
+      // TimeTick just triggers rebuild — relative times update automatically
+    });
   }
 
-  final _heartbeatMessages = [
-    'just checked in',
-    'arrived in the last 5 minutes',
-    'accepted new connections',
-    'are arriving now',
-    'checked in to the event',
-  ];
-  int _heartbeatIndex = 0;
+  void _showHeartbeat(String message) {
+    setState(() => _heartbeatMessage = message);
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        setState(() => _heartbeatMessage = null);
+      }
+    });
+  }
 
   void _startHeartbeat() {
-    _heartbeatTimer = Timer.periodic(const Duration(seconds: 18), (_) async {
-      final newArrivals = await _repository.getNewArrivals();
+    _heartbeatTimer = Timer.periodic(const Duration(seconds: 18), (_) {
       if (!mounted) return;
-
-      HapticFeedback.lightImpact();
-      final count = newArrivals.length;
-      final name = count > 0 ? newArrivals[0].name : '';
-      _heartbeatIndex = (_heartbeatIndex + 1) % _heartbeatMessages.length;
-
-      // Pick message based on rotation
-      String message;
-      if (count == 1 && name.isNotEmpty) {
-        message = '$name ${_heartbeatMessages[0]}';
-      } else if (_heartbeatIndex % 3 == 0) {
-        message = '$count professionals ${_heartbeatMessages[_heartbeatIndex % _heartbeatMessages.length]}';
-      } else if (_heartbeatIndex % 3 == 1) {
-        final industries = ['Fintech', 'Manufacturing', 'AI', 'Healthcare', 'SaaS'];
-        message = '${industries[_heartbeatIndex % industries.length]} professionals are arriving now';
-      } else {
-        message = '$count ${count == 1 ? 'person' : 'people'} accepted new connections';
-      }
-
-      setState(() {
-        if (count > 0) {
-          _professionals = [...newArrivals, ..._professionals];
-        }
-        _heartbeatMessage = message;
-      });
-
-      // Clear heartbeat message after 3 seconds
-      Future.delayed(const Duration(seconds: 3), () {
-        if (mounted) {
-          setState(() => _heartbeatMessage = null);
-        }
-      });
+      _showHeartbeat(_engine.generateHeartbeatMessage());
     });
   }
 
@@ -200,12 +177,22 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
                   ),
                   child: Row(
                     children: [
-                      Text(
-                        '${_professionals.length} people nearby',
-                        style: GoogleFonts.inter(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        transitionBuilder: (child, animation) {
+                          return ScaleTransition(
+                            scale: animation,
+                            child: child,
+                          );
+                        },
+                        child: Text(
+                          '${_professionals.length} people nearby',
+                          key: ValueKey(_professionals.length),
+                          style: GoogleFonts.inter(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                          ),
                         ),
                       ),
                       const Spacer(),
@@ -223,7 +210,10 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
                 // Professional list
                 Expanded(
                   child: RefreshIndicator(
-                    onRefresh: _loadProfessionals,
+                    onRefresh: () async {
+                      _engine.stop();
+                      _engine.start();
+                    },
                     color: AppColors.primary,
                     child: ListView.builder(
                       physics: const ClampingScrollPhysics(),

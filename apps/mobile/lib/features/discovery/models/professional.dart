@@ -14,6 +14,7 @@ class Professional {
   final String lookingFor;
   final String recentActivity;
   final int broadcastsThisMonth;
+  final DateTime? checkedInAt;
 
   const Professional({
     required this.id,
@@ -31,9 +32,18 @@ class Professional {
     this.lookingFor = '',
     this.recentActivity = '',
     this.broadcastsThisMonth = 0,
+    this.checkedInAt,
   });
 
   String get timeAgo {
+    if (checkedInAt != null) {
+      final diff = DateTime.now().difference(checkedInAt!);
+      if (diff.inSeconds < 60) return 'Just now';
+      if (diff.inMinutes == 1) return '1 min ago';
+      if (diff.inMinutes < 60) return '${diff.inMinutes} mins ago';
+      if (diff.inHours == 1) return '1 hour ago';
+      return '${diff.inHours} hours ago';
+    }
     if (minutesAgo < 1) return 'Just now';
     if (minutesAgo == 1) return '1 min ago';
     return '$minutesAgo mins ago';
