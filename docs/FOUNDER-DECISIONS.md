@@ -131,6 +131,10 @@ You don't meet a company. You meet Rajesh from ABB Robotics. The organization an
 
 Every relationship should answer four questions: Who did I meet? Where did I meet them? When did we meet? What happened next? Events are memory capsules — inside them live the people met, the organizations discovered, the conversations started, and the opportunities created. An event without memory is just a calendar entry.
 
+### FD-022 — Relationships require evidence. Never record physical interactions without an intentional user action or a verifiable signal.
+
+The graph must be trustworthy. A booth visit requires a QR scan or an explicit "I'm at this booth" tap. An organization discovery requires viewing the org profile or following it. A session attendance requires a check-in or QR scan. Inferring proximity from GPS, Bluetooth, or AI is not acceptable. It's better to accurately say "You discovered ABC Robotics and met Rajesh" than to incorrectly claim "You visited Booth A12."
+
 ---
 
 *Decisions are numbered sequentially. New decisions are added as the product evolves. Decisions are never deleted — only superseded by later decisions with clear rationale.*
