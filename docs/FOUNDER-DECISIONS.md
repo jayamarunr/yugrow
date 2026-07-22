@@ -109,6 +109,12 @@ Every icon, badge, and status must answer one question without guessing. "Checke
 
 Yugrow is a digital layer on top of a physical event. It reveals what's already happening — people arriving, leaving, moving through the room — without the user refreshing, pulling, or searching. Presence changes. Counts shift. Time ticks. Rankings reorder. Not through animations or noise, but through subtle, meaningful updates that remind the user: *you're at a live event.* If the app is static, the experience is broken.
 
+### FD-016 — (reserved)
+
+### FD-017 — The source of every piece of information must be obvious.
+
+Information can come from only four places: the user, their organization, Yugrow AI, or a live broadcast. Never mix them. A "Looking for" field must clearly show it came from the user. An AI match must say "Recommended because" — never pretend to be user-generated. A broadcast must show a pulse icon and timestamp. If a user has to wonder who is saying something, the design failed.
+
 ---
 
 *Decisions are numbered sequentially. New decisions are added as the product evolves. Decisions are never deleted — only superseded by later decisions with clear rationale.*

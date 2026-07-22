@@ -180,33 +180,32 @@ class ProfessionalCard extends StatelessWidget {
 
                   const SizedBox(height: AppSpacing.md),
 
-                  // Relevance chip — actionable
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.06),
-                      borderRadius: BorderRadius.circular(AppRadius.sm),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(LucideIcons.sparkles, size: 10, color: AppColors.primary.withValues(alpha: 0.6)),
-                        const SizedBox(width: 4),
-                        Text(
-                          p.lookingFor.isNotEmpty
-                              ? p.lookingFor.length > 50
-                                  ? '${p.lookingFor.substring(0, 50)}...'
-                                  : p.lookingFor
-                              : p.relevanceReason,
-                          style: GoogleFonts.inter(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.primary.withValues(alpha: 0.7),
+                  // Looking for — user-sourced intent
+                  if (p.lookingFor.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.06),
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(LucideIcons.crosshair, size: 10, color: AppColors.primary.withValues(alpha: 0.6)),
+                          const SizedBox(width: 4),
+                          Text(
+                            p.lookingFor.length > 55
+                                ? '${p.lookingFor.substring(0, 55)}...'
+                                : p.lookingFor,
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.primary.withValues(alpha: 0.7),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
 
                   const SizedBox(height: AppSpacing.md),
 
