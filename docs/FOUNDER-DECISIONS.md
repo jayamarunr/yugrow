@@ -133,7 +133,7 @@ Every relationship should answer four questions: Who did I meet? Where did I mee
 
 ### FD-022 — The best automation is invisible.
 
-Never ask users to perform extra steps purely so the app can collect data. Organizations should not check in — their presence emerges naturally when their representatives check in. A booth was "visited" when someone connected with its representative, followed the organization, or sent a message. Organization discovery is derived from meaningful interactions (connections, conversations, follows, introductions), not explicit scans. If a feature exists solely to feed the graph, the design is wrong. The graph should observe genuine behavior, not request it.
+Never ask users to perform extra steps purely so the app can collect data. Presence is never declared when it can be observed. Organizations don't check in — their presence emerges through the people who represent them. Discovery is derived from meaningful interactions, never from artificial actions. If a feature exists solely to feed the graph, the design is wrong. Every sprint must answer: *"Are we asking the user to do work because we need data?"* If yes, stop. Then ask: *"Can Yugrow infer this naturally from something the user is already doing?"* If yes, that's the feature.
 
 ---
 
