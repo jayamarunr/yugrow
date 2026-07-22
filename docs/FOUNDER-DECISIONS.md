@@ -115,6 +115,10 @@ Yugrow is a digital layer on top of a physical event. It reveals what's already 
 
 Information can come from only four places: the user, their organization, Yugrow AI, or a live broadcast. Never mix them. A "Looking for" field must clearly show it came from the user. An AI match must say "Recommended because" — never pretend to be user-generated. A broadcast must show a pulse icon and timestamp. If a user has to wonder who is saying something, the design failed.
 
+### FD-018 — One action per corner.
+
+Every corner of a card has a job. Top-left: identity (avatar). Top-right: status (Checked in). Bottom-left: context (time, mutuals). Bottom-right: action (Quick Connect). No duplicate navigation hints, no competing elements in the same corner. A card should never have two arrows pointing in the same direction. If the entire card is tappable, no chevron is needed.
+
 ---
 
 *Decisions are numbered sequentially. New decisions are added as the product evolves. Decisions are never deleted — only superseded by later decisions with clear rationale.*

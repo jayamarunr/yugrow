@@ -72,7 +72,7 @@ class ProfessionalCard extends StatelessWidget {
                       ),
                       const SizedBox(width: AppSpacing.md),
 
-                      // Name + title + company
+                      // Name row — identity left, status right
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,7 +108,7 @@ class ProfessionalCard extends StatelessWidget {
                                         style: GoogleFonts.inter(
                                           fontSize: 11,
                                           color: AppColors.success,
-                                          fontWeight: FontWeight.w500,
+                                          fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                     ],
@@ -134,46 +134,6 @@ class ProfessionalCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                      ),
-
-                      // Quick Connect + Chevron
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Quick Connect for obvious relevance
-                          if (p.mutualConnections >= 3 || p.lookingFor.isNotEmpty)
-                            GestureDetector(
-                              onTap: () {
-                                HapticFeedback.lightImpact();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Request sent to ${p.name.split(' ')[0]}'),
-                                    duration: const Duration(seconds: 2),
-                                    behavior: SnackBarBehavior.floating,
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                width: 32,
-                                height: 32,
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary.withValues(alpha: 0.1),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  LucideIcons.user_plus,
-                                  size: 16,
-                                  color: AppColors.primary,
-                                ),
-                              ),
-                            ),
-                          const SizedBox(width: 8),
-                          Icon(
-                            LucideIcons.chevron_right,
-                            size: 18,
-                            color: AppColors.textDisabled,
-                          ),
-                        ],
                       ),
                     ],
                   ),
@@ -209,7 +169,7 @@ class ProfessionalCard extends StatelessWidget {
 
                   const SizedBox(height: AppSpacing.md),
 
-                  // Bottom row: time ago + mutual
+                  // Bottom row: time (grey) → mutual (emerald) → checked in (green dot + bold green)
                   Row(
                     children: [
                       Icon(LucideIcons.clock, size: 12, color: AppColors.textDisabled),
@@ -234,12 +194,55 @@ class ProfessionalCard extends StatelessWidget {
                           ),
                         ),
                       ],
+                      if (p.isRecentlyArrived) ...[
+                        const SizedBox(width: AppSpacing.lg),
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: const BoxDecoration(
+                            color: AppColors.success,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Checked in',
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            color: AppColors.success,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                       const Spacer(),
-                      Icon(
-                        LucideIcons.chevron_right,
-                        size: 14,
-                        color: AppColors.textDisabled,
-                      ),
+
+                      // Quick Connect
+                      if (p.mutualConnections >= 3 || p.lookingFor.isNotEmpty)
+                        GestureDetector(
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Request sent to ${p.name.split(' ')[0]}'),
+                                duration: const Duration(seconds: 2),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          },
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withValues(alpha: 0.08),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              LucideIcons.user_plus,
+                              size: 18,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                 ],

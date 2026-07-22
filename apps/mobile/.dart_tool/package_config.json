@@ -122,6 +122,12 @@
       "languageVersion": "3.1"
     },
     {
+      "name": "flutter_lucide",
+      "rootUri": "file:///C:/Users/jayam/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_lucide-1.11.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "flutter_riverpod",
       "rootUri": "file:///C:/Users/jayam/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_riverpod-2.6.1",
       "packageUri": "lib/",
@@ -384,6 +390,12 @@
       "rootUri": "file:///C:/Users/jayam/AppData/Local/Pub/Cache/hosted/pub.dev/rxdart-0.28.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
+    },
+    {
+      "name": "shimmer",
+      "rootUri": "file:///C:/Users/jayam/AppData/Local/Pub/Cache/hosted/pub.dev/shimmer-3.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
     },
     {
       "name": "sky_engine",
