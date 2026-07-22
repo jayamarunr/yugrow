@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 /// provides meaningful context for every connection: who was met, where,
 /// when, and why. A list of names is not enough.
 ///
+/// Yugrow remembers relationships, not contacts.
+///
 /// Renamed from "Connections" to "Relationship History" per FD-020:
 /// "Relationships are always between people. Organizations provide identity,
 /// trust, and continuity."
