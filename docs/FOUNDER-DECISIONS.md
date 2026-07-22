@@ -105,6 +105,10 @@ There will never be a "Message All" or "Connect All" button. Yugrow optimizes fo
 
 Every icon, badge, and status must answer one question without guessing. "Checked in" not a green dot. "Looking for partnerships" not "Fintech leader." "Replied 3 days ago" not a gray indicator. If a user has to wonder what it means, the design failed.
 
+### FD-015 — The event must feel alive even when the user does nothing.
+
+Yugrow is a digital layer on top of a physical event. It reveals what's already happening — people arriving, leaving, moving through the room — without the user refreshing, pulling, or searching. Presence changes. Counts shift. Time ticks. Rankings reorder. Not through animations or noise, but through subtle, meaningful updates that remind the user: *you're at a live event.* If the app is static, the experience is broken.
+
 ---
 
 *Decisions are numbered sequentially. New decisions are added as the product evolves. Decisions are never deleted — only superseded by later decisions with clear rationale.*

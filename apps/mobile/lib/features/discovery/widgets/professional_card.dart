@@ -161,7 +161,7 @@ class ProfessionalCard extends StatelessWidget {
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
-                                  LucideIcons.plus,
+                                  LucideIcons.user_plus,
                                   size: 16,
                                   color: AppColors.primary,
                                 ),
