@@ -4,22 +4,83 @@ import '../models/professional.dart';
 import '../repository/discovery_repository.dart';
 
 /// Types of entities that can have presence at an event.
-enum PresenceType { professional, organization, booth, session }
+/// Reserved for future use: organization, booth, session, product, sponsor.
+enum PresenceType {
+  professional,
+  organization,
+  booth,
+  session,
+  product,
+  sponsor,
+}
+
+/// Who can see this presence entry.
+enum PresenceVisibility {
+  /// Visible to all attendees at the event (default for professionals)
+  everyone,
+
+  /// Visible only to specific groups (e.g., exhibitors only)
+  restricted,
+
+  /// Visible only to the organization and its representatives
+  organizationOnly,
+}
+
+/// Optional metadata carried by a presence entry.
+/// Extends without changing the Presence class signature.
+class PresenceContext {
+  final String? boothId;
+  final String? sessionId;
+  final Map<String, String> attributes;
+
+  const PresenceContext({
+    this.boothId,
+    this.sessionId,
+    this.attributes = const {},
+  });
+}
 
 /// A generic presence entry — any entity type at any time.
+///
+/// The engine doesn't know what an Organization or Booth is.
+/// It only knows: *something became present.*
 class Presence {
+  /// Unique ID for this presence entry
+  final String presenceId;
+
+  /// The type of entity that is present
   final PresenceType type;
-  final String id;
+
+  /// The ID of the underlying entity (professional ID, org ID, etc.)
+  final String entityId;
+
+  /// Human-readable name for display
   final String displayName;
+
+  /// When this presence started
   final DateTime checkedInAt;
+
+  /// When this presence expires (null = never)
+  final DateTime? expiresAt;
+
+  /// Visibility scope
+  final PresenceVisibility visibility;
+
+  /// Optional context data
+  final PresenceContext context;
+
+  /// The underlying professional data (null for non-professional types)
   final Professional? professional;
-  // Future: organization, booth, session data
 
   const Presence({
+    required this.presenceId,
     required this.type,
-    required this.id,
+    required this.entityId,
     required this.displayName,
     required this.checkedInAt,
+    this.expiresAt,
+    this.visibility = PresenceVisibility.everyone,
+    this.context = const PresenceContext(),
     this.professional,
   });
 
@@ -31,13 +92,15 @@ class Presence {
         .toList();
   }
 
-  /// Create a professional presence entry
+  /// Create a professional presence entry with 60-minute expiry
   factory Presence.fromProfessional(Professional p, DateTime checkedInAt) {
     return Presence(
+      presenceId: 'pres_${p.id}_${checkedInAt.millisecondsSinceEpoch}',
       type: PresenceType.professional,
-      id: p.id,
+      entityId: p.id,
       displayName: p.name,
       checkedInAt: checkedInAt,
+      expiresAt: checkedInAt.add(const Duration(minutes: 60)),
       professional: p,
     );
   }
@@ -50,6 +113,9 @@ class Presence {
     if (diff.inHours == 1) return '1 hour ago';
     return '${diff.inHours} hours ago';
   }
+
+  /// Whether this presence has expired
+  bool get isExpired => expiresAt != null && DateTime.now().isAfter(expiresAt!);
 }
 
 /// Central engine that makes the event feel alive.
@@ -139,7 +205,7 @@ class PresenceEngine {
     // Schedule expiry after 60 minutes
     Timer(const Duration(minutes: 60), () {
       if (!_running) return;
-      _active.removeWhere((p) => p.id == presence.id);
+      _active.removeWhere((p) => p.presenceId == presence.presenceId);
       _controller.add(PresenceExpiry(presence, List.from(_active)));
     });
   }
