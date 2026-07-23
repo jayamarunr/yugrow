@@ -1,5 +1,5 @@
 // ─── Yugrow Authorization Guard ─────────────────────────────────────
-// Global guard: validates JWT, extracts identity, checks required capabilities.
+// Global guard: validates JWT via Passport, extracts identity, checks capabilities.
 // Controllers declare requirements via @RequireCapability() decorator.
 
 import {
@@ -13,6 +13,8 @@ import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { PermissionService } from '../../permission/permission.service';
 import { CAPABILITIES_KEY } from '../../../common/decorators/capabilities.decorator';
+import { IS_PUBLIC_KEY } from '../../../common/decorators/public.decorator';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -20,9 +22,17 @@ export class AuthGuard implements CanActivate {
     private readonly config: ConfigService,
     private readonly reflector: Reflector,
     private readonly permission: PermissionService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    // Skip auth for @Public() decorated routes
+    const isPublic = this.reflector.getAllAndOverride<boolean>(
+      IS_PUBLIC_KEY,
+      [context.getHandler(), context.getClass()],
+    );
+    if (isPublic) return true;
+
     const request = context.switchToHttp().getRequest();
     const token = this.extractToken(request);
 
@@ -31,12 +41,15 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      // TODO: Real JWT validation via Authentik/OIDC
-      // For now, use demo identity for development
-      const personId = request.headers['x-person-id'] || 'demo-person-id';
-      const workspaceId = request.headers['x-workspace-id'] || 'demo-workspace-id';
+      // Validate the JWT
+      const secret = this.config.get<string>('JWT_SECRET', 'yugrow-dev-secret-change-in-production');
+      const payload = await this.jwtService.verifyAsync(token, { secret });
 
-      request.user = { personId, workspaceId };
+      // Set user from verified JWT payload
+      request.user = {
+        personId: payload.sub,
+        workspaceId: payload.workspaceId,
+      };
 
       // Check required capabilities from @RequireCapability() decorator
       const requiredCapabilities = this.reflector.getAllAndOverride<string[]>(
@@ -50,8 +63,8 @@ export class AuthGuard implements CanActivate {
 
       // Verify all required capabilities
       const results = await this.permission.canBatch(
-        personId,
-        workspaceId,
+        payload.sub,
+        payload.workspaceId,
         requiredCapabilities,
       );
 

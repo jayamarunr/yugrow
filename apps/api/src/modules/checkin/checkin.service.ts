@@ -23,12 +23,14 @@ import { Injectable, Inject, ConflictException, NotFoundException } from '@nestj
 import { PrismaClient } from '@prisma/client';
 import { PRISMA } from '@database/index';
 import { CommunicationService } from '../communication/communication.service';
+import { IdentityService } from '../identity/identity.service';
 
 @Injectable()
 export class CheckinService {
   constructor(
     @Inject(PRISMA) private readonly prisma: PrismaClient,
     private readonly communicationService: CommunicationService,
+    private readonly identityService: IdentityService,
   ) {}
 
   // ═════════════════════════════════════════════════════════════════
@@ -139,6 +141,426 @@ export class CheckinService {
       where: { endDate: { lt: now }, status: 'ACTIVE' },
       data: { status: 'EXPIRED' },
     });
+  }
+
+  // ── Active Presence Check ────────────────────────────────────
+
+  async getActivePresence(personId: string) {
+    return this.prisma.presence.findFirst({
+      where: {
+        personId,
+        status: 'ACTIVE',
+        expiresAt: { gte: new Date() },
+      },
+      include: {
+        event: { include: { venue: true } },
+      },
+      orderBy: { startedAt: 'desc' },
+    });
+  }
+
+  // ── Founder Mode: Update Event ────────────────────────────────
+
+  async updateEvent(
+    id: string,
+    data: {
+      name?: string;
+      startDate?: string;
+      endDate?: string;
+      status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'EXPIRED';
+      visibility?: 'PUBLIC' | 'PRIVATE' | 'HIDDEN';
+      discoverable?: boolean;
+    },
+  ) {
+    const event = await this.prisma.event.findUnique({ where: { id } });
+    if (!event) throw new NotFoundException('Event not found.');
+
+    const updateData: any = {};
+    if (data.name !== undefined) updateData.name = data.name;
+    if (data.startDate !== undefined) updateData.startDate = new Date(data.startDate);
+    if (data.endDate !== undefined) updateData.endDate = new Date(data.endDate);
+    if (data.status !== undefined) updateData.status = data.status;
+    if (data.visibility !== undefined) updateData.visibility = data.visibility;
+    if (data.discoverable !== undefined) updateData.discoverable = data.discoverable;
+
+    return this.prisma.event.update({
+      where: { id },
+      data: updateData,
+      include: { venue: true },
+    });
+  }
+
+  // ── Founder Mode: Expire Event (ends event + all active presence) ──
+
+  async expireEvent(id: string) {
+    const event = await this.prisma.event.findUnique({ where: { id } });
+    if (!event) throw new NotFoundException('Event not found.');
+
+    // Expire all active presence for this event
+    await this.prisma.presence.updateMany({
+      where: { eventId: id, status: 'ACTIVE' },
+      data: { status: 'EXPIRED' },
+    });
+
+    // Expire the event itself
+    return this.prisma.event.update({
+      where: { id },
+      data: { status: 'EXPIRED' },
+      include: { venue: true },
+    });
+  }
+
+  // ── Founder Mode: Duplicate Event ─────────────────────────────
+
+  async duplicateEvent(id: string, newName?: string) {
+    const source = await this.prisma.event.findUnique({
+      where: { id },
+      include: { venue: true },
+    });
+    if (!source) throw new NotFoundException('Event not found.');
+
+    const now = new Date();
+    const duration = source.endDate.getTime() - source.startDate.getTime();
+    const newStart = new Date(now.getTime() + 60 * 60 * 1000); // start 1h from now
+    const newEnd = new Date(newStart.getTime() + duration);
+
+    return this.prisma.event.create({
+      data: {
+        name: newName ?? `${source.name} (${now.toLocaleDateString('en-IN')})`,
+        venueId: source.venueId,
+        organizerWorkspaceId: source.organizerWorkspaceId,
+        startDate: newStart,
+        endDate: newEnd,
+        status: 'ACTIVE',
+        visibility: source.visibility,
+        discoverable: source.discoverable,
+      },
+      include: { venue: true },
+    });
+  }
+
+  // ── Founder Mode: Seed Test Attendees ─────────────────────────
+
+  async seedTestAttendees(eventId: string, count: number = 20) {
+    const event = await this.prisma.event.findUnique({ where: { id: eventId } });
+    if (!event) throw new NotFoundException('Event not found.');
+
+    const testNames = [
+      'Rajesh Kumar', 'Ananya Sharma', 'Priya Patel', 'Arun Venkatesh',
+      'Deepika Singh', 'Vikram Reddy', 'Kavita Nair', 'Suresh Iyer',
+      'Meera Joshi', 'Rahul Kapoor', 'Neha Gupta', 'Aditya Deshmukh',
+      'Shruti Menon', 'Karthik Rajan', 'Pooja Mehta', 'Ravi Chandra',
+      'Anjali Krishnan', 'Manish Agarwal', 'Divya Saxena', 'Sanjay Pillai',
+      'Ishita Basu', 'Rohit Saxena', 'Lakshmi Narayan', 'Akash Jain',
+      'Sneha Bhatt', 'Varun Malhotra', 'Nandini Rao', 'Arjun Nair',
+      'Tanya George', 'Pranav Kapoor',
+    ];
+
+    const testTitles = [
+      'Founder & CEO', 'Product Manager', 'Software Engineer',
+      'Marketing Lead', 'Design Director', 'Data Scientist',
+      'Business Analyst', 'Engineering Manager', 'Growth Hacker',
+      'Sales Director', 'CTO', 'COO', 'VP Engineering', 'Tech Lead',
+      'Consultant', 'Angel Investor', 'Venture Partner', 'Advisor',
+      'Community Manager', 'Event Organizer',
+    ];
+
+    const testCompanies = [
+      'TechVentures', 'GrowthLabs', 'InnovateAI', 'CloudBase',
+      'DataDriven Inc', 'ProductForge', 'DesignStudio', 'ScaleUp',
+      'NextGen Corp', 'MarketPulse',
+    ];
+
+    const testIndustries = [
+      'Technology', 'SaaS', 'AI/ML', 'Fintech', 'Healthcare',
+      'E-commerce', 'EdTech', 'Enterprise Software', 'CleanTech',
+      'Professional Services',
+    ];
+
+    const created = [];
+
+    for (let i = 0; i < Math.min(count, testNames.length); i++) {
+      const name = testNames[i];
+      const [firstName, ...lastParts] = name.split(' ');
+      const lastName = lastParts.join(' ');
+      const email = `test.${firstName.toLowerCase()}.${i}@yugrow.test`;
+
+      // Create or find person
+      let person = await this.prisma.person.findUnique({ where: { email } });
+      if (!person) {
+        person = await this.prisma.person.create({
+          data: { email, firstName, lastName: lastName || '', status: 'ACTIVE' },
+        });
+      }
+
+      // Create or find workspace
+      const slug = `test-ws-${firstName.toLowerCase()}-${i}`;
+      let workspace = await this.prisma.workspace.findUnique({ where: { slug } });
+      if (!workspace) {
+        workspace = await this.prisma.workspace.create({
+          data: { name: `${name}'s Workspace`, slug, type: 'PERSONAL' },
+        });
+      }
+
+      // Ensure membership
+      const existingMember = await this.prisma.membership.findFirst({
+        where: { personId: person.id, workspaceId: workspace.id },
+      });
+      if (!existingMember) {
+        await this.prisma.membership.create({
+          data: {
+            personId: person.id,
+            workspaceId: workspace.id,
+            membershipType: 'EMPLOYEE',
+          },
+        });
+      }
+
+      // Create or update ProfessionalIdentity
+      const existingProf = await this.prisma.professionalIdentity.findUnique({
+        where: { personId: person.id },
+      });
+      const profData = {
+        workspaceId: workspace.id,
+        name,
+        title: testTitles[i % testTitles.length],
+        company: testCompanies[i % testCompanies.length],
+        industries: [testIndustries[i % testIndustries.length]],
+        skills: [testIndustries[i % testIndustries.length], 'Networking', 'Leadership'],
+        verified: true,
+      };
+
+      if (!existingProf) {
+        await this.prisma.professionalIdentity.create({
+          data: { personId: person.id, ...profData },
+        });
+      } else {
+        await this.prisma.professionalIdentity.update({
+          where: { id: existingProf.id },
+          data: profData,
+        });
+      }
+
+      // Create presence (staggered over the last 30 minutes)
+      const minutesAgo = Math.floor(Math.random() * 30);
+      const startedAt = new Date(Date.now() - minutesAgo * 60 * 1000);
+      const expiresAt = new Date(startedAt.getTime() + 4 * 60 * 60 * 1000);
+
+      const presence = await this.prisma.presence.create({
+        data: {
+          personId: person.id,
+          workspaceId: workspace.id,
+          eventId,
+          venueId: event.venueId,
+          startedAt,
+          expiresAt,
+          status: 'ACTIVE',
+        },
+      });
+
+      created.push({ personId: person.id, name, presenceId: presence.id });
+    }
+
+    return {
+      message: `Seeded ${created.length} test attendees for event '${event.name}'.`,
+      count: created.length,
+      attendees: created,
+    };
+  }
+
+  // ── Founder Mode: Clear Presence ──────────────────────────────
+
+  async clearPresence(eventId?: string) {
+    const where: any = { status: 'ACTIVE' };
+    if (eventId) where.eventId = eventId;
+
+    const result = await this.prisma.presence.updateMany({
+      where,
+      data: { status: 'EXPIRED' },
+    });
+
+    return {
+      message: `Expired ${result.count} active presence${eventId ? ` for event ${eventId}` : ''}.`,
+      count: result.count,
+    };
+  }
+
+  // ── Founder Mode: Reset Demo Data ─────────────────────────────
+
+  async resetDemoData() {
+    // Delete test data in reverse dependency order
+    // Only removes data created by test/seed operations (identified by @yugrow.test email)
+    const testPersonEmails = await this.prisma.person.findMany({
+      where: { email: { endsWith: '@yugrow.test' } },
+      select: { id: true, email: true },
+    });
+    const testPersonIds = testPersonEmails.map(p => p.id);
+
+    // Delete presences for test persons
+    if (testPersonIds.length > 0) {
+      await this.prisma.presence.deleteMany({
+        where: { personId: { in: testPersonIds } },
+      });
+    }
+
+    // Delete connection requests involving test persons
+    await this.prisma.connectionRequest.deleteMany({
+      where: {
+        OR: [
+          { senderPersonId: { in: testPersonIds } },
+          { recipientPersonId: { in: testPersonIds } },
+        ],
+      },
+    });
+
+    // Delete ProfessionalIdentities for test persons
+    await this.prisma.professionalIdentity.deleteMany({
+      where: { personId: { in: testPersonIds } },
+    });
+
+    // Delete memberships for test persons
+    await this.prisma.membership.deleteMany({
+      where: { personId: { in: testPersonIds } },
+    });
+
+    // Delete test workspaces
+    await this.prisma.workspace.deleteMany({
+      where: { slug: { startsWith: 'test-ws-' } },
+    });
+
+    // Delete test persons
+    await this.prisma.person.deleteMany({
+      where: { id: { in: testPersonIds } },
+    });
+
+    return {
+      message: `Reset complete. Removed ${testPersonIds.length} test attendees and related data.`,
+      removedAttendees: testPersonIds.length,
+    };
+  }
+
+  // ── Founder Mode: Test Status (for banner) ────────────────────
+
+  async getTestStatus() {
+    // Find persons with test email suffix
+    const testPersonEmails = await this.prisma.person.findMany({
+      where: { email: { endsWith: '@yugrow.test' } },
+      select: { id: true },
+    });
+    const testPersonIds = testPersonEmails.map(p => p.id);
+
+    // Count active test presence
+    const activeTestPresence = testPersonIds.length > 0
+      ? await this.prisma.presence.findMany({
+          where: {
+            personId: { in: testPersonIds },
+            status: 'ACTIVE',
+            expiresAt: { gte: new Date() },
+          },
+          include: {
+            event: { select: { id: true, name: true } },
+          },
+        })
+      : [];
+
+    // Count total active presence per event affected by test data
+    const eventIds = [...new Set(activeTestPresence.map(p => p.eventId))];
+    const events = await Promise.all(
+      eventIds.map(async (eventId) => {
+        const event = activeTestPresence.find(p => p.eventId === eventId)?.event;
+        const totalActive = await this.prisma.presence.count({
+          where: { eventId, status: 'ACTIVE', expiresAt: { gte: new Date() } },
+        });
+        const seededActive = activeTestPresence.filter(p => p.eventId === eventId).length;
+        return {
+          eventId,
+          eventName: event?.name ?? 'Unknown',
+          totalAttendees: totalActive,
+          realAttendees: totalActive - seededActive,
+          seededAttendees: seededActive,
+        };
+      }),
+    );
+
+    return {
+      hasSeededAttendees: activeTestPresence.length > 0,
+      totalSeededActive: activeTestPresence.length,
+      events,
+    };
+  }
+
+  // ── Founder Demo Login ───────────────────────────────────────
+
+  async founderLogin() {
+    const email = 'founder@yugrow.test';
+    const name = 'Jayam (Founder)';
+
+    // Find or create founder person
+    let person = await this.prisma.person.findUnique({ where: { email } });
+    if (!person) {
+      person = await this.prisma.person.create({
+        data: { email, firstName: 'Jayam', lastName: '(Founder)', status: 'ACTIVE' },
+      });
+    }
+
+    // Find or create personal workspace
+    const slug = 'founder-yugrow';
+    let workspace = await this.prisma.workspace.findUnique({ where: { slug } });
+    if (!workspace) {
+      workspace = await this.prisma.workspace.create({
+        data: { name: "Jayam's Workspace", slug, type: 'PERSONAL' },
+      });
+    }
+
+    // Ensure membership
+    const existingMember = await this.prisma.membership.findFirst({
+      where: { personId: person.id, workspaceId: workspace.id },
+    });
+    if (!existingMember) {
+      await this.prisma.membership.create({
+        data: {
+          personId: person.id,
+          workspaceId: workspace.id,
+          membershipType: 'OWNER',
+        },
+      });
+    }
+
+    // Ensure professional identity
+    const existingProf = await this.prisma.professionalIdentity.findUnique({
+      where: { personId: person.id },
+    });
+    if (!existingProf) {
+      await this.prisma.professionalIdentity.create({
+        data: {
+          personId: person.id,
+          workspaceId: workspace.id,
+          name,
+          title: 'Founder',
+          company: 'Yugrow',
+          industries: ['Technology', 'SaaS'],
+          skills: ['AI', 'CRM', 'Product Strategy'],
+          lookingFor: 'Co-founders, investors, and strategic partners',
+          verified: true,
+        },
+      });
+    }
+
+    // Generate a real JWT via IdentityService
+    const token = await this.identityService.generateToken(person.id, person.email, workspace.id);
+
+    return {
+      token,
+      person: {
+        id: person.id,
+        email: person.email,
+        name,
+      },
+      workspace: {
+        id: workspace.id,
+        name: workspace.name,
+      },
+    };
   }
 
   // ═════════════════════════════════════════════════════════════════

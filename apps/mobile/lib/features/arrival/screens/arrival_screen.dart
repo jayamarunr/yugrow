@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:go_router/go_router.dart';
 import 'package:yugrow_mobile/core/theme/app_colors.dart';
 import 'package:yugrow_mobile/core/theme/app_spacing.dart';
 import 'package:yugrow_mobile/core/theme/app_radius.dart';
 import '../models/arrival_models.dart';
-import '../../debug/debug_screen.dart';
 import '../repository/arrival_repository.dart';
-import '../widgets/greeting_header.dart';
-import '../widgets/event_card.dart';
-import 'event_detail_screen.dart';
 import '../../discovery/screens/discovery_screen.dart';
+import '../../../core/api/api_client.dart';
+import '../../../core/widgets/founder_mode_banner.dart';
 
 class ArrivalScreen extends StatefulWidget {
   const ArrivalScreen({super.key});
@@ -22,74 +21,65 @@ class ArrivalScreen extends StatefulWidget {
 
 class _ArrivalScreenState extends State<ArrivalScreen> {
   final _repository = ArrivalRepository();
+  final _api = ApiClient();
 
-  bool _isLoading = true;
-  List<BusinessEvent> _events = [];
   Persona? _currentUser;
-  String? _error;
 
   // "I'm Here" flow state
   BusinessEvent? _selectedEvent;
-  bool _isNearby = false; // proximity gate — simulates GPS arrival
+  final bool _isNearby = false;
   bool _isCheckingIn = false;
   bool _isCheckedIn = false;
+  bool _restoringPresence = true;
 
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _load();
   }
 
-  Future<void> _loadData() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
+  Future<void> _load() async {
+    await Future.wait([_loadUser(), _restorePresence()]);
+  }
+
+  Future<void> _loadUser() async {
     try {
-      final events = await _repository.getNearbyEvents();
       final user = await _repository.getCurrentUser();
-      setState(() {
-        _events = events;
-        _currentUser = user;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-      });
+      if (mounted) setState(() => _currentUser = user);
+    } catch (_) {}
+  }
+
+  Future<void> _restorePresence() async {
+    try {
+      final presence = await _api.getActivePresence('person-self');
+      if (mounted) {
+        if (presence != null && presence.isNotEmpty) {
+          final eventData = presence['event'] as Map<String, dynamic>?;
+          if (eventData != null) {
+            setState(() {
+              _selectedEvent = BusinessEvent(
+                id: eventData['id'] as String? ?? '',
+                name: eventData['name'] as String? ?? 'Event',
+                venue: (eventData['venue'] as Map<String, dynamic>?)?['name'] as String? ?? '',
+                distance: '',
+                professionalCount: 0,
+                businessCount: 0,
+                status: 'live',
+              );
+              _isCheckedIn = true;
+              _restoringPresence = false;
+            });
+          }
+        } else {
+          setState(() => _restoringPresence = false);
+        }
+      }
+    } catch (_) {
+      if (mounted) setState(() => _restoringPresence = false);
     }
   }
 
-  void _onEventTap(BusinessEvent event) {
-    HapticFeedback.lightImpact();
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => EventDetailScreen(
-          event: event,
-          onCheckIn: () => _onJoinEvent(event),
-        ),
-      ),
-    );
-  }
 
-  void _onJoinEvent(BusinessEvent event) {
-    HapticFeedback.lightImpact();
-    setState(() {
-      _selectedEvent = event;
-      _isNearby = false;
-    });
-
-    // Simulate GPS proximity detection after 3 seconds
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted && _selectedEvent?.id == event.id && !_isCheckingIn) {
-        HapticFeedback.mediumImpact();
-        setState(() {
-          _isNearby = true;
-        });
-      }
-    });
-  }
 
   void _onCheckIn() {
     HapticFeedback.mediumImpact();
@@ -135,7 +125,19 @@ class _ArrivalScreenState extends State<ArrivalScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // If user has checked in, show confirmation overlay
+    // While restoring presence from API, show a brief loading state
+    if (_restoringPresence) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          backgroundColor: AppColors.surface,
+          title: Text('Live', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+        ),
+        body: const Center(child: CircularProgressIndicator(strokeWidth: 2.5, color: AppColors.primary)),
+      );
+    }
+
+    // If user has checked in, show confirmation overlay or active presence
     if (_isCheckedIn && _selectedEvent != null) {
       return _buildCheckInComplete(context);
     }
@@ -145,49 +147,18 @@ class _ArrivalScreenState extends State<ArrivalScreen> {
       return _buildJoinScreen(context);
     }
 
-    // Main Arrival screen
+    // Live tab: not present state
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.surface,
-        title: Row(
-          children: [
-            GestureDetector(
-              onLongPress: () {
-                HapticFeedback.mediumImpact();
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const DebugScreen()),
-                );
-              },
-              child: Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Center(
-                  child: Text(
-                    'Y',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Text(
-              'Yugrow',
-              style: GoogleFonts.inter(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
-            ),
-          ],
+        title: Text(
+          'Live',
+          style: GoogleFonts.inter(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
         ),
         actions: [
           IconButton(
@@ -213,145 +184,81 @@ class _ArrivalScreenState extends State<ArrivalScreen> {
           const SizedBox(width: 12),
         ],
       ),
-      body: _buildBody(),
+      body: Column(
+        children: [
+          const FounderModeBanner(),
+          Expanded(child: _buildNotPresent()),
+        ],
+      ),
     );
   }
 
-  Widget _buildBody() {
-    if (_isLoading) {
-      return const Center(
-        child: SizedBox(
-          width: 32,
-          height: 32,
-          child: CircularProgressIndicator(
-            strokeWidth: 2.5,
-            color: AppColors.primary,
-          ),
+  Widget _buildNotPresent() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.xxl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 96,
+              height: 96,
+              decoration: BoxDecoration(
+                color: AppColors.primarySoft,
+                borderRadius: AppRadius.xlCircular,
+              ),
+              child: const Icon(
+                LucideIcons.map_pin,
+                size: 44,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xxl),
+            Text(
+              "You're not currently present",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              'Join a nearby event to become visible\nto professionals here.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                fontSize: 15,
+                color: AppColors.textSecondary,
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xxl),
+            ElevatedButton.icon(
+              onPressed: () => context.go('/'),
+              icon: const Icon(LucideIcons.arrow_left, size: 18),
+              label: Text(
+                'Go to Events',
+                style: GoogleFonts.inter(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.textInverse,
+                shape: RoundedRectangleBorder(
+                  borderRadius: AppRadius.lgCircular,
+                ),
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 28,
+                  vertical: 14,
+                ),
+              ),
+            ),
+          ],
         ),
-      );
-    }
-
-    if (_error != null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.xxl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(LucideIcons.wifi_off, size: 48, color: AppColors.textDisabled),
-              const SizedBox(height: AppSpacing.lg),
-              Text(
-                'Could not load events',
-                style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                'Check your connection and try again.',
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.xl),
-              ElevatedButton(
-                onPressed: _loadData,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: AppColors.textInverse,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: AppRadius.lgCircular,
-                  ),
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 14,
-                  ),
-                ),
-                child: const Text('Try again'),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    if (_events.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.xxl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                LucideIcons.calendar,
-                size: 48,
-                color: AppColors.textDisabled,
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              Text(
-                'No business events nearby today',
-                style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                'Explore upcoming events or create one for your community.',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.xl),
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: AppColors.textInverse,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: AppRadius.lgCircular,
-                  ),
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 14,
-                  ),
-                ),
-                child: const Text('Explore Events'),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return RefreshIndicator(
-      onRefresh: _loadData,
-      color: AppColors.primary,
-      child: ListView.builder(
-        padding: const EdgeInsets.only(top: AppSpacing.sm, bottom: AppSpacing.xxxl),
-        itemCount: _events.length + 1, // +1 for greeting header
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return GreetingHeader(
-              userName: _currentUser?.name ?? 'there',
-              eventCount: _events.length,
-            );
-          }
-          final event = _events[index - 1];
-          return EventCard(
-            event: event,
-            onJoin: () => _onJoinEvent(event),
-            onTap: () => _onEventTap(event),
-          );
-        },
       ),
     );
   }

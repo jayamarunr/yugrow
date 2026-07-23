@@ -13,6 +13,7 @@ import {
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { IdentityService } from './identity.service';
 import { RequireCapability } from '../../common/decorators/capabilities.decorator';
+import { Public } from '../../common/decorators/public.decorator';
 import { UpdateProfessionalDto } from './dto/professional-identity.dto';
 
 @ApiTags('Identity Engine')
@@ -22,11 +23,13 @@ export class IdentityController {
 
   // ─── Auth ─────────────────────────────────────────────────────
 
+  @Public()
   @Post('auth/login')
   async login(@Body() dto: { email: string; password: string }) {
     return this.identity.login(dto.email, dto.password);
   }
 
+  @Public()
   @Post('auth/register')
   async register(
     @Body() dto: { email: string; password: string; name: string },

@@ -1,8 +1,9 @@
 // ─── CheckIN MVP Controller ────────────────────────────────────────
 // REST API for Venue, Event, Presence, Live Discovery, Connection Flow.
 
-import { Controller, Get, Post, Patch, Param, Body, Query } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body, Query } from '@nestjs/common';
 import { CheckinService } from './checkin.service';
+import { Public } from '../../common/decorators/public.decorator';
 
 @Controller('checkin')
 export class CheckinController {
@@ -62,6 +63,66 @@ export class CheckinController {
     return this.checkinService.getEvent(id);
   }
 
+  @Patch('events/:id')
+  async updateEvent(
+    @Param('id') id: string,
+    @Body() body: {
+      name?: string;
+      startDate?: string;
+      endDate?: string;
+      status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'EXPIRED';
+      visibility?: 'PUBLIC' | 'PRIVATE' | 'HIDDEN';
+      discoverable?: boolean;
+    },
+  ) {
+    return this.checkinService.updateEvent(id, body);
+  }
+
+  @Post('events/:id/expire')
+  async expireEvent(@Param('id') id: string) {
+    return this.checkinService.expireEvent(id);
+  }
+
+  @Post('events/:id/duplicate')
+  async duplicateEvent(
+    @Param('id') id: string,
+    @Body('name') name?: string,
+  ) {
+    return this.checkinService.duplicateEvent(id, name);
+  }
+
+  // ═════════════════════════════════════════════════════════════════
+  // FOUNDER MODE — Test/Tooling Endpoints (hidden from public API docs)
+  // ═════════════════════════════════════════════════════════════════
+
+  @Public()
+  @Post('test/login')
+  async founderLogin() {
+    return this.checkinService.founderLogin();
+  }
+
+  @Post('test/seed')
+  async seedTestAttendees(
+    @Body() body: { eventId: string; count?: number },
+  ) {
+    return this.checkinService.seedTestAttendees(body.eventId, body.count ?? 20);
+  }
+
+  @Post('test/clear-presence')
+  async clearPresence(@Body('eventId') eventId?: string) {
+    return this.checkinService.clearPresence(eventId);
+  }
+
+  @Post('test/reset')
+  async resetDemoData() {
+    return this.checkinService.resetDemoData();
+  }
+
+  @Get('test/status')
+  async getTestStatus() {
+    return this.checkinService.getTestStatus();
+  }
+
   // ═════════════════════════════════════════════════════════════════
   // PRESENCE ("I'm Here")
   // ═════════════════════════════════════════════════════════════════
@@ -74,6 +135,11 @@ export class CheckinController {
     venueId: string;
   }) {
     return this.checkinService.checkIn(body);
+  }
+
+  @Get('presence/active')
+  async getActivePresence(@Query('personId') personId: string) {
+    return this.checkinService.getActivePresence(personId);
   }
 
   @Get('live/:eventId')

@@ -155,3 +155,31 @@ Build complete user journeys across multiple engines rather than completing one 
 ---
 
 *No decision in this file is final. As the platform evolves and the market teaches us what works, decisions can be refined. But every change should be recorded as an addendum, not a deletion.*
+
+---
+
+## FD-025 — Founder Tooling Must Never Become User-Facing Functionality
+
+**Date:** 2026-07-23
+**Category:** Engineering, Product
+
+Founder tools (test endpoints, seed data, debug UI, simulation controls) exist to accelerate product validation. They must remain isolated from production user flows — hidden behind gestures, flagged in the API, and never surfaced in the main navigation.
+
+If users need the same capability, it must be redesigned as a product feature — not exposed directly from the Founder Console.
+
+**Why:** Prevents years of technical debt. The line between "debug toggle" and "user setting" is the most expensive distinction to undo. Founder tools optimize for speed. Product features optimize for trust, UX, permissions, and scale. Never mix the two.
+
+**Related:** The `/checkin/test/*` API namespace is explicitly excluded from production routing. A single feature flag can disable all founder endpoints in production environments.
+
+---
+
+## FD-026 — Validation Before Acceleration
+
+**Date:** 2026-07-23
+**Category:** Product, Engineering, Strategy
+
+Never optimize or expand a feature until real users have demonstrated that it creates value. Evidence outranks intuition. Scale amplifies strengths — but it also amplifies mistakes.
+
+**Why:** The most dangerous moment in a product's life is when it has enough features to feel real but hasn't yet validated which ones matter. Every feature built before validation risks solving a problem that doesn't exist, at the cost of delaying the problems that do.
+
+**Related:** FD-012 (Build Vertical Slices), FD-024 (Conceptual Integrity). Validation milestones replace sprint numbers until evidence accumulates.

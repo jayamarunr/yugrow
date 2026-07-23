@@ -10,6 +10,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { PrismaClient } from '@prisma/client';
 import { PRISMA } from '@database/index';
 import { EventBus as EventBusInstance } from '@core/event-bus';
@@ -21,13 +22,55 @@ export class IdentityService {
   constructor(
     @Inject(PRISMA) private readonly prisma: PrismaClient,
     private readonly config: ConfigService,
+    private readonly jwtService: JwtService,
   ) {}
+
+  // ─── JWT Token Generation ─────────────────────────────────────
+
+  async generateToken(personId: string, email: string, workspaceId: string): Promise<string> {
+    return this.jwtService.signAsync({
+      sub: personId,
+      email,
+      workspaceId,
+    });
+  }
 
   // ─── Authentication ─────────────────────────────────────────────
 
   async login(email: string, password: string) {
-    // TODO: Implement Authentik/OIDC integration
-    throw new UnauthorizedException('Not yet implemented');
+    // Find person by email
+    const person = await this.prisma.person.findUnique({ where: { email } });
+    if (!person || person.status !== 'ACTIVE') {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    // TODO: Implement password verification via Authentik/OIDC
+    // For now, accept any password for existing accounts in development
+    if (this.config.get<string>('NODE_ENV') !== 'development') {
+      throw new UnauthorizedException('Password verification not yet implemented');
+    }
+
+    // Find the person's primary workspace
+    const membership = await this.prisma.membership.findFirst({
+      where: { personId: person.id },
+      include: { workspace: true },
+    });
+    const workspaceId = membership?.workspaceId ?? 'personal';
+
+    const token = await this.generateToken(person.id, person.email, workspaceId);
+
+    return {
+      token,
+      person: {
+        id: person.id,
+        email: person.email,
+        name: person.firstName ?? person.email,
+      },
+      workspace: {
+        id: workspaceId,
+        name: membership?.workspace?.name ?? 'Personal',
+      },
+    };
   }
 
   async register(email: string, password: string, name: string) {

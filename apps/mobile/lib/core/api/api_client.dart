@@ -58,11 +58,73 @@ class ApiClient {
     return res.data as Map<String, dynamic>;
   }
 
+  // ── Founder Mode: Event Management ────────────────────────────
+
+  Future<Map<String, dynamic>> createEvent(Map<String, dynamic> data) async {
+    final res = await _dio.post('/checkin/events', data: data);
+    return res.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> updateEvent(String id, Map<String, dynamic> data) async {
+    final res = await _dio.patch('/checkin/events/$id', data: data);
+    return res.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> expireEvent(String id) async {
+    final res = await _dio.post('/checkin/events/$id/expire');
+    return res.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> duplicateEvent(String id, {String? name}) async {
+    final res = await _dio.post('/checkin/events/$id/duplicate', data: name != null ? {'name': name} : {});
+    return res.data as Map<String, dynamic>;
+  }
+
+  // ── Founder Mode: Test Tools ──────────────────────────────────
+
+  Future<Map<String, dynamic>> seedTestAttendees(String eventId, {int count = 20}) async {
+    final res = await _dio.post('/checkin/test/seed', data: {
+      'eventId': eventId,
+      'count': count,
+    });
+    return res.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> clearPresence({String? eventId}) async {
+    final data = eventId != null ? {'eventId': eventId} : <String, dynamic>{};
+    final res = await _dio.post('/checkin/test/clear-presence', data: data);
+    return res.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> resetDemoData() async {
+    final res = await _dio.post('/checkin/test/reset');
+    return res.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> getTestStatus() async {
+    final res = await _dio.get('/checkin/test/status');
+    return res.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> founderLogin() async {
+    final res = await _dio.post('/checkin/test/login');
+    return res.data as Map<String, dynamic>;
+  }
+
   // ── Presence ─────────────────────────────────────────────────
 
   Future<Map<String, dynamic>> checkIn(Map<String, dynamic> data) async {
     final res = await _dio.post('/checkin/presence', data: data);
     return res.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>?> getActivePresence(String personId) async {
+    try {
+      final res = await _dio.get('/checkin/presence/active', queryParameters: {'personId': personId});
+      return res.data as Map<String, dynamic>?;
+    } catch (_) {
+      return null;
+    }
   }
 
   // ── Live Discovery ───────────────────────────────────────────
