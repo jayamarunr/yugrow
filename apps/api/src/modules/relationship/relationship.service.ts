@@ -10,12 +10,11 @@ import { RelationshipEvents } from './events/relationship.events';
 
 @Injectable()
 export class RelationshipService {
+  private readonly eventBus = EventBusInstance;
+
   constructor(
     @Inject(PRISMA) private readonly prisma: PrismaClient,
-    private readonly eventBus: typeof EventBusInstance,
-  ) {
-    this.eventBus = EventBusInstance;
-  }
+  ) {}
 
   // ─── Relationship Types ────────────────────────────────────────
 

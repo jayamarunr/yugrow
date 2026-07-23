@@ -1,9 +1,9 @@
 import 'package:go_router/go_router.dart';
 import '../../features/arrival/screens/arrival_screen.dart';
 import '../../features/auth/auth_screen.dart';
-import '../../features/checkin/home_screen.dart';
 import '../../features/checkin/live_screen.dart';
 import '../../features/checkin/checkin_complete_screen.dart';
+import '../../features/debug/debug_screen.dart';
 import '../../features/events/events_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../features/connections/connections_screen.dart';
@@ -16,6 +16,7 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(path: '/auth', builder: (_, __) => const AuthScreen()),
     GoRoute(path: '/', builder: (_, __) => const ArrivalScreen()),
+    GoRoute(path: '/debug', builder: (_, __) => const DebugScreen()),
     ShellRoute(
       builder: (_, __, child) => MainShell(child: child),
       routes: [

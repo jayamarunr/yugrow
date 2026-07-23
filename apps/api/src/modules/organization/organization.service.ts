@@ -11,16 +11,12 @@ import {
 } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { PRISMA } from '@database/index';
-import { EventBus as EventBusInstance } from '@core/event-bus';
 
 @Injectable()
 export class OrganizationService {
   constructor(
     @Inject(PRISMA) private readonly prisma: PrismaClient,
-    private readonly eventBus: typeof EventBusInstance,
-  ) {
-    this.eventBus = EventBusInstance;
-  }
+  ) {}
 
   // ─── Business Hierarchy (inside a Workspace) ──────────────────
 

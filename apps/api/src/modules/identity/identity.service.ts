@@ -16,13 +16,12 @@ import { EventBus as EventBusInstance } from '@core/event-bus';
 
 @Injectable()
 export class IdentityService {
+  private readonly eventBus = EventBusInstance;
+
   constructor(
     @Inject(PRISMA) private readonly prisma: PrismaClient,
     private readonly config: ConfigService,
-    private readonly eventBus: typeof EventBusInstance,
-  ) {
-    this.eventBus = EventBusInstance;
-  }
+  ) {}
 
   // ─── Authentication ─────────────────────────────────────────────
 
