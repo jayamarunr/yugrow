@@ -26,7 +26,7 @@ class StorageSDK {
 
   async upload(options: UploadOptions): Promise<StorageResult> {
     const form = new FormData();
-    const blob = new Blob([options.buffer], { type: options.mimeType });
+    const blob = new Blob([options.buffer as unknown as BlobPart], { type: options.mimeType });
     form.append('file', blob, options.filename);
 
     const res = await fetch(

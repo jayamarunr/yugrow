@@ -1,6 +1,6 @@
 // ─── Authenticated Layout — Platform Shell with Journey Engine ─────
 
-import { Shell, JourneyProvider } from '@ui/index';
+import { Shell, JourneyProvider } from '@ui';
 
 const demoWorkspaces = [
   { id: 'personal', name: 'Personal', type: 'personal' as const },

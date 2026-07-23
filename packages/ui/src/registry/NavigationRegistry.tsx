@@ -24,11 +24,10 @@ export function registerNavItems(productId: string, items: NavItem[]) {
 }
 
 export function getNavTree(): NavItem[] {
-  const all: NavItem[] = [];
-  for (const items of navRegistry.values()) {
-    all.push(...items);
-  }
-  return all;
+  return Array.from(navRegistry.values()).reduce(
+    (acc, items) => acc.concat(items),
+    [] as NavItem[],
+  );
 }
 
 // ── Workspace-Aware Nav Tree ───────────────────────────────────────

@@ -4,8 +4,9 @@ export { JourneyProgress } from './JourneyProgress';
 export { JourneyLauncher } from './JourneyLauncher';
 export { JourneySidebar } from './JourneySidebar';
 
+export { PLATFORMS } from './types';
+
 export {
-  PLATFORMS,
   defaultJourneys,
   startBusinessJourney,
   findCustomersJourney,
@@ -16,7 +17,6 @@ export {
 export type {
   Journey,
   JourneyStep,
-  JourneyProgress,
   JourneyState,
   JourneyAction,
   JourneyCategory,

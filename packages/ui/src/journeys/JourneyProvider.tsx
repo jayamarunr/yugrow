@@ -102,7 +102,7 @@ export function JourneyProvider({
           },
         },
         completedJourneys: isComplete
-          ? [...new Set([...prev.completedJourneys, journeyId])]
+          ? Array.from(new Set(prev.completedJourneys.concat([journeyId])))
           : prev.completedJourneys,
         // Auto-advance to next pending step
         currentStepId: undefined,

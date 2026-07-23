@@ -7,7 +7,7 @@ import {
   Card, CardSkeleton, EmptyState, DashboardGrid,
   registerWidget, getAllWidgets,
   JourneyLauncher, JourneyCard, useJourneys,
-} from '@ui/index';
+} from '@ui';
 import { useEffect, useState } from 'react';
 
 // Demo widgets

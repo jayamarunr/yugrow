@@ -1,7 +1,8 @@
 'use client';
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Button, Input, Card } from '@ui/index';
+import { Button, Input, Card } from '@ui';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
