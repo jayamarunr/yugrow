@@ -6,6 +6,7 @@ import '../../features/home/home_screen.dart';
 import '../../features/network/network_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../features/messaging/message_screen.dart';
+import '../../features/events/public_event_screen.dart';
 import '../widgets/main_shell.dart';
 
 final appRouter = GoRouter(
@@ -13,6 +14,7 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(path: '/auth', builder: (_, __) => const AuthScreen()),
     GoRoute(path: '/debug', builder: (_, __) => const FounderConsole()),
+    GoRoute(path: '/e/:eventId', builder: (_, state) => PublicEventScreen(eventId: state.pathParameters['eventId']!)),
     ShellRoute(
       builder: (_, __, child) => MainShell(child: child),
       routes: [

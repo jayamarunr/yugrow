@@ -183,3 +183,64 @@ Never optimize or expand a feature until real users have demonstrated that it cr
 **Why:** The most dangerous moment in a product's life is when it has enough features to feel real but hasn't yet validated which ones matter. Every feature built before validation risks solving a problem that doesn't exist, at the cost of delaying the problems that do.
 
 **Related:** FD-012 (Build Vertical Slices), FD-024 (Conceptual Integrity). Validation milestones replace sprint numbers until evidence accumulates.
+
+---
+
+## FD-027 — Every Screen Must Answer One Question
+
+**Date:** 2026-07-23
+**Category:** Product, UX, Architecture
+
+Every screen in Yugrow must answer exactly one question for the user. If a screen starts answering two questions, it's time to split it.
+
+| Screen | Question |
+|--------|----------|
+| Events | Where should I go today? |
+| Live | Who is here now? |
+| Network | What relationships have I built? |
+| Me | Who am I professionally? |
+| Create Event | How do I bring professionals together? |
+| Event Details | Why should I attend? |
+| Chat | What should we discuss next? |
+
+**Why:** This single principle prevents feature creep at the screen level. When a developer is tempted to add "one more section" to a screen, FD-027 forces the question: *"Does this answer the screen's primary question?"* If not, it either doesn't belong or deserves its own screen. Over time, this keeps Yugrow remarkably clean as the product grows.
+
+**Related:** FD-024 (Conceptual Integrity), FD-026 (Validation Before Acceleration). Together, these three decisions form the product philosophy guardrail: strengthen existing concepts, validate before expanding, and never let a screen lose focus.
+
+---
+
+## FD-028 — Shared UI Components Represent Domain Objects
+
+**Date:** 2026-07-23
+**Category:** UI, Engineering, Architecture
+
+A domain object (Event, Person, Relationship, Workspace, etc.) should have one canonical UI representation. New screens compose these shared components rather than creating alternate visual representations of the same object.
+
+**Why:** Every time a new feature needs to display an Event, it should reuse `EventCard` rather than creating a new layout. Improvements to the shared component immediately benefit every screen that uses it — Home, Search, Host Preview, Recommendations, Relationship History — without duplicating design or logic.
+
+**Related:** FD-024 (Conceptual Integrity). A reusable EventCard strengthens the Event concept rather than letting it fragment across multiple inconsistent visual representations.
+
+---
+
+## FD-029 — Sharing Should Celebrate Professional Progress, Not Vanity Metrics
+
+**Date:** 2026-07-23
+**Category:** Product, Marketing, UX
+
+Whenever Yugrow generates content for social sharing (event recaps, connection summaries, attendance cards), it should highlight **relationships, learning, contribution, or participation** rather than raw counts or gamified achievements.
+
+**Approved styles:**
+- *"7 new professional connections"* ✅
+- *"Met founders, engineers and investors"* ✅
+- *"3 conversations started"* ✅
+- *"Spoke at AI Summit Chennai"* ✅
+- *"Hosted AI Meetup — 126 attendees"* ✅
+
+**Avoid:**
+- *"654 professionals"* ❌ — encourages quantity over quality
+- *"Top 1% networker"* ❌ — gamification, not professional value
+- *"Collected 200 connections"* ❌ — not meaningful
+
+**Why:** Someone should feel proud to share a Yugrow card because it reflects a meaningful professional experience — not because it says they "collected" hundreds of people. This distinction makes the brand credible over time, and prevents the platform from drifting toward vanity metrics that weaken trust.
+
+**Related:** FD-024 (Conceptual Integrity). Celebrating relationships instead of counts strengthens the Relationship concept rather than weakening it into a popularity score.

@@ -63,6 +63,12 @@ export class CheckinController {
     return this.checkinService.getEvent(id);
   }
 
+  @Public()
+  @Get('events/:id/public')
+  async getPublicEvent(@Param('id') id: string) {
+    return this.checkinService.getEvent(id);
+  }
+
   @Patch('events/:id')
   async updateEvent(
     @Param('id') id: string,

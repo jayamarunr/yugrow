@@ -28,10 +28,11 @@ class _HostEventScreenState extends State<HostEventScreen> {
   TimeOfDay _selectedTime = const TimeOfDay(hour: 18, minute: 0);
   String _eventType = 'NETWORKING_MEETUP';
   String _visibility = 'PUBLIC';
+  String _attendance = 'OPEN';
   String _expectedSize = 'under_20';
   final _descriptionCtrl = TextEditingController();
   final Set<String> _industryTags = {};
-  String _organizerWorkspace = 'personal'; // 'personal' or workspace name
+  String _organizerWorkspace = 'personal';
   bool _creating = false;
   bool _created = false;
   Map<String, dynamic>? _createdEvent;
@@ -206,10 +207,19 @@ class _HostEventScreenState extends State<HostEventScreen> {
   String get _visibilityLabel {
     switch (_visibility) {
       case 'PUBLIC': return 'Public';
-      case 'HIDDEN': return 'Invite Link';
+      case 'LINK_ACCESS': return 'Private Link';
       case 'INVITE_ONLY': return 'Invite Only';
       default: return _visibility;
     }
+  }
+
+  String get _accessDescription {
+    final isPublic = _visibility == 'PUBLIC';
+    final isInstant = _attendance == 'OPEN';
+    if (isPublic && isInstant) return 'Anyone can discover and join this event immediately.';
+    if (isPublic && !isInstant) return 'Anyone can discover this event. You approve who joins.';
+    if (!isPublic && isInstant) return 'Only people with your private link can discover and join this event.';
+    return 'Only people with your private link can request to join.';
   }
 
   @override
@@ -485,19 +495,61 @@ class _HostEventScreenState extends State<HostEventScreen> {
           ),
         const SizedBox(height: 20),
 
-        // ── Who can join? ─────────────────────────────────────
-        _label('Who can join?'),
+        // ── Access Mode ───────────────────────────────────────
+        _label('Who can get into this event?'),
         const SizedBox(height: 6),
         SegmentedButton<String>(
-          segments: const [
-            ButtonSegment(value: 'PUBLIC', label: Text('Public'), icon: Icon(LucideIcons.globe, size: 16)),
-            ButtonSegment(value: 'HIDDEN', label: Text('Invite Link'), icon: Icon(LucideIcons.link, size: 16)),
-            ButtonSegment(value: 'INVITE_ONLY', label: Text('Invite Only'), icon: Icon(LucideIcons.lock, size: 16), enabled: false),
+          segments: [
+            const ButtonSegment(value: 'PUBLIC', label: Text('Public'), icon: Icon(LucideIcons.globe, size: 16)),
+            const ButtonSegment(value: 'LINK_ACCESS', label: Text('Private Link'), icon: Icon(LucideIcons.link, size: 16)),
+            ButtonSegment(value: 'INVITE_ONLY', label: const Column(mainAxisSize: MainAxisSize.min, children: [Text('Invite Only'), Text('Coming Soon', style: TextStyle(fontSize: 9))]), icon: Icon(LucideIcons.mail, size: 16), enabled: false),
           ],
           selected: {_visibility},
-          onSelectionChanged: (s) => setState(() => _visibility = s.first),
+          onSelectionChanged: (s) => setState(() {
+            _visibility = s.first;
+            if (_visibility == 'INVITE_ONLY') _attendance = 'INVITE_ONLY';
+          }),
         ),
-        const SizedBox(height: 20),
+
+        // Sub-options for Public and Link Access
+        if (_visibility == 'PUBLIC') ...[
+          const SizedBox(height: 4),
+          Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: Text('Anyone can discover this event.',
+              style: TextStyle(fontSize: 12, color: mutedColor)),
+          ),
+          const SizedBox(height: 12),
+          _label('How do people join?'),
+          const SizedBox(height: 6),
+          SegmentedButton<String>(
+            segments: const [
+              ButtonSegment(value: 'OPEN', label: Text('Join Instantly'), icon: Icon(LucideIcons.log_in, size: 16)),
+              ButtonSegment(value: 'REQUEST', label: Text('Request to Join'), icon: Icon(LucideIcons.file_text, size: 16)),
+            ],
+            selected: {_attendance},
+            onSelectionChanged: (s) => setState(() => _attendance = s.first),
+          ),
+        ],
+        if (_visibility == 'LINK_ACCESS') ...[
+          const SizedBox(height: 4),
+          Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: Text('Only people with the invite link can discover it.',
+              style: TextStyle(fontSize: 12, color: mutedColor)),
+          ),
+          const SizedBox(height: 12),
+          _label('How do people join?'),
+          const SizedBox(height: 6),
+          SegmentedButton<String>(
+            segments: const [
+              ButtonSegment(value: 'OPEN', label: Text('Join Instantly'), icon: Icon(LucideIcons.log_in, size: 16)),
+              ButtonSegment(value: 'REQUEST', label: Text('Request to Join'), icon: Icon(LucideIcons.file_text, size: 16)),
+            ],
+            selected: {_attendance},
+            onSelectionChanged: (s) => setState(() => _attendance = s.first),
+          ),
+        ],
 
         // ── Audience Size ──────────────────────────────────────
         _label('How many people are you expecting?'),

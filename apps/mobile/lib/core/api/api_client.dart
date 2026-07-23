@@ -58,6 +58,15 @@ class ApiClient {
     return res.data as Map<String, dynamic>;
   }
 
+  Future<Map<String, dynamic>?> getPublicEvent(String id) async {
+    try {
+      final res = await _dio.get('/checkin/events/$id/public');
+      return res.data as Map<String, dynamic>?;
+    } catch (_) {
+      return null;
+    }
+  }
+
   // ── Founder Mode: Event Management ────────────────────────────
 
   Future<Map<String, dynamic>> createEvent(Map<String, dynamic> data) async {
