@@ -74,17 +74,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: const Color(0xFFBBF7D0)),
             ),
-            child: Row(
+            child: const Row(
               children: [
-                const Icon(Icons.visibility_outlined, size: 18, color: Color(0xFF16A34A)),
-                const SizedBox(width: 10),
+                Icon(Icons.visibility_outlined, size: 18, color: Color(0xFF16A34A)),
+                SizedBox(width: 10),
                 Expanded(
-                  child: const Text(
+                  child: Text(
                     'Co-founders, investors, and strategic partners for Yugrow.',
                     style: TextStyle(fontSize: 13, color: Color(0xFF166534)),
                   ),
                 ),
-                const IconButton(
+                IconButton(
                   icon: Icon(Icons.edit_outlined, size: 16, color: Color(0xFF16A34A)),
                   onPressed: null,
                   padding: EdgeInsets.zero,

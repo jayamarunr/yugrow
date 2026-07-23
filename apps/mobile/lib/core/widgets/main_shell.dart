@@ -54,10 +54,10 @@ class _MainShellState extends State<MainShell> {
           const BottomNavigationBarItem(icon: Icon(Icons.event_outlined), activeIcon: Icon(Icons.event), label: 'Events'),
           BottomNavigationBarItem(
             icon: _hasActivePresence
-                ? _GreenDot(child: Icon(Icons.explore_outlined))
+                ? const _GreenDot(child: Icon(Icons.explore_outlined))
                 : const Icon(Icons.explore_outlined),
             activeIcon: _hasActivePresence
-                ? _GreenDot(child: Icon(Icons.explore))
+                ? const _GreenDot(child: Icon(Icons.explore))
                 : const Icon(Icons.explore),
             label: 'Live',
           ),

@@ -361,7 +361,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                           ),
-                          Icon(LucideIcons.chevron_right, size: 18, color: AppColors.textSecondary),
+                          const Icon(LucideIcons.chevron_right, size: 18, color: AppColors.textSecondary),
                         ],
                       ),
                     ),
