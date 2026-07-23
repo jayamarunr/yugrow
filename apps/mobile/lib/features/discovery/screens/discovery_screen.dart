@@ -213,7 +213,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> with WidgetsBindingOb
                           color: AppColors.success.withValues(alpha: 0.08),
                           child: Row(
                             children: [
-                              Icon(LucideIcons.sparkles, size: 14, color: AppColors.success),
+                              const Icon(LucideIcons.sparkles, size: 14, color: AppColors.success),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(

@@ -120,7 +120,7 @@ class AppTypography {
       );
 
   // ── Body Text ────────────────────────────────────
-  static TextStyle get body => TextStyle(
+  static TextStyle get body => const TextStyle(
         fontFamily: 'Inter',
         fontSize: 14,
         fontWeight: FontWeight.w400,

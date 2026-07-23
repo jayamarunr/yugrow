@@ -159,7 +159,7 @@ class ProfessionalCard extends StatelessWidget {
                   // Bottom row: time + mutuals + checked in + quick connect
                   Row(
                     children: [
-                        Icon(LucideIcons.clock, size: 12, color: AppColors.textDisabled),
+                        const Icon(LucideIcons.clock, size: 12, color: AppColors.textDisabled),
                         const SizedBox(width: 4),
                         Text(
                           p.timeAgo,
@@ -167,7 +167,7 @@ class ProfessionalCard extends StatelessWidget {
                         ),
                         if (p.mutualConnections > 0) ...[
                           const SizedBox(width: AppSpacing.lg),
-                          Icon(LucideIcons.link_2, size: 12, color: AppColors.primary),
+                          const Icon(LucideIcons.link_2, size: 12, color: AppColors.primary),
                           const SizedBox(width: 4),
                           Text(
                             '${p.mutualConnections} mutual',

@@ -327,7 +327,7 @@ class EventDetailScreen extends StatelessWidget {
                         onPressed: () {
                           // TODO: Launch URL
                         },
-                        icon: Icon(LucideIcons.external_link, size: 18),
+                        icon: const Icon(LucideIcons.external_link, size: 18),
                         label: Text(
                           'Buy Ticket',
                           style: GoogleFonts.inter(

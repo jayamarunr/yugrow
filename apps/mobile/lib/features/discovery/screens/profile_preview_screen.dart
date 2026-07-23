@@ -112,7 +112,7 @@ class _ProfilePreviewScreenState extends State<ProfilePreviewScreen> {
                   Container(
                     width: 80,
                     height: 80,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: AppColors.primarySoft,
                       shape: BoxShape.circle,
                     ),
@@ -202,7 +202,7 @@ class _ProfilePreviewScreenState extends State<ProfilePreviewScreen> {
                     _ReasonRow(icon: LucideIcons.search, text: p.lookingFor),
                   if (p.mutualConnections > 0)
                     _ReasonRow(icon: LucideIcons.link_2, text: '${p.mutualConnections} mutual connections'),
-                  _ReasonRow(icon: LucideIcons.calendar, text: 'Attending AI Summit Chennai'),
+                  const _ReasonRow(icon: LucideIcons.calendar, text: 'Attending AI Summit Chennai'),
                 ],
               ),
             ),

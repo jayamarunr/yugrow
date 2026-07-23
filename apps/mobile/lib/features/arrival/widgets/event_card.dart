@@ -139,7 +139,7 @@ class EventCard extends StatelessWidget {
                         ),
                       if (event.distance.isNotEmpty) ...[
                         const Spacer(),
-                        Icon(
+                        const Icon(
                           LucideIcons.map_pin,
                           size: 12,
                           color: AppColors.textSecondary,
@@ -188,7 +188,7 @@ class EventCard extends StatelessWidget {
                   // Venue
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         LucideIcons.building_2,
                         size: 14,
                         color: AppColors.textSecondary,

@@ -55,7 +55,7 @@ class AppTheme {
           color: AppColors.textPrimary, height: 1.33, letterSpacing: 0.02,
         ),
       ),
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.surface,
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
@@ -169,7 +169,7 @@ class AppTheme {
           color: AppColors.textPrimaryDark, height: 1.33, letterSpacing: 0.02,
         ),
       ),
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.surfaceDark,
         foregroundColor: AppColors.textPrimaryDark,
         elevation: 0,

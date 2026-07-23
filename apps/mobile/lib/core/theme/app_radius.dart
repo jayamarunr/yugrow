@@ -18,7 +18,7 @@ class AppRadius {
   static BorderRadius get fullCircular => BorderRadius.circular(full);
 
   // Top-only radii for bottom sheets
-  static BorderRadius get topXxl => BorderRadius.vertical(
+  static BorderRadius get topXxl => const BorderRadius.vertical(
     top: Radius.circular(xxl),
   );
 }
