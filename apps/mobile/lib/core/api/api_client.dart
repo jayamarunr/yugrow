@@ -5,7 +5,6 @@ class ApiClient {
   late final Dio _dio;
   final _storage = const FlutterSecureStorage();
 
-  static const _baseUrlKey = 'api_base_url';
   static const _tokenKey = 'auth_token';
 
   ApiClient() {

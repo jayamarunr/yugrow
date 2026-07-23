@@ -6,6 +6,7 @@ import 'package:yugrow_mobile/core/theme/app_colors.dart';
 import 'package:yugrow_mobile/core/theme/app_spacing.dart';
 import 'package:yugrow_mobile/core/theme/app_radius.dart';
 import '../models/arrival_models.dart';
+import '../../debug/debug_screen.dart';
 import '../repository/arrival_repository.dart';
 import '../widgets/greeting_header.dart';
 import '../widgets/event_card.dart';
@@ -151,20 +152,28 @@ class _ArrivalScreenState extends State<ArrivalScreen> {
         backgroundColor: AppColors.surface,
         title: Row(
           children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Center(
-                child: Text(
-                  'Y',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
+            GestureDetector(
+              onLongPress: () {
+                HapticFeedback.mediumImpact();
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const DebugScreen()),
+                );
+              },
+              child: Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Center(
+                  child: Text(
+                    'Y',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
               ),
@@ -567,7 +576,7 @@ class _ArrivalScreenState extends State<ArrivalScreen> {
                   color: AppColors.success.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   LucideIcons.circle_check,
                   size: 48,
                   color: AppColors.success,

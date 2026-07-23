@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/api/api_client.dart';
-import '../../core/widgets/attendee_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,9 +12,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final _api = ApiClient();
   Map<String, dynamic>? _activeEvent;
   bool _loading = true;
-  bool _checkedIn = false;
   String _selectedWorkspace = 'personal';
-  Map<String, dynamic>? _presence;
 
   @override
   void initState() {
@@ -42,17 +39,13 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _doCheckin() async {
     if (_activeEvent == null) return;
     try {
-      final presence = await _api.checkIn({
-        'personId': 'person-001', // TODO: use actual user ID
+      await _api.checkIn({
+        'personId': 'current-person-id',
         'workspaceId': _selectedWorkspace == 'personal' ? 'workspace-personal' : 'workspace-001',
         'eventId': _activeEvent!['id'],
         'venueId': _activeEvent!['venue']['id'],
       });
       if (mounted) {
-        setState(() {
-          _presence = presence;
-          _checkedIn = true;
-        });
         context.go('/live/${_activeEvent!['id']}');
       }
     } catch (e) {

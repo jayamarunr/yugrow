@@ -17,7 +17,6 @@ class AttendeeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final name = attendee['name'] ?? 'Unknown';
-    final workspace = attendee['workspaceId'] ?? '';
     final mutual = attendee['mutualConnections'] ?? 0;
     final venueName = attendee['venueName'] ?? '';
 
