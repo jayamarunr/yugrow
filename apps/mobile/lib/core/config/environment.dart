@@ -1,34 +1,62 @@
 // ─── Yugrow Environment Configuration ──────────────────────────────
 // Single source of truth for all environment-specific settings.
-// Override at build time with --dart-define.
 //
-// Usage:
+// Usage — explicit flavor:
+//   flutter run --flavor dev --dart-define=API_BASE_URL=http://localhost:4000
+//   flutter run --flavor staging --dart-define=API_BASE_URL=https://api-staging.yugrow.app
+//   flutter run --flavor prod --dart-define=API_BASE_URL=https://api.yugrow.app
+//
+// Usage — override only:
 //   flutter run --dart-define=API_BASE_URL=http://192.168.1.100:4000
-//   flutter build apk --dart-define=API_BASE_URL=https://api.yugrow.com
 //
-// Default: localhost:4000 (local development)
+// Default: development, localhost:4000
+
+enum Flavor { development, staging, production }
 
 class Environment {
   Environment._();
 
+  /// The active flavor, set at compile time via --flavor or --dart-define=FLAVOR.
+  /// Defaults to development.
+  static Flavor get flavor {
+    const flavorName = String.fromEnvironment('FLAVOR');
+    switch (flavorName) {
+      case 'staging':
+        return Flavor.staging;
+      case 'production':
+      case 'prod':
+        return Flavor.production;
+      default:
+        return Flavor.development;
+    }
+  }
+
+  /// The API base URL. Override via --dart-define=API_BASE_URL.
+  /// Defaults based on flavor.
   static String get apiBaseUrl {
-    const defaultValue = 'http://localhost:4000';
-    // Allow override via --dart-define
     const override = String.fromEnvironment('API_BASE_URL');
-    return override.isNotEmpty ? override : defaultValue;
+    if (override.isNotEmpty) return override;
+
+    return switch (flavor) {
+      Flavor.development => 'http://localhost:4000',
+      Flavor.staging => 'https://api-staging.yugrow.app',
+      Flavor.production => 'https://api.yugrow.app',
+    };
   }
 
-  static bool get isProduction {
-    return apiBaseUrl.startsWith('https://');
+  /// The app's public URL. Used for deep links and sharing.
+  static String get appUrl {
+    return switch (flavor) {
+      Flavor.development => 'http://dev.yugrow.app:3000',
+      Flavor.staging => 'https://staging.yugrow.app',
+      Flavor.production => 'https://yugrow.app',
+    };
   }
 
-  static bool get isLocalDevelopment {
-    return apiBaseUrl.contains('localhost');
-  }
+  /// Human-readable environment name for display and analytics.
+  static String get environmentName => flavor.name;
 
-  static String get environmentName {
-    if (isProduction) return 'production';
-    if (apiBaseUrl.contains('staging')) return 'staging';
-    return 'development';
-  }
+  static bool get isProduction => flavor == Flavor.production;
+  static bool get isStaging => flavor == Flavor.staging;
+  static bool get isDevelopment => flavor == Flavor.development;
 }

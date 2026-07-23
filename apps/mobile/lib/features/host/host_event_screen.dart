@@ -9,6 +9,8 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/api/api_client.dart';
+import '../venue/models/venue.dart';
+import '../venue/widgets/venue_search_field.dart';
 
 
 class HostEventScreen extends StatefulWidget {
@@ -25,12 +27,15 @@ class _HostEventScreenState extends State<HostEventScreen> {
 
   // ── State ─────────────────────────────────────────────────────
   DateTime _selectedDate = DateTime.now();
-  TimeOfDay _selectedTime = const TimeOfDay(hour: 18, minute: 0);
+  TimeOfDay _startTime = const TimeOfDay(hour: 18, minute: 0);
+  TimeOfDay _endTime = const TimeOfDay(hour: 21, minute: 0);
   String _eventType = 'NETWORKING_MEETUP';
   String _visibility = 'PUBLIC';
   String _attendance = 'OPEN';
   String _expectedSize = 'under_20';
   final _descriptionCtrl = TextEditingController();
+  final _websiteCtrl = TextEditingController();
+  final _ticketCtrl = TextEditingController();
   final Set<String> _industryTags = {};
   String _organizerWorkspace = 'personal';
   bool _creating = false;
@@ -43,38 +48,17 @@ class _HostEventScreenState extends State<HostEventScreen> {
     'Design', 'Marketing', 'Sales', 'HR', 'Legal', 'Finance',
   ];
 
-  // ── Venue search ──────────────────────────────────────────────
-  List<Map<String, dynamic>> _venueResults = [];
-  Map<String, dynamic>? _selectedVenue;
-  bool _searchingVenue = false;
-  bool _useCurrentLocation = false;
+  // ── Venue search (via VenueSearchField) ────────────────────────
+  Venue? _selectedVenueObj;
 
   @override
   void dispose() {
     _nameCtrl.dispose();
     _venueCtrl.dispose();
     _descriptionCtrl.dispose();
+    _websiteCtrl.dispose();
+    _ticketCtrl.dispose();
     super.dispose();
-  }
-
-  Future<void> _searchVenues(String query) async {
-    if (query.length < 2) {
-      setState(() => _venueResults = []);
-      return;
-    }
-    setState(() => _searchingVenue = true);
-    try {
-      final results = await _api.searchVenues(query);
-      if (mounted) {
-        setState(() {
-          _venueResults = results.cast<Map<String, dynamic>>();
-          _selectedVenue = null;
-          _searchingVenue = false;
-        });
-      }
-    } catch (_) {
-      if (mounted) setState(() => _searchingVenue = false);
-    }
   }
 
   Future<void> _pickDate() async {
@@ -87,12 +71,20 @@ class _HostEventScreenState extends State<HostEventScreen> {
     if (date != null) setState(() => _selectedDate = date);
   }
 
+  Future<void> _pickEndTime() async {
+    final time = await showTimePicker(
+      context: context,
+      initialTime: _endTime,
+    );
+    if (time != null) setState(() => _endTime = time);
+  }
+
   Future<void> _pickTime() async {
     final time = await showTimePicker(
       context: context,
-      initialTime: _selectedTime,
+      initialTime: _startTime,
     );
-    if (time != null) setState(() => _selectedTime = time);
+    if (time != null) setState(() => _startTime = time);
   }
 
   Future<void> _create() async {
@@ -106,35 +98,12 @@ class _HostEventScreenState extends State<HostEventScreen> {
     try {
       String venueId;
 
-      if (_selectedVenue != null) {
-        venueId = _selectedVenue!['id'] as String;
-      } else if (_useCurrentLocation) {
-        // Create a venue with current location placeholder
-        final venueName = _venueCtrl.text.trim().isNotEmpty
-            ? _venueCtrl.text.trim()
-            : 'Current Location';
-        final newVenue = await _api.createVenue({
-          'name': venueName,
-          'city': 'Chennai',
-          'createdByPersonId': 'person-self',
-          'ownerWorkspaceId': 'personal',
-        });
-        venueId = newVenue['id'] as String;
+      if (_selectedVenueObj != null) {
+        venueId = _selectedVenueObj!.id;
       } else {
-        // Create a new venue from the text input
-        final venueName = _venueCtrl.text.trim();
-        if (venueName.isEmpty) {
-          _showSnack('Please enter or search for a venue');
-          setState(() => _creating = false);
-          return;
-        }
-        final newVenue = await _api.createVenue({
-          'name': venueName,
-          'city': 'Chennai',
-          'createdByPersonId': 'person-self',
-          'ownerWorkspaceId': 'personal',
-        });
-        venueId = newVenue['id'] as String;
+        _showSnack('Please search for or create a venue');
+        setState(() => _creating = false);
+        return;
       }
 
       // Build date/time
@@ -142,10 +111,21 @@ class _HostEventScreenState extends State<HostEventScreen> {
         _selectedDate.year,
         _selectedDate.month,
         _selectedDate.day,
-        _selectedTime.hour,
-        _selectedTime.minute,
+        _startTime.hour,
+        _startTime.minute,
       );
-      final endDate = startDate.add(const Duration(hours: 3));
+      final endDate = DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+        _endTime.hour,
+        _endTime.minute,
+      );
+      if (endDate.isBefore(startDate) || endDate.isAtSameMomentAs(startDate)) {
+        _showSnack('End time must be after start time');
+        setState(() => _creating = false);
+        return;
+      }
 
       // Create the event
       final event = await _api.createEvent({
@@ -202,7 +182,8 @@ class _HostEventScreenState extends State<HostEventScreen> {
   }
 
   String get _formattedDate => DateFormat('EEEE, MMMM d').format(_selectedDate);
-  String get _formattedTime => _selectedTime.format(context);
+  String get _formattedStartTime => _startTime.format(context);
+  String get _formattedEndTime => _endTime.format(context);
 
   String get _visibilityLabel {
     switch (_visibility) {
@@ -242,13 +223,13 @@ class _HostEventScreenState extends State<HostEventScreen> {
   }
 
   Widget _buildForm(Color textColor, Color mutedColor, Color cardColor) {
-    final venueName = _selectedVenue?['name'] as String? ?? '';
-
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        _sectionDivider('🤝', 'What are you hosting?'),
+
         // ── Event Type ────────────────────────────────────────
-        _label('What are you hosting?'),
+        _label('Type'),
         const SizedBox(height: 6),
         Wrap(
           spacing: 6, runSpacing: 6,
@@ -266,9 +247,11 @@ class _HostEventScreenState extends State<HostEventScreen> {
             final value = e.$2;
             final selected = _eventType == value;
             return ChoiceChip(
-              label: Text(label, style: TextStyle(fontSize: 12, color: selected ? Colors.white : null)),
+              label: Text(label, style: TextStyle(fontSize: 12, color: selected ? Colors.white : null, fontWeight: selected ? FontWeight.w600 : null)),
               selected: selected,
               selectedColor: const Color(0xFF0F766E),
+              backgroundColor: const Color(0xFFF3F4F6),
+              visualDensity: VisualDensity.compact,
               onSelected: (v) {
                 if (v) setState(() => _eventType = value);
               },
@@ -284,121 +267,28 @@ class _HostEventScreenState extends State<HostEventScreen> {
           controller: _nameCtrl,
           decoration: const InputDecoration(
             hintText: 'e.g. AI Meetup Chennai',
-            border: OutlineInputBorder(),
+            border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
             filled: true,
+            fillColor: Color(0xFFF9FAFB),
+            contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           ),
         ),
         const SizedBox(height: 20),
 
-        // ── Venue ─────────────────────────────────────────────
-        _label('Venue'),
-        const SizedBox(height: 6),
-        TextField(
-          controller: _venueCtrl,
-          decoration: InputDecoration(
-            hintText: 'Search for a venue...',
-            border: const OutlineInputBorder(),
-            filled: true,
-            suffixIcon: _searchingVenue
-                ? const Padding(
-                    padding: EdgeInsets.all(12),
-                    child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
-                  )
-                : null,
-          ),
-          onChanged: _searchVenues,
-        ),
+        _sectionDivider('📍', 'Where is it?'),
 
-        // Venue search results
-        if (_venueResults.isNotEmpty && _selectedVenue == null)
-          Container(
-            margin: const EdgeInsets.only(top: 4),
-            decoration: BoxDecoration(
-              color: cardColor,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xFFE5E7EB)),
-            ),
-            constraints: const BoxConstraints(maxHeight: 160),
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: _venueResults.length,
-              itemBuilder: (_, i) {
-                final v = _venueResults[i];
-                return ListTile(
-                  dense: true,
-                  title: Text(v['name'] as String? ?? ''),
-                  subtitle: v['city'] != null ? Text(v['city'] as String) : null,
-                  trailing: const Icon(Icons.check, size: 16),
-                  onTap: () {
-                    setState(() {
-                      _selectedVenue = v;
-                      _venueCtrl.text = v['name'] as String? ?? '';
-                      _venueResults = [];
-                    });
-                  },
-                );
-              },
-            ),
-          ),
-
-        if (_selectedVenue != null)
-          Container(
-            margin: const EdgeInsets.only(top: 4),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF0FDF4),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xFFBBF7D0)),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.check_circle, size: 16, color: Color(0xFF16A34A)),
-                const SizedBox(width: 8),
-                Expanded(child: Text(venueName, style: const TextStyle(fontSize: 13, color: Color(0xFF166534)))),
-                TextButton(
-                  onPressed: () => setState(() { _selectedVenue = null; _venueCtrl.clear(); }),
-                  child: const Text('Change', style: TextStyle(fontSize: 12)),
-                ),
-              ],
-            ),
-          ),
-
-        const SizedBox(height: 8),
-        TextButton.icon(
-          onPressed: () {
-            setState(() {
-              _useCurrentLocation = !_useCurrentLocation;
-              if (_useCurrentLocation) {
-                _venueCtrl.text = 'My Current Location';
-                _selectedVenue = null;
-              } else {
-                _venueCtrl.clear();
-              }
-            });
+        // ── Venue (VenueSearchField) ───────────────────────────
+        VenueSearchField(
+          api: _api,
+          onVenueSelected: (venue) {
+            setState(() => _selectedVenueObj = venue);
           },
-          icon: Icon(_useCurrentLocation ? LucideIcons.navigation : LucideIcons.navigation_off, size: 16),
-          label: Text(_useCurrentLocation ? 'Using Current Location' : 'Use Current Location'),
-          style: TextButton.styleFrom(foregroundColor: const Color(0xFF0F766E)),
-        ),
-        TextButton.icon(
-          onPressed: () {
-            setState(() {
-              _selectedVenue = null;
-              _useCurrentLocation = false;
-              _venueCtrl.text = '';
-              _venueCtrl.clear();
-            });
-            // Focus the venue field so user can type a new name
-            FocusScope.of(context).requestFocus(FocusNode());
-          },
-          icon: const Icon(LucideIcons.plus, size: 16),
-          label: const Text('Create New Venue'),
-          style: TextButton.styleFrom(foregroundColor: const Color(0xFF0F766E)),
         ),
         const SizedBox(height: 20),
+
+        _sectionDivider('📅', 'When is it?'),
 
         // ── Date ──────────────────────────────────────────────
-        _label('Date'),
         const SizedBox(height: 6),
         InkWell(
           onTap: _pickDate,
@@ -423,7 +313,6 @@ class _HostEventScreenState extends State<HostEventScreen> {
         const SizedBox(height: 20),
 
         // ── Start Time ─────────────────────────────────────────
-        _label('Start Time'),
         const SizedBox(height: 6),
         InkWell(
           onTap: _pickTime,
@@ -438,7 +327,7 @@ class _HostEventScreenState extends State<HostEventScreen> {
               children: [
                 const Icon(LucideIcons.clock, size: 18, color: Color(0xFF0F766E)),
                 const SizedBox(width: 10),
-                Text(_formattedTime, style: TextStyle(fontSize: 15, color: textColor)),
+                Text(_formattedStartTime, style: TextStyle(fontSize: 15, color: textColor)),
                 const Spacer(),
                 const Icon(Icons.chevron_right, size: 18, color: Color(0xFF9CA3AF)),
               ],
@@ -447,8 +336,33 @@ class _HostEventScreenState extends State<HostEventScreen> {
         ),
         const SizedBox(height: 20),
 
+        // ── End Time ───────────────────────────────────────────
+        const SizedBox(height: 6),
+        InkWell(
+          onTap: _pickEndTime,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            decoration: BoxDecoration(
+              border: Border.all(color: const Color(0xFFD1D5DB)),
+              borderRadius: BorderRadius.circular(4),
+              color: cardColor,
+            ),
+            child: Row(
+              children: [
+                const Icon(LucideIcons.clock, size: 18, color: Color(0xFF0F766E)),
+                const SizedBox(width: 10),
+                Text(_formattedEndTime, style: TextStyle(fontSize: 15, color: textColor)),
+                const Spacer(),
+                const Icon(Icons.chevron_right, size: 18, color: Color(0xFF9CA3AF)),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        _sectionDivider('📝', 'About the Event'),
+
         // ── Description ───────────────────────────────────────
-        _label('Description (optional)'),
         const SizedBox(height: 6),
         TextField(
           controller: _descriptionCtrl,
@@ -460,14 +374,45 @@ class _HostEventScreenState extends State<HostEventScreen> {
           ),
           decoration: const InputDecoration(
             hintText: 'Tell attendees what they will gain from attending.',
-            border: OutlineInputBorder(),
+            border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
             filled: true,
+            fillColor: Color(0xFFF9FAFB),
+            contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // ── Event Website ─────────────────────────────────────
+        const SizedBox(height: 6),
+        TextField(
+          controller: _websiteCtrl,
+          decoration: const InputDecoration(
+            hintText: 'e.g. meetup.com/ai-summit-chennai',
+            border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+            filled: true,
+            fillColor: Color(0xFFF9FAFB),
+            contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            prefixIcon: Icon(LucideIcons.globe, size: 18),
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // ── Ticket Link ───────────────────────────────────────
+        const SizedBox(height: 6),
+        TextField(
+          controller: _ticketCtrl,
+          decoration: const InputDecoration(
+            hintText: 'e.g. eventbrite.com/e/...',
+            border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+            filled: true,
+            fillColor: Color(0xFFF9FAFB),
+            contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            prefixIcon: Icon(LucideIcons.ticket, size: 18),
           ),
         ),
         const SizedBox(height: 20),
 
         // ── Event Topics ─────────────────────────────────────
-        _label('Event Topics (max 3)'),
         const SizedBox(height: 6),
         Wrap(
           spacing: 6, runSpacing: 6,
@@ -475,9 +420,11 @@ class _HostEventScreenState extends State<HostEventScreen> {
             final selected = _industryTags.contains(tag);
             final atLimit = _industryTags.length >= 3 && !selected;
             return FilterChip(
-              label: Text(tag, style: TextStyle(fontSize: 12, color: selected ? Colors.white : null)),
+              label: Text(tag, style: TextStyle(fontSize: 12, color: selected ? Colors.white : null, fontWeight: selected ? FontWeight.w600 : null)),
               selected: selected,
               selectedColor: const Color(0xFF0F766E),
+              backgroundColor: const Color(0xFFF3F4F6),
+              visualDensity: VisualDensity.compact,
               checkmarkColor: Colors.white,
               onSelected: atLimit ? null : (v) {
                 setState(() {
@@ -495,14 +442,15 @@ class _HostEventScreenState extends State<HostEventScreen> {
           ),
         const SizedBox(height: 20),
 
+        _sectionDivider('🌍', 'Access & Settings'),
+
         // ── Access Mode ───────────────────────────────────────
-        _label('Who can get into this event?'),
         const SizedBox(height: 6),
         SegmentedButton<String>(
-          segments: [
-            const ButtonSegment(value: 'PUBLIC', label: Text('Public'), icon: Icon(LucideIcons.globe, size: 16)),
-            const ButtonSegment(value: 'LINK_ACCESS', label: Text('Private Link'), icon: Icon(LucideIcons.link, size: 16)),
-            ButtonSegment(value: 'INVITE_ONLY', label: const Column(mainAxisSize: MainAxisSize.min, children: [Text('Invite Only'), Text('Coming Soon', style: TextStyle(fontSize: 9))]), icon: Icon(LucideIcons.mail, size: 16), enabled: false),
+          segments: const [
+            ButtonSegment(value: 'PUBLIC', label: Text('Public'), icon: Icon(LucideIcons.globe, size: 16)),
+            ButtonSegment(value: 'LINK_ACCESS', label: Text('Private Link'), icon: Icon(LucideIcons.link, size: 16)),
+            ButtonSegment(value: 'INVITE_ONLY', label: Column(mainAxisSize: MainAxisSize.min, children: [Text('Invite Only'), Text('Coming Soon', style: TextStyle(fontSize: 9))]), icon: Icon(LucideIcons.mail, size: 16), enabled: false),
           ],
           selected: {_visibility},
           onSelectionChanged: (s) => setState(() {
@@ -520,8 +468,7 @@ class _HostEventScreenState extends State<HostEventScreen> {
               style: TextStyle(fontSize: 12, color: mutedColor)),
           ),
           const SizedBox(height: 12),
-          _label('How do people join?'),
-          const SizedBox(height: 6),
+
           SegmentedButton<String>(
             segments: const [
               ButtonSegment(value: 'OPEN', label: Text('Join Instantly'), icon: Icon(LucideIcons.log_in, size: 16)),
@@ -539,8 +486,6 @@ class _HostEventScreenState extends State<HostEventScreen> {
               style: TextStyle(fontSize: 12, color: mutedColor)),
           ),
           const SizedBox(height: 12),
-          _label('How do people join?'),
-          const SizedBox(height: 6),
           SegmentedButton<String>(
             segments: const [
               ButtonSegment(value: 'OPEN', label: Text('Join Instantly'), icon: Icon(LucideIcons.log_in, size: 16)),
@@ -552,7 +497,6 @@ class _HostEventScreenState extends State<HostEventScreen> {
         ],
 
         // ── Audience Size ──────────────────────────────────────
-        _label('How many people are you expecting?'),
         const SizedBox(height: 6),
         SegmentedButton<String>(
           segments: const [
@@ -567,7 +511,6 @@ class _HostEventScreenState extends State<HostEventScreen> {
         const SizedBox(height: 24),
 
         // ── Hosted By ─────────────────────────────────────────
-        _label('Hosted by'),
         const SizedBox(height: 6),
         SegmentedButton<String>(
           segments: const [
@@ -591,12 +534,12 @@ class _HostEventScreenState extends State<HostEventScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                const Row(
                   children: [
-                    const Icon(LucideIcons.eye, size: 14, color: Color(0xFF0284C7)),
-                    const SizedBox(width: 6),
+                    Icon(LucideIcons.eye, size: 14, color: Color(0xFF0284C7)),
+                    SizedBox(width: 6),
                     Text('Attendee Preview',
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: const Color(0xFF0284C7))),
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF0284C7))),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -620,14 +563,14 @@ class _HostEventScreenState extends State<HostEventScreen> {
                       // Topics
                       if (_industryTags.isNotEmpty) ...[const SizedBox(height: 4),
                         Text(_industryTags.join(' · '),
-                          style: TextStyle(fontSize: 12, color: const Color(0xFF0F766E))),
+                          style: const TextStyle(fontSize: 12, color: Color(0xFF0F766E))),
                       ],
                       const SizedBox(height: 6),
                       Row(
                         children: [
                           const Icon(LucideIcons.calendar, size: 13, color: Color(0xFF6B7280)),
                           const SizedBox(width: 4),
-                          Text('$_formattedDate · $_formattedTime',
+                          Text('$_formattedDate · $_formattedStartTime - $_formattedEndTime',
                             style: TextStyle(fontSize: 12, color: mutedColor)),
                         ],
                       ),
@@ -636,7 +579,7 @@ class _HostEventScreenState extends State<HostEventScreen> {
                         children: [
                           const Icon(LucideIcons.map_pin, size: 13, color: Color(0xFF6B7280)),
                           const SizedBox(width: 4),
-                          Text(_venueCtrl.text.isNotEmpty ? _venueCtrl.text : 'Venue TBD',
+                          Text(_selectedVenueObj?.name ?? 'Venue TBD',
                             style: TextStyle(fontSize: 12, color: mutedColor)),
                         ],
                       ),
@@ -655,8 +598,8 @@ class _HostEventScreenState extends State<HostEventScreen> {
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(color: const Color(0xFFBAE6FD)),
                             ),
-                            child: Text('$_formattedDate · $_formattedTime',
-                              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: const Color(0xFF0284C7))),
+                            child: Text('$_formattedDate · $_formattedStartTime',
+                              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF0284C7))),
                           ),
                         ],
                       ),
@@ -669,6 +612,7 @@ class _HostEventScreenState extends State<HostEventScreen> {
         const SizedBox(height: 24),
 
         // ── Create Button ──────────────────────────────────────
+        const SizedBox(height: 8),
         SizedBox(
           width: double.infinity,
           height: 52,
@@ -679,10 +623,18 @@ class _HostEventScreenState extends State<HostEventScreen> {
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               elevation: 0,
+              textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             child: _creating
                 ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white))
-                : const Text('Create Event', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                : const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(LucideIcons.plus, size: 20),
+                      SizedBox(width: 8),
+                      Text('Create Event'),
+                    ],
+                  ),
           ),
         ),
         const SizedBox(height: 32),
@@ -715,7 +667,7 @@ class _HostEventScreenState extends State<HostEventScreen> {
               Text(venueName, style: TextStyle(fontSize: 15, color: Colors.grey[600])),
             ],
             const SizedBox(height: 4),
-            Text('$_formattedDate · $_formattedTime',
+            Text('$_formattedDate · $_formattedStartTime - $_formattedEndTime',
               style: TextStyle(fontSize: 14, color: Colors.grey[500])),
 
             const SizedBox(height: 32),
@@ -779,5 +731,20 @@ class _HostEventScreenState extends State<HostEventScreen> {
 
   Widget _label(String text) {
     return Text(text, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF0F766E)));
+  }
+
+  Widget _sectionDivider(String emoji, String title) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8, bottom: 12),
+      child: Row(
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 16)),
+          const SizedBox(width: 8),
+          Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Color(0xFF111827))),
+          const Expanded(child: SizedBox()),
+          Container(height: 1, color: const Color(0xFFE5E7EB)),
+        ],
+      ),
+    );
   }
 }

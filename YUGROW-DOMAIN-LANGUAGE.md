@@ -79,13 +79,23 @@ Every term has:
 
 ### Event
 
-> A temporary context where Presence can exist.
+> A temporary professional gathering with a defined purpose, time, and attendance mode.
 
-**Not:** A calendar item, a meetup group, a webinar, a conference.
+**Not:** A calendar item, a meetup group, a dating mixer, a party.
 
-**Relationship:** Contains Venue. Hosts Presence. Bounds Discovery. Expires fully when ended.
+**Relationship:** Optionally contains a Venue (physical events). Optionally activates Presence (physical only). Bounds Discovery. Expires fully when ended.
 
-**Example:** "AI Summit Chennai is an Event. Presence exists inside it. When it ends, all presence expires."
+**Attendance modes:**
+
+| Mode | Presence | Networking | Example |
+|------|----------|------------|---------|
+| **Physical** | ✅ Presence Engine activated | ✅ Live Discovery + Missed Connections | Conference, Expo, Meetup |
+| **Online** | ❌ Not activated | ❌ No Live Discovery | AMA, Masterclass, Webinar, Q&A |
+| **Hybrid** | ✅ Physical attendees only | ✅ Physical attendees only | Conference with live stream |
+
+**Key rule:** Only Physical attendance activates the Presence Engine. Online attendees never appear in Live Discovery. This preserves the integrity of verified physical presence as the platform's moat (see FD-030, Constitution §0.1).
+
+**Example:** "AI Summit Chennai is a Physical Event. Presence exists inside it. When it ends, all presence expires. 'Ask a Billionaire' is an Online Event — it has no Presence, no venue, no Live Discovery."
 
 ### Venue
 

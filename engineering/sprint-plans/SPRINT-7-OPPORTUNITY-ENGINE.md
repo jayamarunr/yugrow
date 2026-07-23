@@ -1,8 +1,8 @@
 ---
 Title: Sprint 7 — Opportunity Engine (Presence Mode)
-Version: 1.0
+Version: 1.1
 Status: Approved — Frozen
-Next Action: Awaiting Presence Model completion before implementation
+Next Action: Awaiting Opportunity Lifecycle validation before implementation
 Owner: Chief Architect
 Last Updated: 2026-07-23
 Dependencies:
@@ -10,6 +10,7 @@ Dependencies:
   - INTELLIGENCE-LAYER.md
   - PRESENCE-ENGINE.md
 Related Documents:
+  - YUGROW-OPPORTUNITY-LIFECYCLE.md (lifecycle contract — Live vs Missed, two-clock model)
   - SPRINT-6-ARRIVAL-EXPERIENCE.md
   - DOMAIN-MODEL.md
   - YUGROW-FLOW-EXPERIENCE-SYSTEM.md

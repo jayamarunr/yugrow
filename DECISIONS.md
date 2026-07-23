@@ -244,3 +244,153 @@ Whenever Yugrow generates content for social sharing (event recaps, connection s
 **Why:** Someone should feel proud to share a Yugrow card because it reflects a meaningful professional experience — not because it says they "collected" hundreds of people. This distinction makes the brand credible over time, and prevents the platform from drifting toward vanity metrics that weaken trust.
 
 **Related:** FD-024 (Conceptual Integrity). Celebrating relationships instead of counts strengthens the Relationship concept rather than weakening it into a popularity score.
+
+---
+
+## FD-030 — Yugrow Is a Professional Presence Platform
+
+**Date:** 2026-07-23
+**Category:** Product, Architecture, Strategy
+
+Yugrow is a **Professional Presence Platform**. Events are one source of verified professional presence — not the product itself.
+
+**Professional presence is the foundation. Events are one source of professional presence — not the platform itself.**
+
+Every future feature must either **create, verify, interpret, or preserve** professional presence. Features that do none of these do not belong in the platform.
+
+**How this changes the product narrative:**
+
+| | Old framing | New framing |
+|--|-------------|-------------|
+| Product | "A networking app for events" | "A professional presence platform" |
+| Event role | The product | One source of presence among many |
+| Moat | Event check-in | Verified physical presence |
+| Future scope | More event features | More presence sources |
+
+**Evolution in phases:**
+
+```
+Phase 1 (today)     Professional Events
+                    Meetups, conferences, workshops, expos
+                    │
+Phase 2             Professional Places
+                    Coworking spaces, innovation hubs, campuses, offices
+                    │
+Phase 3             Professional Networks
+                    Broadcast, opportunities, trust evidence, discovery
+```
+
+Events are the Phase 1 bootstrap — they provide trust, density, easier validation, and easier moderation. But the architecture never lost the original capability: *check into any place and discover professionals around you.* Events were simply the strongest structured way to start.
+
+**What this means in practice:**
+
+| Proposal | Decision | Reason |
+|----------|----------|--------|
+| Build an event platform (compete with Luma/Eventbrite) | ❌ No | Events are a presence source, not the product |
+| Support company offices as check-in locations | ✅ Yes | Offices create verified professional presence |
+| Add QR/NFC check-in | ✅ Yes | Verifies presence |
+| Add Bluetooth proximity detection | ✅ Yes | Verifies presence (with user consent) |
+| Build opportunity recommendations | ✅ Yes | Interprets presence |
+| Build AI auto-connections | ❌ No | Invents relationships; violates Design Axiom |
+| Build photo feeds / social media features | ❌ No | Neither creates nor interprets presence |
+| Build a chat platform (compete with Slack/WhatsApp) | ❌ No | Conversation is downstream of relationship, not standalone |
+| Support coworking spaces | ✅ Yes | Professional presence context |
+| Support university campuses | ✅ Yes | Professional presence context |
+| Support spontaneous presence (no event) | ✅ Later | Architecture supports it; validation doesn't yet |
+| Add free-form event categories (Party, Dinner, Hangout, Singles, Coffee, Friends) | ❌ Never | Violates professional context constraint (Constitution §0.4) |
+| Allow personal profile fields (age, relationship status, hobbies, photo gallery) as primary signals | ❌ Never | Would shift the platform toward people-discovery, not context-discovery |
+| Add social-only event types (dating, nightlife, entertainment) | ❌ Never | Outside the definition of a Professional Event |
+
+**Why:** The platform's moat is **verified physical presence**. Every feature that strengthens this moat compounds the platform's value. Every feature that dilutes it (virtual networking, AI-generated connections, social media feeds) weakens the one thing competitors cannot replicate. This decision protects the moat.
+
+**Why Phase 1 starts with events, not everywhere:** Events give Yugrow trust, density, easier validation, and easier moderation. The "check in anywhere" vision was never wrong — it was simply too broad for an MVP. Events are the strongest source of verified professional presence to start with. The architecture preserves the original capability; the product sequence determines when to unlock it. See Constitution §1.4 (The Two Horizons) for the complete model.
+
+**Related:**
+- FD-024 (Conceptual Integrity) — Every feature must strengthen an existing concept
+- Constitution §0.1 (Design Axiom) — Never invent relationships, only reveal and record
+- Constitution §0.2 (Three-Layer Model) — Events are Reality; relationships are Interpretation
+- Constitution §0.4 (Professional Context) — Defines what a Professional Event is and the four constraints that protect it
+- Constitution §1.4 (The Two Horizons) — Horizon 1 (Events) → Horizon 2 (Ambient Presence)
+
+---
+
+## FD-031 — URL Structure and Brand Architecture
+
+**Date:** 2026-07-24
+**Category:** Product, Architecture, Brand
+
+Yugrow uses **subdomains for products** and **path-based URLs for domain entities**.
+
+### Brand architecture
+
+```
+yugrow.in          Platform website (products, docs, blog, pricing, developers, company)
+yugrow.app         CheckIn — Professional Presence Platform (the app)
+```
+
+### Product subdomains
+
+Each major product gets its own subdomain under `yugrow.in`:
+
+| Product | Domain | Status |
+|---------|--------|--------|
+| CheckIn | `yugrow.app` | Available — validation phase |
+| Broadcast | `broadcast.yugrow.in` | Coming soon |
+| CRM | `crm.yugrow.in` | Coming soon |
+| Website Builder | `builder.yugrow.in` | Coming soon |
+| HR | `hr.yugrow.in` | Coming soon |
+| Finance | `finance.yugrow.in` | Coming soon |
+
+**Why subdomains for products:**
+- Each product is independently deployable and versioned
+- Shared platform identity (users know it's official Yugrow)
+- Easier SSL, authentication, and SSO across products
+- Products can evolve at different speeds without coupling
+
+### Domain entity URLs
+
+All domain entities use **path-based URLs** under `yugrow.in` with namespace prefixes:
+
+| Namespace | Entity | Example |
+|-----------|--------|---------|
+| `/u/` | Person | `yugrow.in/u/jayam` |
+| `/o/` | Organization / Workspace | `yugrow.in/o/yugrow` |
+| `/e/` | Event | `yugrow.in/e/ai-summit-chennai` |
+| `/v/` | Venue | `yugrow.in/v/tidel-park` |
+| `/t/` | Topic | `yugrow.in/t/artificial-intelligence` |
+
+**Why not subdomains for entities:** Users are resources, not applications. The `yugrow.in/jayam` pattern is familiar (GitHub, LinkedIn, X). Subdomains are reserved for independently deployable products.
+
+**Why namespaces:** Prevents collisions. A person named "Microsoft" should not own `yugrow.in/microsoft` — that belongs to the organization. Namespaces (`/u/`, `/o/`) keep all entity types distinct and unambiguous.
+
+### What every user gets at signup
+
+Every person who signs up automatically receives a permanent public address:
+
+```
+yugrow.in/u/{username}
+```
+
+Initially this contains: Profile, Looking For, Links, Professional Identity.
+
+Over time it evolves into: Website, Portfolio, Events attended, Blogs, Products, Booking, Contact — all under the same URL. No breaking changes.
+
+This URL is the foundation of the Website Builder. The first website the builder publishes is the user's own professional identity page.
+
+### The journey
+
+```
+User signs up
+    ↓
+yugrow.in/u/jayam created immediately
+    ↓
+Today: Professional profile + links
+    ↓
+Later: Full website (Website Builder)
+    ↓
+Later: Custom domain (jayam.com)
+```
+
+**Related:**
+- FD-024 (Conceptual Integrity) — Every feature strengthens an existing concept
+- Constitution §0.2 (Three-Layer Model) — People are Reality; profiles are Interpretation

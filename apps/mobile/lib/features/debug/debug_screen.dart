@@ -24,9 +24,9 @@ class _FounderConsoleState extends State<FounderConsole> {
   final _api = ApiClient();
 
   // ── App Info ──────────────────────────────────────────────────
-  String _apiUrl = 'http://localhost:4000/api/v1';
-  String _appVersion = '0.1.1-alpha';
-  String _buildNumber = '1';
+  final String _apiUrl = 'http://localhost:4000/api/v1';
+  final String _appVersion = '0.1.1-alpha';
+  final String _buildNumber = '1';
   String _lastApiCall = 'None';
   bool _apiHealthy = false;
 
@@ -366,7 +366,7 @@ class _FounderConsoleState extends State<FounderConsole> {
     final cardColor = isDark ? const Color(0xFF16213E) : Colors.white;
     final textColor = isDark ? Colors.white : const Color(0xFF111827);
     final mutedColor = isDark ? Colors.grey[400]! : const Color(0xFF6B7280);
-    final dangerColor = const Color(0xFFDC2626);
+    const dangerColor = Color(0xFFDC2626);
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -601,7 +601,7 @@ class _FounderConsoleState extends State<FounderConsole> {
           ),
           const SizedBox(height: 10),
           DropdownButtonFormField<String>(
-            value: _visibility,
+            initialValue: _visibility,
             decoration: const InputDecoration(
               labelText: 'Visibility',
               border: OutlineInputBorder(),
@@ -617,7 +617,7 @@ class _FounderConsoleState extends State<FounderConsole> {
           const SizedBox(height: 6),
           Text(
             'Starts today at 6 PM · Ends at 9 PM',
-            style: TextStyle(fontSize: 12, color: mutedColor),
+            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
           ),
           const SizedBox(height: 12),
           Row(
@@ -673,7 +673,7 @@ class _FounderConsoleState extends State<FounderConsole> {
           ),
           const SizedBox(height: 10),
           DropdownButtonFormField<String>(
-            value: _visibility,
+            initialValue: _visibility,
             decoration: const InputDecoration(
               labelText: 'Visibility',
               border: OutlineInputBorder(),

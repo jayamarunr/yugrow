@@ -1,8 +1,14 @@
 # Yugrow
 
-> **The professional networking layer for real-world business events.**
+> **The purpose of the architecture is not to predict the future. It is to make it safe to discover the future.**
+
+[Validation Phase](#-current-status) — *Does verified presence at professional events create better professional relationships?*
+
+---
 
 Yugrow is a **Professional Presence Platform** — not a CRM, not a social network, not an event platform. It helps professionals discover the right people at the right place and turn those introductions into lasting business relationships.
+
+**Events are our first validated source of professional presence — not our final destination.** The architecture supports Horizon 1 (events) today and Horizon 2 (ambient presence at any professional place) when validation earns it. See [`CONSTITUTION.md`](./CONSTITUTION.md) §1.4.
 
 ---
 
