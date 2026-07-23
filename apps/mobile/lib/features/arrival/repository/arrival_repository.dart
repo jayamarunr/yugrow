@@ -1,133 +1,79 @@
+import '../../../core/api/api_client.dart';
 import '../models/arrival_models.dart';
 
 class ArrivalRepository {
-  Future<List<BusinessEvent>> getNearbyEvents() async {
-    // Simulate network delay
-    await Future.delayed(const Duration(milliseconds: 400));
+  final ApiClient _api = ApiClient();
 
-    return [
-      const BusinessEvent(
-        id: 'event-001',
-        name: 'AI Summit Chennai',
-        venue: 'Chennai Trade Centre',
-        distance: '2.3 km',
-        professionalCount: 1560,
-        businessCount: 247,
-        speakerCount: 42,
-        sponsorCount: 85,
-        presentCount: 824,
-        visibleCount: 412,
-        visitorCount: 6354,
-        eventType: EventType.expo,
-        connectionsAttending: 3,
-        expertiseMatches: 14,
-        status: 'live',
-        dayNumber: 2,
-        totalDays: 3,
-        description: 'South Asia\'s largest AI conference featuring 100+ speakers, 247 exhibitors, and networking sessions across three days.',
-        ticketUrl: 'https://aisummit.example.com/tickets',
-        peopleBreakdown: {
-          'Founders': 18,
-          'Engineers': 32,
-          'Investors': 12,
-          'Product Leaders': 9,
-          'AI Researchers': 15,
-        },
-      ),
-      const BusinessEvent(
-        id: 'event-002',
-        name: 'Manufacturing Expo 2026',
-        venue: 'Chennai Convention Center',
-        distance: '5.1 km',
-        professionalCount: 820,
-        businessCount: 156,
-        presentCount: 340,
-        visibleCount: 128,
-        visitorCount: 2800,
-        eventType: EventType.exhibition,
-        connectionsAttending: 0,
-        expertiseMatches: 2,
-        status: 'live',
-        dayNumber: 1,
-        totalDays: 2,
-        description: 'India\'s premier manufacturing exhibition showcasing the latest in industrial automation, machinery, and supply chain innovation.',
-        ticketUrl: 'https://manufacturing-expo.example.com/register',
-        peopleBreakdown: {
-          'Manufacturing Directors': 9,
-          'Supply Chain Managers': 7,
-          'Factory Owners': 5,
-          'Engineers': 14,
-        },
-      ),
-      const BusinessEvent(
-        id: 'event-003',
-        name: 'Startup Meetup Chennai',
-        venue: 'The Startup Hub, T Nagar',
-        distance: '3.7 km',
-        professionalCount: 41,
-        businessCount: 18,
-        connectionsAttending: 1,
-        expertiseMatches: 5,
-        eventType: EventType.meetup,
-        status: 'starting_soon',
-        startHour: 14,
-        startMinute: 30,
-        description: 'Monthly startup networking event. Pitch your idea, find co-founders, meet investors, and connect with Chennai\'s startup ecosystem.',
-      ),
-      const BusinessEvent(
-        id: 'event-004',
-        name: 'Export Connect 2026',
-        venue: 'Madras Export Centre',
-        distance: '8.2 km',
-        professionalCount: 156,
-        businessCount: 64,
-        presentCount: 98,
-        visibleCount: 45,
-        visitorCount: 1200,
-        eventType: EventType.expo,
-        connectionsAttending: 2,
-        expertiseMatches: 0,
-        status: 'today',
-        startHour: 10,
-        startMinute: 0,
-        dayNumber: 3,
-        totalDays: 3,
-        description: 'International trade fair connecting Indian exporters with global buyers. Featuring B2B meetings, seminars, and networking sessions.',
-        ticketUrl: 'https://exportconnect.example.com/register',
-        peopleBreakdown: {
-          'Export Managers': 12,
-          'Logistics Companies': 6,
-          'Trade Consultants': 8,
-          'Manufacturers': 10,
-        },
-      ),
-      const BusinessEvent(
-        id: 'event-005',
-        name: 'Healthcare Innovation Forum',
-        venue: 'Apollo Research Campus',
-        distance: '12.5 km',
-        professionalCount: 93,
-        businessCount: 22,
-        speakerCount: 8,
-        eventType: EventType.conference,
-        connectionsAttending: 0,
-        expertiseMatches: 3,
-        status: 'tomorrow',
-        dayNumber: 1,
-        totalDays: 2,
-        description: 'Where healthcare meets technology. Explore digital health innovations, AI diagnostics, and telehealth solutions.',
-      ),
-    ];
+  Future<List<BusinessEvent>> getNearbyEvents() async {
+    try {
+      final data = await _api.getActiveEvents();
+      return data.map((json) => _parseEvent(json as Map<String, dynamic>)).toList();
+    } catch (_) {
+      return [];
+    }
   }
 
   Future<Persona> getCurrentUser() async {
-    return const Persona(
-      id: 'person-self',
-      name: 'Jay',
-      role: 'Founder',
-      company: 'Yugrow Technologies',
-      industry: 'Technology',
-      skills: ['Product', 'Engineering', 'Design'],
+    try {
+      final data = await _api.getProfessionalIdentity('personal');
+      return Persona(
+        id: data['personId'] as String? ?? 'person-self',
+        name: data['name'] as String? ?? 'You',
+        role: data['title'] as String? ?? '',
+        company: data['company'] as String? ?? '',
+        industry: (data['industries'] as List<dynamic>?)?.isNotEmpty == true
+            ? (data['industries'] as List<dynamic>).first.toString()
+            : '',
+        skills: (data['skills'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
+      );
+    } catch (_) {
+      return const Persona(
+        id: 'person-self',
+        name: 'You',
+        role: '',
+        company: '',
+        industry: '',
+        skills: [],
+      );
+    }
+  }
+
+  BusinessEvent _parseEvent(Map<String, dynamic> json) {
+    final venueData = json['venue'] as Map<String, dynamic>?;
+    final startDate = json['startDate'] != null ? DateTime.parse(json['startDate'] as String) : null;
+    final endDate = json['endDate'] != null ? DateTime.parse(json['endDate'] as String) : null;
+
+    final status = json['status'] as String? ?? 'active';
+    String mappedStatus;
+    if (status == 'ACTIVE') {
+      mappedStatus = 'live';
+    } else if (status == 'DRAFT') {
+      mappedStatus = 'upcoming';
+    } else {
+      mappedStatus = 'ended';
+    }
+
+    return BusinessEvent(
+      id: json['id'] as String? ?? '',
+      name: json['name'] as String? ?? 'Untitled Event',
+      venue: venueData?['name'] as String? ?? '',
+      distance: '',
+      professionalCount: 0,
+      businessCount: 0,
+      presentCount: 0,
+      visibleCount: 0,
+      visitorCount: 0,
+      eventType: EventType.expo,
+      connectionsAttending: 0,
+      expertiseMatches: 0,
+      status: mappedStatus,
+      dayNumber: 1,
+      totalDays: startDate != null && endDate != null
+          ? (endDate.difference(startDate).inDays + 1)
+          : 1,
+      description: '',
+      startHour: startDate?.hour ?? 9,
+      startMinute: startDate?.minute ?? 0,
     );
   }
 }

@@ -714,6 +714,7 @@ model ProfessionalIdentity {
   avatarUrl       String?
   bio             String?
   skills          String[]
+  lookingFor      String?   // Intent signal — "What are you looking for?"
   services        String[]
   industries      String[]
   certifications  Json?    @default("[]")

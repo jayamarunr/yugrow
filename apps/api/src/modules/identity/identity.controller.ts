@@ -13,6 +13,7 @@ import {
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { IdentityService } from './identity.service';
 import { RequireCapability } from '../../common/decorators/capabilities.decorator';
+import { UpdateProfessionalDto } from './dto/professional-identity.dto';
 
 @ApiTags('Identity Engine')
 @Controller('api/v1/identity')
@@ -59,6 +60,27 @@ export class IdentityController {
   @RequireCapability('identity.people.deactivate')
   async deactivatePerson(@Param('id') id: string) {
     return this.identity.deactivatePerson(id);
+  }
+
+  // ─── Professional Identity ─────────────────────────────────────
+  // Canonical profile — single source of truth for Discovery,
+  // Recommendations, and Opportunity Engine signals.
+
+  @Get('professional/:workspaceId')
+  @ApiBearerAuth()
+  @RequireCapability('identity.profile.read')
+  async getProfessionalIdentity(@Param('workspaceId') workspaceId: string) {
+    return this.identity.getProfessionalIdentity('current-person-id', workspaceId);
+  }
+
+  @Patch('professional/:workspaceId')
+  @ApiBearerAuth()
+  @RequireCapability('identity.profile.update')
+  async updateProfessionalIdentity(
+    @Param('workspaceId') workspaceId: string,
+    @Body() dto: UpdateProfessionalDto,
+  ) {
+    return this.identity.updateProfessionalIdentity('current-person-id', workspaceId, dto);
   }
 
   // ─── Roles (delegated to Permission Engine) ─────────────────

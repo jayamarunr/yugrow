@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ['@ui', '@types'],
+  transpilePackages: ['@ui'],
   reactStrictMode: true,
 };
 

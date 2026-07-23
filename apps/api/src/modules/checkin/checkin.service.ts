@@ -220,12 +220,16 @@ export class CheckinService {
       orderBy: { startedAt: 'desc' },
     });
 
-    // For each presence, gather person info and mutual connections
+    // For each presence, gather person info, professional identity, and mutual connections
     const attendees = await Promise.all(
       activePresences.map(async (presence) => {
         const person = await this.prisma.person.findUnique({
           where: { id: presence.personId },
           select: { id: true, firstName: true, lastName: true, email: true },
+        });
+
+        const professional = await this.prisma.professionalIdentity.findFirst({
+          where: { personId: presence.personId, workspaceId: presence.workspaceId },
         });
 
         // Count mutual connections if viewer is present
@@ -236,7 +240,15 @@ export class CheckinService {
 
         return {
           personId: presence.personId,
-          name: person ? `${person.firstName ?? ''} ${person.lastName ?? ''}`.trim() : 'Unknown',
+          name: professional?.name ?? (person ? `${person.firstName ?? ''} ${person.lastName ?? ''}`.trim() : 'Unknown'),
+          title: professional?.title ?? null,
+          company: professional?.company ?? null,
+          industry: professional && professional.industries && professional.industries.length > 0 ? professional.industries[0] : null,
+          skills: professional?.skills ?? [],
+          lookingFor: professional?.lookingFor ?? null,
+          bio: professional?.bio ?? null,
+          avatarUrl: professional?.avatarUrl ?? null,
+          verified: professional?.verified ?? false,
           workspaceId: presence.workspaceId,
           checkedInAt: presence.startedAt,
           expiresAt: presence.expiresAt,

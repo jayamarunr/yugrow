@@ -107,4 +107,49 @@ export class IdentityService {
     });
     await this.eventBus.publish('Identity.Person.Deactivated', { personId });
   }
+
+  // ─── Professional Identity ──────────────────────────────────────
+
+  async getProfessionalIdentity(personId: string, workspaceId: string) {
+    let identity = await this.prisma.professionalIdentity.findFirst({
+      where: { personId, workspaceId },
+    });
+
+    // Auto-create if it doesn't exist
+    if (!identity) {
+      const person = await this.prisma.person.findUnique({ where: { id: personId } });
+      identity = await this.prisma.professionalIdentity.create({
+        data: {
+          personId,
+          workspaceId,
+          name: person ? `${person.firstName ?? ''} ${person.lastName ?? ''}`.trim() : 'Unknown',
+        },
+      });
+    }
+
+    return identity;
+  }
+
+  async updateProfessionalIdentity(personId: string, workspaceId: string, data: any) {
+    const existing = await this.prisma.professionalIdentity.findFirst({
+      where: { personId, workspaceId },
+    });
+
+    if (!existing) {
+      throw new NotFoundException('Professional identity not found. Create it first by calling GET.');
+    }
+
+    const updated = await this.prisma.professionalIdentity.update({
+      where: { id: existing.id },
+      data,
+    });
+
+    await this.eventBus.publish('Identity.Professional.Updated', {
+      personId,
+      workspaceId,
+      changes: Object.keys(data),
+    });
+
+    return updated;
+  }
 }

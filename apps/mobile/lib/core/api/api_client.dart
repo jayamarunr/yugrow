@@ -121,6 +121,18 @@ class ApiClient {
     return res.data as List<dynamic>;
   }
 
+  // ── Professional Identity ────────────────────────────────────
+
+  Future<Map<String, dynamic>> getProfessionalIdentity(String workspaceId) async {
+    final res = await _dio.get('/identity/professional/$workspaceId');
+    return res.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> updateProfessionalIdentity(String workspaceId, Map<String, dynamic> data) async {
+    final res = await _dio.patch('/identity/professional/$workspaceId', data: data);
+    return res.data as Map<String, dynamic>;
+  }
+
   // ── Auth ─────────────────────────────────────────────────────
 
   Future<void> setAuthToken(String token) async {
