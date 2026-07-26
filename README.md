@@ -14,11 +14,39 @@ Yugrow is a **Professional Presence Platform** — not a CRM, not a social netwo
 
 ## Quick Start
 
-```bash
-# Start infrastructure (PostgreSQL, Redis, RabbitMQ, MinIO)
-docker compose -f infrastructure/docker/docker-compose.yml up -d
+### Prerequisites
+- Docker Desktop (PostgreSQL 17)
+- Flutter 3.44+ / Dart 3.12+
+- Node.js 20+
+- pnpm
 
-# Install dependencies
+### Start Infrastructure
+
+```bash
+docker compose -f infrastructure/docker/docker-compose.yml up -d
+```
+
+### Start Development
+
+**Terminal 1 — API:**
+```bash
+cd apps/api
+$env:DATABASE_URL="postgresql://yugrow:yugrow_password@localhost:5432/yugrow"
+$env:CORS_ORIGIN="http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3003,http://localhost:3004"
+npx ts-node -r tsconfig-paths/register src/start.ts
+# API at http://localhost:4000
+```
+
+**Terminal 2 — Flutter Web:**
+```bash
+cd apps/mobile
+flutter run -d chrome --web-port 3004
+# App at http://localhost:3004
+```
+
+### Setup (first time only)
+
+```bash
 pnpm install
 
 # Generate Prisma client and push schema
@@ -28,20 +56,8 @@ npx prisma generate
 npx prisma db push
 cd ../..
 
-# Build and start the API
-cd apps/api
-$env:DATABASE_URL="postgresql://yugrow:yugrow_password@localhost:5432/yugrow"
-npx nest build
-node dist/apps/api/src/main
-# API running at http://localhost:4000
-cd ../..
-
-# Build and serve the Flutter web app
-cd apps/mobile
-flutter build web --release
-cd build/web
-python -m http.server 8080
-# App running at http://localhost:8080
+# Copy API .env
+Copy-Item apps/api/.env.example apps/api/.env
 ```
 
 ---
@@ -71,7 +87,7 @@ A Flutter mobile app implementing the full relationship lifecycle. Built with **
 |---------|--------|---------|
 | **Application Shell** | ✅ Built | 4-tab navigation: Events, Live, Network, Me. Messages accessible from Network. |
 | **Home (Events)** | ✅ Built | Nearby events timeline, greeting, empty state, long-press Y for Founder Console |
-| **Host Event** | ✅ Built | Full form: event type, name, venue search/create, date, time, description, topics, visibility, audience size, hosted by. Preview card. Created in under 60s. |
+| **Host Event** | ✅ Built | Full form: event type, name, venue search/create, date, time, description, topics, visibility, audience size, hosted by. Preview card. Created in under 60s. Venues auto-imported from external providers (Mapbox/Nominatim) into Yugrow DB on selection. |
 | **Attendee Preview** | ✅ Built | Live card preview showing event type, topics, date/time, venue, visibility. |
 | **Post-Create Screen** | ✅ Built | 🎉 celebration, "I'm Here Now", "Copy Invite Link", "Back to Events" |
 | **Event Check-In** | ✅ Built | Proximity gate → "I'm Here" → confirmation → discovery |
@@ -107,7 +123,7 @@ Founder Console
 
 | Feature | Status | Details |
 |---------|--------|---------|
-| Venue CRUD | ✅ Built | Search, create, get. Duplicate detection by name+city. |
+| Venue CRUD | ✅ Built | Search, create, get. Duplicate detection by name+city. External venue auto-import (Mapbox/Nominatim → Yugrow DB) on selection. |
 | Event CRUD | ✅ Built | Create, list, get, update. PATCH + expire + duplicate endpoints. |
 | Presence (Check-in) | ✅ Built | Auto-expires (4h default), workspace-aware, active-presence query |
 | Live Discovery | ✅ Built | Ranked by mutual connections, person info, professional identity |
@@ -117,7 +133,7 @@ Founder Console
 | **Real JWT Authentication** | ✅ Built | `@nestjs/jwt`, HS256, 24h expiry, public decorator for routes |
 | **Founder Demo Login** | ✅ Built | `POST /checkin/test/login` — creates/returns founder with real JWT |
 | **Founder Mode APIs** | ✅ Built | `test/seed`, `test/clear-presence`, `test/reset`, `test/status` |
-| **CORS** | ✅ Built | Configured for `localhost:8080` |
+| **CORS** | ✅ Built | Configured via `CORS_ORIGIN` env var for multiple dev ports |
 | 25+ API endpoints | ✅ Built | Full CheckIN + Communication + Identity |
 
 ### ✅ Architecture & Strategy

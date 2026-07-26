@@ -17,7 +17,7 @@ import { Public } from '../../common/decorators/public.decorator';
 import { UpdateProfessionalDto } from './dto/professional-identity.dto';
 
 @ApiTags('Identity Engine')
-@Controller('api/v1/identity')
+@Controller('identity')
 export class IdentityController {
   constructor(private readonly identity: IdentityService) {}
 

@@ -31,6 +31,16 @@ class Environment {
     }
   }
 
+  /// Mapbox access token. Set via --dart-define=MAPBOX_ACCESS_TOKEN.
+  /// Only needed when Mapbox provider is enabled.
+  static String get mapboxAccessToken {
+    const token = String.fromEnvironment('MAPBOX_ACCESS_TOKEN');
+    return token;
+  }
+
+  /// Whether Mapbox search is available (token is configured).
+  static bool get mapboxAvailable => mapboxAccessToken.isNotEmpty;
+
   /// The API base URL. Override via --dart-define=API_BASE_URL.
   /// Defaults based on flavor.
   static String get apiBaseUrl {

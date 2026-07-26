@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/api/api_client.dart';
-import '../../core/widgets/attendee_card.dart';
+import '../profile/widgets/profile_card.dart';
 
 class LiveScreen extends StatefulWidget {
   final String eventId;
@@ -75,10 +75,23 @@ class _LiveScreenState extends State<LiveScreen> {
                     itemCount: _attendees.length,
                     itemBuilder: (_, i) {
                       final a = _attendees[i] as Map<String, dynamic>;
-                      return AttendeeCard(
-                        attendee: a,
-                        showConnect: a['personId'] != 'person-001',
-                        onConnect: () => _connect(a['personId']),
+                      final name = a['name'] as String? ?? 'Unknown';
+                      final headline = [a['title'], a['company']]
+                          .whereType<String>()
+                          .where((s) => s.isNotEmpty)
+                          .join(' · ');
+                      return ProfileCard(
+                        compact: true,
+                        name: name,
+                        headline: headline.isNotEmpty ? headline : null,
+                        onTap: () {},
+                        trailing: a['personId'] != 'person-001'
+                            ? TextButton(
+                                onPressed: () => _connect(a['personId']),
+                                child: const Text('Connect',
+                                    style: TextStyle(fontWeight: FontWeight.w600)),
+                              )
+                            : null,
                       );
                     },
                   ),

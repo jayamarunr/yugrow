@@ -8,19 +8,22 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/api/api_client.dart';
+import '../../core/auth/auth_service.dart';
 import '../venue/models/venue.dart';
 import '../venue/widgets/venue_search_field.dart';
 
 
-class HostEventScreen extends StatefulWidget {
+class HostEventScreen extends ConsumerStatefulWidget {
   const HostEventScreen({super.key});
 
   @override
-  State<HostEventScreen> createState() => _HostEventScreenState();
+  ConsumerState<HostEventScreen> createState() => _HostEventScreenState();
 }
 
-class _HostEventScreenState extends State<HostEventScreen> {
+class _HostEventScreenState extends ConsumerState<HostEventScreen> {
   final _api = ApiClient();
   final _nameCtrl = TextEditingController();
   final _venueCtrl = TextEditingController();
@@ -50,6 +53,15 @@ class _HostEventScreenState extends State<HostEventScreen> {
 
   // ── Venue search (via VenueSearchField) ────────────────────────
   Venue? _selectedVenueObj;
+
+  @override
+  void initState() {
+    super.initState();
+    // Populate API client with auth context from the shared provider
+    final auth = ref.read(authProvider);
+    _api.personId = auth.person?['id'] as String?;
+    _api.workspaceId = auth.workspace?['id'] as String?;
+  }
 
   @override
   void dispose() {
@@ -144,9 +156,39 @@ class _HostEventScreenState extends State<HostEventScreen> {
 
       HapticFeedback.heavyImpact();
     } catch (e) {
-      _showSnack('Failed to create event: $e');
+      final msg = _parseEventError(e);
+      _showSnack(msg);
       setState(() => _creating = false);
     }
+  }
+
+  String _parseEventError(dynamic error) {
+    try {
+      if (error is DioException && error.response?.data != null) {
+        final data = error.response!.data;
+        if (data is Map<String, dynamic>) {
+          if (data['error'] is Map<String, dynamic>) {
+            final err = data['error'] as Map<String, dynamic>;
+            final message = err['message'] as String?;
+            if (message != null) return message;
+          }
+        }
+        final statusCode = error.response?.statusCode;
+        if (statusCode == 404) {
+          return 'Venue not found. Try selecting a different venue or creating a new one.';
+        }
+        if (statusCode == 401) {
+          return 'Session expired. Please sign in again.';
+        }
+        if (statusCode == 400) {
+          return 'Please fill in all required fields.';
+        }
+      }
+      if (error is DioException && error.type == DioExceptionType.connectionError) {
+        return 'Unable to connect. Check your internet connection.';
+      }
+    } catch (_) {}
+    return 'Failed to create event. Please try again.';
   }
 
   void _showSnack(String msg) {
@@ -649,81 +691,138 @@ class _HostEventScreenState extends State<HostEventScreen> {
     final venueName = venueData?['name'] as String? ?? '';
     final eventId = event?['id'] as String? ?? '';
 
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('🎉', style: TextStyle(fontSize: 56)),
-            const SizedBox(height: 16),
-            Text('Event Created!', style: GoogleFonts.inter(
-              fontSize: 24, fontWeight: FontWeight.w700, color: const Color(0xFF111827))),
-            const SizedBox(height: 8),
-            Text(name, style: GoogleFonts.inter(
-              fontSize: 18, fontWeight: FontWeight.w600, color: const Color(0xFF111827))),
-            if (venueName.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Text(venueName, style: TextStyle(fontSize: 15, color: Colors.grey[600])),
+    return SingleChildScrollView(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Confetti decoration
+              SizedBox(
+                height: 80,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Positioned(
+                      left: 10, top: 10,
+                      child: Container(width: 12, height: 12,
+                          decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFF0F766E))),
+                    ),
+                    Positioned(
+                      right: 20, top: 5,
+                      child: Container(width: 8, height: 8,
+                          decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFF59E0B))),
+                    ),
+                    Positioned(
+                      left: 40, bottom: 10,
+                      child: Container(width: 10, height: 10,
+                          decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFF3B82F6))),
+                    ),
+                    Positioned(
+                      right: 50, bottom: 5,
+                      child: Container(width: 6, height: 6,
+                          decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFEF4444))),
+                    ),
+                    const SizedBox(
+                      width: 64, height: 64,
+                      child: Icon(Icons.check_circle, color: Color(0xFF0F766E), size: 64),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text('Event Created!',
+                  style: GoogleFonts.inter(
+                      fontSize: 24, fontWeight: FontWeight.w700,
+                      color: const Color(0xFF111827))),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0F766E).withValues(alpha: 0.06),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Column(
+                  children: [
+                    Text(name,
+                        style: GoogleFonts.inter(
+                            fontSize: 18, fontWeight: FontWeight.w600,
+                            color: const Color(0xFF111827))),
+                    if (venueName.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(LucideIcons.map_pin, size: 14, color: Color(0xFF0F766E)),
+                          const SizedBox(width: 4),
+                          Text(venueName,
+                              style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+                        ],
+                      ),
+                    ],
+                    const SizedBox(height: 4),
+                    Text('$_formattedDate · $_formattedStartTime - $_formattedEndTime',
+                        style: TextStyle(fontSize: 13, color: Colors.grey[500])),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 28),
+
+              Text('What would you like to do?',
+                  style: GoogleFonts.inter(
+                      fontSize: 15, fontWeight: FontWeight.w500,
+                      color: Colors.grey[700])),
+              const SizedBox(height: 16),
+
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: FilledButton.icon(
+                  onPressed: _checkInNow,
+                  icon: const Icon(LucideIcons.log_in, size: 18),
+                  label: const Text("I'm Here Now",
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFF0F766E),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    final link = 'https://yugrow.app/e/${eventId.isNotEmpty ? eventId : 'event'}';
+                    Clipboard.setData(ClipboardData(text: link));
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Invite link copied!'),
+                      behavior: SnackBarBehavior.floating,
+                      duration: Duration(seconds: 2),
+                    ));
+                  },
+                  icon: const Icon(LucideIcons.link, size: 18),
+                  label: const Text('Copy Invite Link',
+                      style: TextStyle(fontSize: 15)),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFF0F766E),
+                    side: const BorderSide(color: Color(0xFF0F766E)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextButton(
+                onPressed: () => context.go('/'),
+                child: Text('Back to Events',
+                    style: TextStyle(fontSize: 14, color: Colors.grey[500])),
+              ),
             ],
-            const SizedBox(height: 4),
-            Text('$_formattedDate · $_formattedStartTime - $_formattedEndTime',
-              style: TextStyle(fontSize: 14, color: Colors.grey[500])),
-
-            const SizedBox(height: 32),
-            const Divider(),
-            const SizedBox(height: 16),
-
-            Text('What would you like to do?',
-              style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.grey[700])),
-            const SizedBox(height: 16),
-
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: ElevatedButton.icon(
-                onPressed: _checkInNow,
-                icon: const Icon(LucideIcons.log_in, size: 18),
-                label: const Text("I'm Here Now", style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0F766E),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  elevation: 0,
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  final link = 'https://yugrow.app/e/${eventId.isNotEmpty ? eventId : 'event'}';
-                  Clipboard.setData(ClipboardData(text: link));
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Invite link copied!'),
-                    behavior: SnackBarBehavior.floating,
-                  ));
-                },
-                icon: const Icon(LucideIcons.link, size: 18),
-                label: const Text('Copy Invite Link', style: TextStyle(fontSize: 15)),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFF0F766E),
-                  side: const BorderSide(color: Color(0xFF0F766E)),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-
-            TextButton(
-              onPressed: () => context.go('/'),
-              child: Text('Back to Events',
-                style: TextStyle(fontSize: 14, color: Colors.grey[500])),
-            ),
-          ],
+          ),
         ),
       ),
     );

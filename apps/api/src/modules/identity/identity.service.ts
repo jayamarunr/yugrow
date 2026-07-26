@@ -77,38 +77,65 @@ export class IdentityService {
     const existing = await this.prisma.person.findUnique({
       where: { email },
     });
-    if (existing) throw new ConflictException('Email already registered');
+    if (existing) {
+      throw new ConflictException({
+        code: 'EMAIL_ALREADY_EXISTS',
+        message: 'An account already exists with this email. Please sign in instead.',
+      });
+    }
 
-    const person = await this.prisma.person.create({
-      data: { email, firstName: name, status: 'ACTIVE' },
+    // Use a transaction to ensure all-or-nothing creation
+    const result = await this.prisma.$transaction(async (tx) => {
+      const person = await tx.person.create({
+        data: { email, firstName: name, status: 'ACTIVE' },
+      });
+
+      // Auto-create personal workspace
+      const workspace = await tx.workspace.create({
+        data: {
+          name: `${name}'s Workspace`,
+          slug: `p-${person.id.slice(0, 8)}`,
+          type: 'PERSONAL',
+        },
+      });
+
+      // Create owner membership
+      await tx.membership.create({
+        data: {
+          personId: person.id,
+          workspaceId: workspace.id,
+          membershipType: 'OWNER',
+        },
+      });
+
+      return { person, workspace };
     });
 
-    // Auto-create personal workspace
-    const workspace = await this.prisma.workspace.create({
-      data: {
-        name: `${name}'s Workspace`,
-        slug: `p-${person.id.slice(0, 8)}`,
-        type: 'PERSONAL',
-      },
-    });
-
-    // Create owner membership
-    await this.prisma.membership.create({
-      data: {
-        personId: person.id,
-        workspaceId: workspace.id,
-        membershipType: 'OWNER',
-      },
-    });
+    const token = await this.generateToken(
+      result.person.id,
+      email,
+      result.workspace.id,
+    );
 
     await this.eventBus.publish('Identity.Person.Registered', {
-      personId: person.id,
+      personId: result.person.id,
       email,
       displayName: name,
       authMethod: 'email',
     });
 
-    return { person, workspace };
+    return {
+      token,
+      person: {
+        id: result.person.id,
+        email: result.person.email,
+        name: result.person.firstName ?? result.person.email,
+      },
+      workspace: {
+        id: result.workspace.id,
+        name: result.workspace.name,
+      },
+    };
   }
 
   async refreshToken(refreshToken: string) {

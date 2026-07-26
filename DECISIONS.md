@@ -158,6 +158,131 @@ Build complete user journeys across multiple engines rather than completing one 
 
 ---
 
+## FD-031 — Venue Discovery: Per-Capability Providers, No Google Until Evidence
+
+**Date:** 2026-07-25
+**Category:** Product, Architecture
+
+**Addendum (2026-07-25):** This decision evolved through three iterations:
+1. Original: Google Places primary
+2. Revised: OpenStreetMap primary, Google fallback
+3. **Final:** Per-capability provider selection. No Google. Evaluate Mapbox before any premium spend.
+
+**Decision:** Yugrow uses **different providers per capability**, not a single map vendor. Google is excluded until user evidence proves search quality is blocking adoption.
+
+**Why:** Yugrow solves a different problem than most apps. The question isn't "Which map provider is best?" — it's "Which provider best supports **verified professional presence** at the lowest cost?" Yugrow only needs five capabilities: show a map, search venues, geocode addresses, drop a pin, validate geofence radius. It does **not** need turn-by-turn navigation, traffic, satellite imagery, street view, indoor maps, or routing — which are the expensive features driving Google's pricing.
+
+**Per-capability provider selection:**
+
+```
+Capability              Provider              Cost
+─────────────────────   ───────────────────   ──────────
+Map display             OpenStreetMap         Free
+                        (MapLibre / Flutter Map)
+Venue search            Mapbox (evaluate      Low
+& autocomplete          before any Google spend)
+Forward/reverse         Nominatim             Free
+geocoding                                    (respect usage limits)
+Geofence validation     Built-in (client)     Free
+                        (no provider needed)
+Routing                 None needed           —
+Traffic                 None needed           —
+```
+
+**Architecture (Phase 1):**
+
+```
+Venue Search
+│
+├── 1. Recent venues (user's history)
+├── 2. Nearby verified Yugrow venues
+├── 3. Mapbox Geocoding (search & autocomplete)
+├── 4. Nominatim (fallback geocoding)
+└── 5. Create New Venue
+```
+
+**Why Mapbox before Google:** Mapbox offers maps, geocoding, and autocomplete under one platform at much friendlier pricing. Its Flutter support is mature. If Mapbox is sufficient (likely), Google is never needed. MapTiler is another strong option, especially if privacy becomes a factor.
+
+**Nominatim concern for growth:** The public Nominatim service is acceptable for Alpha with usage limits respected. As Yugrow grows, plan to migrate to a managed provider (Mapbox, MapTiler) or host a private Nominatim instance. Nominatim is not a long-term production dependency — it's an Alpha bootstrap.
+
+**Venue data model:**
+
+```
+Venue
+├── Name
+├── Coordinates
+├── External ID (OSM or Google Place ID)  ← Reference only
+├── Yugrow Status          ← pending → trusted → verified → archived
+├── Venue Evidence
+│   ├── Coordinates confirmed
+│   ├── Host confirmed
+│   ├── Multiple independent events
+│   ├── Multiple successful check-ins
+│   └── No fraud reports
+└── Trust Evidence         ← Check-in count, event history
+```
+
+**Venue lifecycle (mirrors Topics):**
+
+```
+User creates      Pending
+     ↓
+Used repeatedly   Trusted   ← Multiple independent events, check-ins
+     ↓
+Evidence met      Verified  ← Coordinates + Host confirmed, no fraud
+     ↓
+Deactivated       Archived
+```
+
+This symmetry with Topics (community creates → platform observes → platform verifies → platform normalises) is intentional. The same evidence-driven pattern recurs across the platform.
+
+**Key constraints:**
+- The external provider (OSM/Google) is a **discovery source only**. Yugrow owns venue identity, validation, trust, status, and check-in rules.
+- A venue is not verified solely by usage count — it requires **multiple evidence signals** (coordinates confirmed, host confirmed, multiple independent events, successful check-ins, no fraud reports).
+- Once a venue exists in Yugrow with sufficient evidence, it graduates from `pending` → `trusted` → `verified` — and Google/OSM is never called for that venue again.
+- Search order ensures Yugrow's own venue database becomes the primary source over time, naturally reducing external API dependency.
+- Community-driven verification: first person creates a venue, subsequent uses validate it. Aligned with the future Contribution Economy.
+
+**Why not Google for Alpha:**
+- $100+/month for 50K API calls is material for a pre-revenue startup
+- The first 50-100 users will create events at a handful of venues (coworking spaces, incubators, hotels, conference centres — maybe 2,000-5,000 venues total for an entire city)
+- OpenStreetMap is sufficient for this scale
+- If user testing later shows venue search is the #1 friction point, that's evidence to justify the Google expense
+
+**What to spend the $100/month on instead (prioritised):**
+1. Crash reporting (Sentry)
+2. Product analytics (PostHog)
+3. Push notifications
+4. Email delivery
+5. Reliable hosting
+6. _Then_ premium venue search (if evidence supports it)
+
+**Metric for the first real meetup — Venue Creation Success Rate:**
+
+Track:
+- Existing venue selected
+- New venue created successfully
+- User abandoned venue creation
+- Time taken to select/create a venue
+
+If 70%+ abandon because they can't find or create a venue, that's evidence to move premium venue search up the priority list. If most complete the flow successfully, the cost was wisely deferred.
+
+**Provider Confidence (future concept — not implemented yet):**
+
+As the platform matures, provider selection should be governed by measurable triggers rather than intuition. Each capability has a primary provider, a fallback, and an evidence-based migration trigger:
+
+| Capability | Primary | Fallback | Migration Trigger |
+|---|---|---|---|
+| Venue Search | Yugrow (verified venues) | Mapbox | Search success rate drops below target |
+| Geocoding | Nominatim | Mapbox | Rate limits or latency impact users |
+| Map Display | OpenStreetMap | MapTiler | Tile performance or reliability issues |
+
+This makes provider changes measurable rather than opinion-driven, consistent with the evidence-before-investment pattern across the repository.
+
+**Related:** FD-009 (BYOAI — provider-agnostic architecture), FD-030 (Professional Presence Platform — venues as presence sources), FD-004 (CheckIN Is Frictionless). The provider abstraction pattern makes this a configuration change, not an architecture change, when the time comes to switch.
+
+---
+
 ## FD-025 — Founder Tooling Must Never Become User-Facing Functionality
 
 **Date:** 2026-07-23

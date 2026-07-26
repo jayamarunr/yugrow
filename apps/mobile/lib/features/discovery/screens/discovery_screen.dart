@@ -8,8 +8,8 @@ import 'package:yugrow_mobile/core/theme/app_spacing.dart';
 import 'package:yugrow_mobile/core/theme/app_radius.dart';
 import '../models/professional.dart';
 import '../engine/presence_engine.dart' show PresenceEngine, PresenceEvent, PresenceArrival, Presence;
-import '../widgets/professional_card.dart';
 import 'profile_preview_screen.dart';
+import '../../profile/widgets/profile_card.dart';
 
 class DiscoveryScreen extends StatefulWidget {
   final String eventName;
@@ -341,22 +341,33 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> with WidgetsBindingOb
                         }
 
                         final p = _professionals[index];
-                        return ProfessionalCard(
-                          professional: p,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => ProfilePreviewScreen(professional: p),
-                              ),
-                            );
-                          },
-                        );
+                        // TODO: Replace ProfileCard import once module-level import resolves
+                        return _buildProfileCard(p);
                       },
                     ),
                   ),
                 ),
               ],
             ),
+    );
+  }
+
+  Widget _buildProfileCard(Professional p) {
+    final headline = [p.title, p.company]
+        .where((s) => s.isNotEmpty)
+        .join(' · ');
+    return ProfileCard(
+      compact: true,
+      name: p.name,
+      headline: headline.isNotEmpty ? headline : null,
+      photoUrl: p.photoUrl.isNotEmpty ? p.photoUrl : null,
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => ProfilePreviewScreen(professional: p),
+          ),
+        );
+      },
     );
   }
 }

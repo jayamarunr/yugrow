@@ -1,13 +1,17 @@
 // ─── GooglePlacesProvider ─────────────────────────────────────────
-// Searches venues via Google Places API.
-// Phase 2 — behind feature flag, requires API key.
+// ⚠️  DEPRECATED — replaced by MapboxProvider + NominatimProvider.
+//     Kept as reference for future if user evidence justifies Google spend.
 //
-// To enable:
-//   1. Add your Google Places API key to the environment
-//   2. Set ENABLE_GOOGLE_PLACES=true
-//   3. No UI changes needed — results automatically appear
+// FD-031: Google Places is excluded until user evidence proves that
+// search quality is blocking adoption. Do not implement unless:
+//   1. Venue Creation Success Rate drops below target
+//   2. User testing confirms search quality is the #1 friction point
+//   3. Budget is approved for the $100+/month cost
+//
+// See FD-031 for full decision history.
+// See mapbox_provider.dart for the current primary external provider.
+// See nominatim_provider.dart for the free fallback.
 
-import 'package:yugrow_mobile/core/config/environment.dart';
 import '../../models/venue.dart';
 import 'venue_provider.dart';
 
@@ -17,46 +21,14 @@ class GooglePlacesProvider implements VenueProvider {
   @override
   String get name => 'Google Places';
 
+  /// Disabled by default. Re-enable only when FD-031's evidence
+  /// triggers are met.
   @override
-  bool get isAvailable =>
-      Environment.flavor.name == 'development'
-      // In production, check for API key:
-      // && Environment.googlePlacesApiKey.isNotEmpty
-      ;
+  bool get isAvailable => false;
 
   @override
   Future<List<Venue>> search(String query) async {
-    // ─── Phase 2 implementation ─────────────────────────────────
-    // 1. Call Google Places Autocomplete API:
-    //    GET https://maps.googleapis.com/maps/api/place/autocomplete/json
-    //      ?input=$query
-    //      &key=$apiKey
-    //      &types=establishment
-    //
-    // 2. For the selected place, call Place Details:
-    //    GET https://maps.googleapis.com/maps/api/place/details/json
-    //      ?place_id=$placeId
-    //      &key=$apiKey
-    //
-    // 3. Convert to Venue:
-    //    Venue(
-    //      id: 'google_$placeId',
-    //      name: result.name,
-    //      address: result.formattedAddress,
-    //      city: extractCity(result.addressComponents),
-    //      latitude: result.geometry.location.lat,
-    //      longitude: result.geometry.location.lng,
-    //      googlePlaceId: result.placeId,
-    //      status: 'pending',  // becomes verified after first event
-    //      createdAt: DateTime.now(),
-    //    )
-    //
-    // 4. On event creation, the API imports the Google Place
-    //    into Yugrow's Venue database with the googlePlaceId preserved.
-    //    From that point, every event references the Yugrow Venue,
-    //    not the Google Place ID directly.
-
-    await Future.delayed(Duration.zero); // placeholder
+    // Not implemented. See FD-031 for activation criteria.
     return [];
   }
 }

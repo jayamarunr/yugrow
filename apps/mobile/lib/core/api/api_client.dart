@@ -8,6 +8,10 @@ class ApiClient {
 
   static const _tokenKey = 'auth_token';
 
+  // Cached auth context for API calls that need it
+  String? personId;
+  String? workspaceId;
+
   ApiClient() {
     _dio = Dio(BaseOptions(
       baseUrl: '${Environment.apiBaseUrl}/api/v1',
@@ -205,6 +209,32 @@ class ApiClient {
   }
 
   // ── Auth ─────────────────────────────────────────────────────
+
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    final res = await _dio.post('/identity/auth/login', data: {
+      'email': email,
+      'password': password,
+    });
+    return res.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> register(String email, String password, String name) async {
+    final res = await _dio.post('/identity/auth/register', data: {
+      'email': email,
+      'password': password,
+      'name': name,
+    });
+    return res.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>?> getCurrentPerson() async {
+    try {
+      final res = await _dio.get('/identity/people/me');
+      return res.data as Map<String, dynamic>?;
+    } catch (_) {
+      return null;
+    }
+  }
 
   Future<void> setAuthToken(String token) async {
     await _storage.write(key: _tokenKey, value: token);

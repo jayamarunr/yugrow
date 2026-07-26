@@ -1,7 +1,7 @@
 // ─── Create Venue Dialog ──────────────────────────────────────────
-// Map-first venue creation. The user enters a name, then the map is
-// the primary interaction — address/city are auto-filled from the pin.
-// No manual address typing required.
+// ⚠️  DEPRECATED — replaced by CreateVenuePage (full-page flow with
+//     address autocomplete, reverse geocoding, and radius adjustment).
+//     Kept for reference. New code should use CreateVenuePage instead.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';

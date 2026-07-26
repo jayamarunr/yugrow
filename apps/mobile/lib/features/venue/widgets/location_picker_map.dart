@@ -18,6 +18,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import '../models/venue.dart';
+import '../services/geocoding_service.dart';
 
 class LocationPickerMap extends StatefulWidget {
   /// Pre-populate with an existing location (for editing).
@@ -41,6 +42,10 @@ class _LocationPickerMapState extends State<LocationPickerMap> {
   late LatLng _center;
   late double _radius;
   bool _locating = false;
+  bool _resolving = false;
+  String? _resolvedAddress;
+
+  final _geocodingService = GeocodingService();
 
   @override
   void initState() {
@@ -53,6 +58,7 @@ class _LocationPickerMapState extends State<LocationPickerMap> {
         widget.initialLocation!.longitude,
       );
       _radius = widget.initialLocation!.validationRadius;
+      _resolveAddress();
     } else {
       // Default: center on Chennai
       _center = const LatLng(13.0827, 80.2707);
@@ -79,6 +85,7 @@ class _LocationPickerMapState extends State<LocationPickerMap> {
         _mapController.move(_center, 16);
         _locating = false;
       });
+      _resolveAddress();
     } catch (_) {
       setState(() => _locating = false);
       if (mounted) {
@@ -91,6 +98,22 @@ class _LocationPickerMapState extends State<LocationPickerMap> {
 
   void _onMapTap(TapPosition tapPosition, LatLng point) {
     setState(() => _center = point);
+    _resolveAddress();
+  }
+
+  /// Reverse geocode the current center point to get a readable address.
+  Future<void> _resolveAddress() async {
+    setState(() => _resolving = true);
+    final address = await _geocodingService.reverseGeocode(
+      _center.latitude,
+      _center.longitude,
+    );
+    if (mounted) {
+      setState(() {
+        _resolvedAddress = address;
+        _resolving = false;
+      });
+    }
   }
 
   void _confirm() {
@@ -99,10 +122,11 @@ class _LocationPickerMapState extends State<LocationPickerMap> {
       longitude: _center.longitude,
       validationRadius: _radius,
     );
-    // Return both location and a human-readable address hint
     Navigator.of(context).pop(<String, dynamic>{
       'location': location,
-      'address': widget.addressHint ?? '${_center.latitude.toStringAsFixed(4)}, ${_center.longitude.toStringAsFixed(4)}',
+      'address': _resolvedAddress ??
+          widget.addressHint ??
+          '${_center.latitude.toStringAsFixed(4)}, ${_center.longitude.toStringAsFixed(4)}',
     });
   }
 
@@ -231,11 +255,43 @@ class _LocationPickerMapState extends State<LocationPickerMap> {
                     ],
                   ),
                   const SizedBox(height: 4),
-                  if (widget.addressHint != null)
+                  // Resolved address (auto-reverse geocoded)
+                  if (_resolving)
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 12,
+                          height: 12,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 1.5,
+                            color: Colors.grey[400],
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Resolving address...',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey[500],
+                          ),
+                        ),
+                      ],
+                    )
+                  else if (_resolvedAddress != null)
+                    Text(
+                      _resolvedAddress!,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.grey[600],
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    )
+                  else if (widget.addressHint != null)
                     Text(
                       widget.addressHint!,
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 11,
                         color: Colors.grey[600],
                       ),
                       maxLines: 1,
