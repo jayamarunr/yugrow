@@ -57,15 +57,44 @@ class _LiveScreenState extends State<LiveScreen> {
           ? const Center(child: CircularProgressIndicator())
           : _attendees.isEmpty
               ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.people_outline, size: 64, color: theme.disabledColor),
-                      const SizedBox(height: 16),
-                      Text('No one else here yet', style: theme.textTheme.titleLarge),
-                      const SizedBox(height: 8),
-                      Text('Be the first! Share this event with others.', style: theme.textTheme.bodyMedium),
-                    ],
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.celebration_outlined, size: 72, color: theme.primaryColor.withValues(alpha: 0.4)),
+                        const SizedBox(height: 20),
+                        Text("You're checked in!", style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600)),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Waiting for other professionals to arrive...',
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodyMedium?.copyWith(color: theme.disabledColor),
+                        ),
+                        const SizedBox(height: 24),
+                        OutlinedButton.icon(
+                          onPressed: () {},
+                          icon: const Icon(Icons.share, size: 18),
+                          label: const Text('Share Event'),
+                          style: OutlinedButton.styleFrom(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            minimumSize: const Size(200, 44),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        TextButton.icon(
+                          onPressed: _loadAttendees,
+                          icon: const Icon(Icons.refresh, size: 18),
+                          label: const Text('Refresh'),
+                        ),
+                        const SizedBox(height: 32),
+                        Text(
+                          'Nearby professionals will appear here automatically.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 12, color: theme.disabledColor.withValues(alpha: 0.7)),
+                        ),
+                      ],
+                    ),
                   ),
                 )
               : RefreshIndicator(

@@ -48,7 +48,7 @@ class Environment {
     if (override.isNotEmpty) return override;
 
     return switch (flavor) {
-      Flavor.development => 'http://localhost:4000',
+      Flavor.development => 'http://localhost:3001',
       Flavor.staging => 'https://api-staging.yugrow.app',
       Flavor.production => 'https://api.yugrow.app',
     };
@@ -57,7 +57,7 @@ class Environment {
   /// The app's public URL. Used for deep links and sharing.
   static String get appUrl {
     return switch (flavor) {
-      Flavor.development => 'http://dev.yugrow.app:3000',
+      Flavor.development => 'http://dev.yugrow.app:3001',
       Flavor.staging => 'https://staging.yugrow.app',
       Flavor.production => 'https://yugrow.app',
     };

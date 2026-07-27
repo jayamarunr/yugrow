@@ -579,6 +579,20 @@ export class CheckinService {
     if (!event) throw new NotFoundException('Event not found.');
     if (event.status !== 'ACTIVE') throw new ConflictException('Event is not active.');
 
+    // Verify event time window — cannot check in before event starts or after it ends
+    const now = new Date();
+    if (now < event.startDate) {
+      const diff = event.startDate.getTime() - now.getTime();
+      const hours = Math.floor(diff / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      throw new ConflictException(
+        `Event starts in ${hours > 0 ? `${hours}h ` : ''}${minutes}m. Check-in opens when the event begins.`
+      );
+    }
+    if (now > event.endDate) {
+      throw new ConflictException('This event has already ended.');
+    }
+
     // End any existing active presence for this person
     await this.prisma.presence.updateMany({
       where: { personId: data.personId, status: 'ACTIVE' },
@@ -889,5 +903,133 @@ export class CheckinService {
       where: { senderPersonId: personId },
       orderBy: { createdAt: 'desc' },
     });
+  }
+
+  // ═════════════════════════════════════════════════════════════════
+  // FOUNDER MODE — Conversation & Message Seeding
+  // ═════════════════════════════════════════════════════════════════
+
+  async generateTestConversations(eventId: string) {
+    const event = await this.prisma.event.findUnique({ where: { id: eventId } });
+    if (!event) throw new NotFoundException('Event not found.');
+
+    // Find test attendees currently checked in
+    const activePresences = await this.prisma.presence.findMany({
+      where: { eventId, status: 'ACTIVE', expiresAt: { gte: new Date() } },
+      include: { person: true },
+      orderBy: { startedAt: 'asc' },
+    });
+
+    const testPersons = activePresences.filter(p =>
+      p.person.email.endsWith('@yugrow.test')
+    );
+
+    if (testPersons.length < 2) {
+      return {
+        message: 'Need at least 2 test attendees to generate conversations.',
+        conversationsCreated: 0,
+      };
+    }
+
+    const sampleMessages = [
+      'Hey! Great connecting at the event. Would love to catch up over coffee sometime.',
+      'Thanks for the chat earlier. Your work on AI is really impressive!',
+      'Loved discussing the industry trends with you. Let\'s stay in touch.',
+      'Hey, I was thinking about what you said regarding the partnership opportunity. Let\'s explore it.',
+      'Great meeting you! I\'d love to introduce you to my co-founder.',
+      'Thanks for the insights on the market. Really valuable perspective.',
+    ];
+
+    let conversationsCreated = 0;
+
+    // Create connections between adjacent test attendees
+    for (let i = 0; i < testPersons.length - 1; i++) {
+      const personA = testPersons[i];
+      const personB = testPersons[i + 1];
+
+      // Check if connection already exists
+      const existingRel = await this.prisma.relationship.findFirst({
+        where: {
+          OR: [
+            { sourceEntityId: personA.personId, targetEntityId: personB.personId },
+            { sourceEntityId: personB.personId, targetEntityId: personA.personId },
+          ],
+        },
+      });
+
+      if (existingRel) continue;
+
+      // Create relationship
+      const defaultType = await this.prisma.relationshipType.findFirst({
+        where: { isSystem: true, name: 'Network' },
+      });
+
+      const relationship = await this.prisma.relationship.create({
+        data: {
+          sourceEntityType: 'PERSON',
+          sourceEntityId: personA.personId,
+          targetEntityType: 'PERSON',
+          targetEntityId: personB.personId,
+          relationshipTypeId: defaultType?.id,
+          status: 'ACTIVE',
+          context: JSON.stringify({
+            eventId,
+            eventName: event.name,
+            venueId: event.venueId,
+          }),
+        },
+      });
+
+      // Create conversation
+      const conversation = await this.prisma.conversation.create({
+        data: {
+          relationshipId: relationship.id,
+          contextType: 'EVENT',
+          contextId: eventId,
+        },
+      });
+
+      // Create a couple of messages
+      const msg1 = sampleMessages[i % sampleMessages.length];
+      const msg2 = sampleMessages[(i + 3) % sampleMessages.length];
+
+      await this.prisma.message.create({
+        data: {
+          conversationId: conversation.id,
+          senderPersonId: personA.personId,
+          content: msg1,
+        },
+      });
+
+      await this.prisma.message.create({
+        data: {
+          conversationId: conversation.id,
+          senderPersonId: personB.personId,
+          content: msg2,
+        },
+      });
+
+      conversationsCreated++;
+    }
+
+    return {
+      message: `Generated ${conversationsCreated} conversations with sample messages.`,
+      conversationsCreated,
+      totalAttendees: activePresences.length,
+      testAttendeesUsed: testPersons.length,
+    };
+  }
+
+  // ═════════════════════════════════════════════════════════════════
+  // FOUNDER MODE — Force Check-in (bypasses geofence)
+  // ═════════════════════════════════════════════════════════════════
+
+  async forceCheckIn(data: {
+    personId: string;
+    workspaceId: string;
+    eventId: string;
+    venueId: string;
+  }) {
+    return this.checkIn({ ...data });
   }
 }

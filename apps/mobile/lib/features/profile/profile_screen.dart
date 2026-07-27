@@ -100,21 +100,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
                 // ── Settings ──
                 _sectionHeader('Settings', theme),
-                _menuTile(theme, Icons.notifications_outlined, 'Notifications', ''),
+                _menuTile(theme, Icons.notifications_outlined, 'Notifications', '', () {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Notifications — coming soon')));
+                }),
                 const Divider(height: 1),
-                _menuTile(theme, Icons.lock_outlined, 'Privacy', ''),
+                _menuTile(theme, Icons.lock_outlined, 'Privacy', '', () {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Privacy settings — coming soon')));
+                }),
                 const Divider(height: 1),
                 _menuTile(theme, Icons.palette_outlined, 'Appearance',
-                    Theme.of(context).brightness == Brightness.dark
-                        ? 'Dark'
-                        : 'Light'),
+                    Theme.of(context).brightness == Brightness.dark ? 'Dark' : 'Light', () {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Appearance settings — coming soon')));
+                }),
                 const SizedBox(height: 24),
 
                 // ── About ──
                 _sectionHeader('About', theme),
-                _menuTile(theme, Icons.info_outline, 'Version', '0.1.1-alpha'),
+                _menuTile(theme, Icons.info_outline, 'Version', '0.1.1-alpha', null),
                 const Divider(height: 1),
-                _menuTile(theme, Icons.help_outline, 'Help', ''),
+                _menuTile(theme, Icons.help_outline, 'Help', '', () {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Help — coming soon')));
+                }),
                 const SizedBox(height: 8),
 
                 // ── Logout ──
@@ -178,7 +184,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _menuTile(
-      ThemeData theme, IconData icon, String title, String subtitle) {
+      ThemeData theme, IconData icon, String title, String subtitle, VoidCallback? onTap) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 4),
       leading: Icon(icon, size: 22, color: theme.disabledColor),
@@ -187,8 +193,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ? Text(subtitle,
               style: TextStyle(fontSize: 12, color: theme.disabledColor))
           : null,
-      trailing: const Icon(Icons.chevron_right, size: 18),
-      onTap: () {},
+      trailing: onTap != null ? const Icon(Icons.chevron_right, size: 18) : null,
+      onTap: onTap,
     );
   }
 }

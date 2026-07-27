@@ -1,13 +1,13 @@
-// ─── Yugrow Founder Console ──────────────────────────────────────
-// Hidden founder console for testing and operations.
-// Accessible by long-pressing the Yugrow logo on the Arrival screen.
-// NOT exposed to end users. Contains tools to create/manage test events.
+// ─── Yugrow Founder Console v2 ──────────────────────────────────
+// Enhanced founder console for testing, validation, and demos.
+// Accessible from Profile screen. NOT exposed to end users.
 //
 // Sprint 6.7 — Founder Mode only. No public hosting, no navigation changes.
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/api/api_client.dart';
+import '../../core/config/environment.dart';
 
 class FounderConsole extends StatefulWidget {
   const FounderConsole({super.key});

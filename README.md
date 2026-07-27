@@ -28,20 +28,30 @@ docker compose -f infrastructure/docker/docker-compose.yml up -d
 
 ### Start Development
 
-**Terminal 1 — API:**
+**Single terminal (API + Web + Admin):**
 ```bash
-cd apps/api
-$env:DATABASE_URL="postgresql://yugrow:yugrow_password@localhost:5432/yugrow"
-$env:CORS_ORIGIN="http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3003,http://localhost:3004"
-npx ts-node -r tsconfig-paths/register src/start.ts
-# API at http://localhost:4000
+pnpm dev
 ```
 
-**Terminal 2 — Flutter Web:**
+This starts all three services via Turborepo:
+
+| Service | URL |
+|---------|-----|
+| **API (NestJS)** | http://localhost:3001 |
+| **Web (Next.js)** | http://localhost:3000 |
+| **Admin (Next.js)** | http://localhost:3003 |
+| **Swagger Docs** | http://localhost:3001/api/docs |
+
+**Flutter Mobile (separate terminal):**
 ```bash
 cd apps/mobile
-flutter run -d chrome --web-port 3004
-# App at http://localhost:3004
+flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:3001
+```
+
+**Mobile on physical device (same WiFi):**
+```bash
+cd apps/mobile
+flutter run --dart-define=API_BASE_URL=http://<YOUR_LOCAL_IP>:3001
 ```
 
 ### Setup (first time only)
@@ -151,6 +161,18 @@ Founder Console
 | **Presence Model** | ✅ Frozen |
 | CheckIN Minimum Lovable PRD | ✅ Approved |
 | AI Agent Playbooks (9 roles) | ✅ Active |
+
+### ✅ Design Foundation (Frozen 2026-07-28)
+
+| Document | Status |
+|----------|--------|
+| **YUGROW-DESIGN-LANGUAGE.md** — Colours, typography, components, spacing, icons | ✅ Frozen |
+| **YUGROW-BRAND-LANGUAGE.md** — Brand identity, tone, vocabulary, writing principles | ✅ Frozen |
+| **YUGROW-MOTION-LANGUAGE.md** — 4 allowed animations, timing, sound, haptics | ✅ Frozen |
+| **YUGROW-ILLUSTRATION-LANGUAGE.md** — Empty states, success screens, photography, assets | ✅ Frozen |
+| **PRODUCT-STORY-LANGUAGE.md** — Story every screen tells, narrative arc | ✅ Approved |
+
+Design Language is to experience what the Constitution is to architecture. Every UI decision must reference these documents before implementation.
 
 ---
 

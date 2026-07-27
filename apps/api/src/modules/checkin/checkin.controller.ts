@@ -129,6 +129,21 @@ export class CheckinController {
     return this.checkinService.getTestStatus();
   }
 
+  @Post('test/generate-conversations')
+  async generateTestConversations(@Body('eventId') eventId: string) {
+    return this.checkinService.generateTestConversations(eventId);
+  }
+
+  @Post('test/force-checkin')
+  async forceCheckIn(@Body() body: {
+    personId: string;
+    workspaceId: string;
+    eventId: string;
+    venueId: string;
+  }) {
+    return this.checkinService.forceCheckIn(body);
+  }
+
   // ═════════════════════════════════════════════════════════════════
   // PRESENCE ("I'm Here")
   // ═════════════════════════════════════════════════════════════════

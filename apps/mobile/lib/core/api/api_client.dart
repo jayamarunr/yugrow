@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../config/environment.dart';
 
@@ -26,12 +27,32 @@ class ApiClient {
         if (token != null) {
           options.headers['Authorization'] = 'Bearer $token';
         }
+        if (Environment.flavor == 'development') {
+          debugPrint('[API] ${options.method} ${options.path}');
+        }
         handler.next(options);
       },
       onError: (error, handler) {
         if (error.response?.statusCode == 401) {
           // Token expired — redirect to login
           // Handled by auth provider
+        }
+        // Enhanced error logging for debugging
+        if (Environment.flavor == 'development') {
+          final method = error.requestOptions.method;
+          final path = error.requestOptions.path;
+          final baseUrl = error.requestOptions.baseUrl;
+          final statusCode = error.response?.statusCode;
+          final statusMsg = error.response?.statusMessage;
+          final body = error.response?.data;
+          debugPrint('''
+[API Error] ───────────────────────
+  $method $baseUrl$path
+  Status: ${statusCode ?? 'No response'} ${statusMsg ?? ''}
+  Type: ${error.type}
+  Message: ${error.message}
+  ${body != null ? 'Body: $body' : ''}
+─────────────────────────────────''');
         }
         handler.next(error);
       },
@@ -116,6 +137,16 @@ class ApiClient {
 
   Future<Map<String, dynamic>> getTestStatus() async {
     final res = await _dio.get('/checkin/test/status');
+    return res.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> generateTestConversations(String eventId) async {
+    final res = await _dio.post('/checkin/test/generate-conversations', data: {'eventId': eventId});
+    return res.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> forceCheckIn(Map<String, dynamic> data) async {
+    final res = await _dio.post('/checkin/test/force-checkin', data: data);
     return res.data as Map<String, dynamic>;
   }
 
@@ -238,6 +269,10 @@ class ApiClient {
 
   Future<void> setAuthToken(String token) async {
     await _storage.write(key: _tokenKey, value: token);
+  }
+
+  Future<String?> getAuthToken() async {
+    return await _storage.read(key: _tokenKey);
   }
 
   Future<void> clearAuth() async {
