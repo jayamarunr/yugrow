@@ -125,6 +125,27 @@ Sprint (sprint-plan document)
 
 ---
 
+### Feedback Intelligence Engine
+
+| Field | Value |
+|-------|-------|
+| **Purpose** | Transform customer feedback into verified product decisions. Owns the pipeline: capture → evidence → validation → user story → sprint → implementation → verification → notify reporter. Ingests feedback from any channel (in-app shake, WhatsApp, Telegram, email, Play Store, GitHub) and unifies into a single feedback record. |
+| **Activation** | When multiple Yugrow products generate enough external feedback that manual triage no longer scales. |
+| **Status** | Dormant. |
+| **Note** | Every message in a System Conversation (see below) is an input to this engine. The engine is not a support ticketing system — it is an evidence-driven product decision pipeline. Closely related to the System Conversations concept. |
+
+### System Conversations *(Design Note — not a bounded context)*
+
+| Field | Value |
+|-------|-------|
+| **Purpose** | Platform-owned conversations that exist by default for every person or workspace. Examples: **Yugrow** (product updates, support, feedback, AI assistance), **Workspace Assistant** (announcements, onboarding), **Event Host** (event updates), **Billing** (future — invoices, payments). Built on the existing Conversation Engine — no new infrastructure required. |
+| **Activation** | When the Feedback Intelligence Engine activates, or when user research shows professionals expect a direct communication channel with the platform. |
+| **Status** | Design note. Conversation Engine supports this today. |
+| **Principle** | *Every relationship matters — including the relationship between the professional and Yugrow itself.* |
+| **Note** | This is not a separate engine. It's a product pattern on top of the existing Conversation Engine. The first implementation is a default "Yugrow" chat created at onboarding completion, with a welcome message explaining it's their direct line to the team. Supports rich cards (bug status, feature request status, release notes), AI-assisted answers, and human escalation. See `docs/PRODUCT-STORY-LANGUAGE.md` for narrative framing.
+
+---
+
 ## How to Add a Dormant Context
 
 A new entry must include:

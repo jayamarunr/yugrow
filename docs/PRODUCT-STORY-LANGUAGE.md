@@ -299,6 +299,22 @@ Emotion:    Engagement, continuity
 Empty:     "No messages yet. Say hello to start the conversation."
 ```
 
+### Yugrow Chat (System Conversation)
+
+```
+Question:   "How do I reach Yugrow?"
+Story:      "This is your direct line to the team behind the product.
+             Ask questions. Report bugs. Suggest ideas.
+             Every message is read. You'll hear back."
+Primary:    Send message (text, screenshot, screen recording, logs)
+Emotion:    Trust, partnership
+Note:       Created automatically at onboarding completion.
+            Not a support chat — a Product Relationship.
+            Features: feedback cards, status updates, release notes,
+            AI-assisted answers, human escalation.
+            See FUTURE-BOUNDED-CONTEXTS.md — System Conversations.
+```
+
 ### Profile Screen (self)
 
 ```
