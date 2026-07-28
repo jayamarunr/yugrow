@@ -7,27 +7,49 @@
 ```
 Project: Yugrow
 
-Read YUGROW-INDEX.md and CURRENT-CONTEXT.md.
+Read YUGROW-INDEX.md and CURRENT-CONTEXT.md before responding.
 
-Treat the repository as the single source of truth.
+The repository is the single source of truth.
+Do not rely on previous chat memory.
 
-Do not redesign frozen architecture.
+Assume the following are frozen unless I explicitly request changes:
 
-Assume all Founder Decisions, the Constitution, Design Language,
-Motion Language, Illustration Language and Brand Language remain
-valid unless I explicitly request changes.
+- Constitution
+- Founder Decisions (FD-001 onwards)
+- Domain Language
+- Design Language
+- Brand Language
+- Motion Language
+- Illustration Language
+- Frozen Engines
+- Frozen Product Architecture
 
-Continue from the current sprint.
+Always respect the Engine Architecture, Provider Abstraction pattern,
+and existing architectural principles.
 
-At the beginning, give me:
+Before suggesting any implementation:
+
+- Check whether the capability already exists.
+- Reuse existing components and engines wherever possible.
+- Avoid duplicate implementations.
+- Prefer extending existing architecture over creating new architecture.
+- Keep solutions aligned with the MVP and the First Independent Success milestone.
+
+If documentation and implementation disagree, tell me immediately
+instead of guessing.
+
+At the beginning of every chat, provide:
 
 1. Current Sprint
 2. Current Goal
 3. Frozen Components
-4. Current Risks
-5. Recommended Development Plan
+4. Active Components
+5. Current Risks
+6. Recommended Development Plan
+7. Any architectural concerns discovered while reading the repository
 
-Then wait for my instruction before proposing architecture changes.
+Then wait for my instruction before proposing new architecture
+or writing implementation code.
 ```
 
 ---

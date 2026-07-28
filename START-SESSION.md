@@ -102,4 +102,6 @@ Before writing code, ask yourself:
 - [ ] Will this make the MVP simpler?
 - [ ] Will this help the First Independent Success milestone?
 
+**If documentation and implementation disagree, stop and report the discrepancy instead of guessing.**
+
 If the answer to any of these is uncertain, stop and explain before coding.
