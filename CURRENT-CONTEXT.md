@@ -93,7 +93,8 @@ Fix bugs found during testing. Prepare for first real meetup.
 | Date | Focus | Key Outputs |
 |------|-------|-------------|
 | 2026-07-28 | Alpha Stability | Port fixes, bug fixes, Founder Mode v2, Tailwind fix, Design Foundation (5 docs) |
-| 2026-07-28 | Session Workflow | START-SESSION.md, END-SESSION.md, NEW-CHAT-PROMPT.md, ENGINEERING-RULES.md, YUGROW-INDEX.md, CURRENT-CONTEXT.md, Feedback Engine (dormant), System Conversations, Product Memory |
+| 2026-07-28 | Session Workflow | START-SESSION.md, END-SESSION.md, NEW-CHAT-PROMPT.md, ENGINEERING-RULES.md, YUGROW-INDEX.md, CURRENT-CONTEXT.md |
+| 2026-07-28 | System Conversation | FD-032 System Conversations, backend endpoints (init, get, ensure), mobile UI (pinned Yugrow chat, system persona handling), seeded Yugrow system persona at startup |
 
 ---
 

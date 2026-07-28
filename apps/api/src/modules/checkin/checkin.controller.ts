@@ -141,7 +141,7 @@ export class CheckinController {
     eventId: string;
     venueId: string;
   }) {
-    return this.checkinService.forceCheckIn(body);
+    return this.checkinService.checkIn(body);
   }
 
   // ═════════════════════════════════════════════════════════════════

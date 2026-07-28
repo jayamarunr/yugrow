@@ -65,4 +65,28 @@ export class CommunicationController {
   ) {
     return this.communicationService.getMessages(id, personId);
   }
+
+  // ═════════════════════════════════════════════════════════════════
+  // SYSTEM CONVERSATIONS (Yugrow chat)
+  // ═════════════════════════════════════════════════════════════════
+
+  /// Initialize the Yugrow system conversation for a person.
+  /// Creates the Yugrow persona + relationship + conversation if needed.
+  /// Sends the welcome message on first creation.
+  @Post('system/init')
+  async initSystemConversation(@Body('personId') personId: string) {
+    return this.communicationService.initSystemConversation(personId);
+  }
+
+  /// Get the Yugrow system conversation for a person.
+  @Get('system/:personId')
+  async getSystemConversation(@Param('personId') personId: string) {
+    return this.communicationService.getSystemConversation(personId);
+  }
+
+  /// Ensure the Yugrow system persona exists (call at startup).
+  @Post('system/ensure')
+  async ensureSystemPersona() {
+    return this.communicationService.ensureSystemPersona();
+  }
 }

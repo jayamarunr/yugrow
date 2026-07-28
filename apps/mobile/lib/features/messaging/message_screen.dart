@@ -7,7 +7,6 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_service.dart';
-import '../profile/widgets/profile_card.dart';
 
 class MessageScreen extends ConsumerStatefulWidget {
   final String conversationId;
@@ -32,7 +31,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
   List<dynamic> _messages = [];
   bool _loading = true;
   bool _sending = false;
-  bool _typing = false;
+  final bool _typing = false;
   Map<String, dynamic>? _context;
   String? _personId;
   String? _otherName;
@@ -101,7 +100,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
       Map<String, dynamic>? ctx;
       try {
         ctx = await _api.getConversationContext(widget.conversationId);
-        final participants = ctx?['participants'] as List<dynamic>? ?? [];
+        final participants = ctx['participants'] as List<dynamic>? ?? [];
         for (final p in participants) {
           final pMap = p as Map<String, dynamic>;
           if (pMap['id'] != _personId) {
@@ -172,18 +171,37 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final hasMessages = _messages.isNotEmpty;
-    final otherName = _otherName ?? 'Chat';
+    final isSystemConv = _context?['contextType'] == 'system';
+    final otherName = isSystemConv ? 'Yugrow' : (_otherName ?? 'Chat');
 
     return Scaffold(
       appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        title: Row(
           children: [
-            Text(otherName, style: const TextStyle(fontSize: 16)),
-            if (_typing)
-              Text('typing...',
-                  style: TextStyle(
-                      fontSize: 11, color: Colors.grey[600])),
+            if (isSystemConv)
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Icon(Icons.favorite, color: Colors.white, size: 18),
+              ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    otherName,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: isSystemConv ? const Color(0xFF0F766E) : null,
+                      fontWeight: isSystemConv ? FontWeight.w600 : null,
+                    ),
+                  ),
+                  if (_typing)
+                    Text('typing...',
+                        style: TextStyle(
+                            fontSize: 11, color: Colors.grey[600])),
+                ],
+              ),
+            ),
           ],
         ),
       ),

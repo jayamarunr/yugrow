@@ -217,4 +217,183 @@ export class CommunicationService {
       throw new ForbiddenException('You are not a participant in this conversation.');
     }
   }
+
+  // ═════════════════════════════════════════════════════════════════
+  // SYSTEM CONVERSATIONS (Yugrow chat)
+  // ═════════════════════════════════════════════════════════════════
+
+  // Well-known Yugrow system persona UUID — seeded in the database
+  static readonly YUGROW_SYSTEM_PERSON_ID = '00000000-0000-0000-0000-000000000001';
+  static readonly YUGROW_SYSTEM_WORKSPACE_ID = '00000000-0000-0000-0000-000000000001';
+  static readonly YUGROW_SYSTEM_PERSON_EMAIL = 'system@yugrow.app';
+  static readonly YUGROW_RELATIONSHIP_TYPE = 'system-yugrow';
+
+  /// Ensure the Yugrow system persona exists in the database.
+  /// Called at app startup and on demand.
+  async ensureSystemPersona(): Promise<{ personId: string; workspaceId: string }> {
+    const personId = CommunicationService.YUGROW_SYSTEM_PERSON_ID;
+    const workspaceId = CommunicationService.YUGROW_SYSTEM_WORKSPACE_ID;
+
+    // Create or find system person
+    const existingPerson = await this.prisma.person.findUnique({ where: { id: personId } });
+    if (!existingPerson) {
+      await this.prisma.person.create({
+        data: {
+          id: personId,
+          email: CommunicationService.YUGROW_SYSTEM_PERSON_EMAIL,
+          firstName: 'Yugrow',
+          lastName: '',
+          status: 'ACTIVE',
+        },
+      });
+    }
+
+    // Create or find system workspace
+    const existingWs = await this.prisma.workspace.findUnique({ where: { id: workspaceId } });
+    if (!existingWs) {
+      await this.prisma.workspace.create({
+        data: {
+          id: workspaceId,
+          name: 'Yugrow',
+          slug: 'yugrow-system',
+          type: 'PERSONAL',
+        },
+      });
+    }
+
+    // Ensure membership
+    const existingMember = await this.prisma.membership.findFirst({
+      where: { personId, workspaceId },
+    });
+    if (!existingMember) {
+      await this.prisma.membership.create({
+        data: { personId, workspaceId, membershipType: 'OWNER' },
+      });
+    }
+
+    // Create relationship type if needed
+    const existingType = await this.prisma.relationshipType.findFirst({
+      where: { name: CommunicationService.YUGROW_RELATIONSHIP_TYPE },
+    });
+    if (!existingType) {
+      await this.prisma.relationshipType.create({
+        data: {
+          name: CommunicationService.YUGROW_RELATIONSHIP_TYPE,
+          description: 'System',
+          isSystem: true,
+        },
+      });
+    }
+
+    return { personId, workspaceId };
+  }
+
+  /// Initialize the Yugrow system conversation for a person.
+  /// Creates a relationship + conversation if one doesn't already exist.
+  async initSystemConversation(personId: string): Promise<{ conversationId: string; isNew: boolean }> {
+    await this.ensureSystemPersona();
+    const yugrowId = CommunicationService.YUGROW_SYSTEM_PERSON_ID;
+    const workspaceId = CommunicationService.YUGROW_SYSTEM_WORKSPACE_ID;
+
+    // Find the system relationship type
+    const sysType = await this.prisma.relationshipType.findFirst({
+      where: { name: CommunicationService.YUGROW_RELATIONSHIP_TYPE },
+    });
+
+    // Check if relationship already exists (in either direction)
+    const existingRel = await this.prisma.relationship.findFirst({
+      where: {
+        OR: [
+          { sourceEntityId: personId, targetEntityId: yugrowId },
+          { sourceEntityId: yugrowId, targetEntityId: personId },
+        ],
+      },
+    });
+
+    let relationshipId: string;
+    let isNew = false;
+
+    if (!existingRel) {
+      isNew = true;
+      const rel = await this.prisma.relationship.create({
+        data: {
+          workspaceId: 'personal',
+          typeId: sysType?.id ?? '',
+          sourceEntityType: 'person',
+          sourceEntityId: personId,
+          targetEntityType: 'person',
+          targetEntityId: yugrowId,
+          status: 'CONNECTED',
+        },
+      });
+      relationshipId = rel.id;
+    } else {
+      relationshipId = existingRel.id;
+    }
+
+    // Check if conversation already exists
+    const existingConv = await this.prisma.conversation.findFirst({
+      where: { relationshipId },
+    });
+    if (existingConv) {
+      return { conversationId: existingConv.id, isNew: false };
+    }
+
+    // Create the system conversation
+    const conversation = await this.prisma.conversation.create({
+      data: {
+        relationshipId,
+        contextType: 'system',
+        contextId: 'yugrow-chat',
+      },
+    });
+
+    // Send the welcome message
+    const welcomeMessage =
+      'Welcome to Yugrow. 💚\n\n' +
+      'This chat is your direct line to us. You can use it to:\n\n' +
+      '• Ask questions\n' +
+      '• Report bugs\n' +
+      '• Suggest ideas\n' +
+      '• Share feedback\n' +
+      '• Tell us what feels confusing\n' +
+      '• Tell us what you love\n\n' +
+      'Every message is read. Some replies come from AI. Some come from our team.\n' +
+      'When your feedback becomes part of Yugrow, we\'ll let you know here.\n\n' +
+      '— Team Yugrow';
+
+    await this.prisma.message.create({
+      data: {
+        conversationId: conversation.id,
+        senderPersonId: yugrowId,
+        content: welcomeMessage,
+      },
+    });
+
+    return { conversationId: conversation.id, isNew: true };
+  }
+
+  /// Send a proactive message from Yugrow to a professional.
+  async sendSystemMessage(personId: string, content: string): Promise<void> {
+    const { conversationId } = await this.initSystemConversation(personId);
+    await this.prisma.message.create({
+      data: {
+        conversationId,
+        senderPersonId: CommunicationService.YUGROW_SYSTEM_PERSON_ID,
+        content,
+      },
+    });
+  }
+
+  /// Get the Yugrow system conversation for a person (with messages).
+  async getSystemConversation(personId: string) {
+    const { conversationId } = await this.initSystemConversation(personId);
+    const conversation = await this.prisma.conversation.findUnique({
+      where: { id: conversationId },
+      include: {
+        messages: { orderBy: { createdAt: 'asc' } },
+      },
+    });
+    return conversation;
+  }
 }

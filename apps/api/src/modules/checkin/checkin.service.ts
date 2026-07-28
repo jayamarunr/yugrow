@@ -916,15 +916,22 @@ export class CheckinService {
     // Find test attendees currently checked in
     const activePresences = await this.prisma.presence.findMany({
       where: { eventId, status: 'ACTIVE', expiresAt: { gte: new Date() } },
-      include: { person: true },
       orderBy: { startedAt: 'asc' },
     });
 
-    const testPersons = activePresences.filter(p =>
-      p.person.email.endsWith('@yugrow.test')
-    );
+    // Get person records for each presence
+    const personIds = activePresences.map(p => p.personId);
+    const persons = await this.prisma.person.findMany({
+      where: { id: { in: personIds } },
+    });
+    const personMap = new Map(persons.map(p => [p.id, p]));
 
-    if (testPersons.length < 2) {
+    const testPresences = activePresences.filter(p => {
+      const person = personMap.get(p.personId);
+      return person?.email.endsWith('@yugrow.test');
+    });
+
+    if (testPresences.length < 2) {
       return {
         message: 'Need at least 2 test attendees to generate conversations.',
         conversationsCreated: 0,
@@ -943,9 +950,9 @@ export class CheckinService {
     let conversationsCreated = 0;
 
     // Create connections between adjacent test attendees
-    for (let i = 0; i < testPersons.length - 1; i++) {
-      const personA = testPersons[i];
-      const personB = testPersons[i + 1];
+    for (let i = 0; i < testPresences.length - 1; i++) {
+      const personA = testPresences[i];
+      const personB = testPresences[i + 1];
 
       // Check if connection already exists
       const existingRel = await this.prisma.relationship.findFirst({
@@ -966,17 +973,13 @@ export class CheckinService {
 
       const relationship = await this.prisma.relationship.create({
         data: {
-          sourceEntityType: 'PERSON',
+          workspaceId: 'personal',
+          typeId: defaultType?.id ?? '',
+          sourceEntityType: 'person',
           sourceEntityId: personA.personId,
-          targetEntityType: 'PERSON',
+          targetEntityType: 'person',
           targetEntityId: personB.personId,
-          relationshipTypeId: defaultType?.id,
-          status: 'ACTIVE',
-          context: JSON.stringify({
-            eventId,
-            eventName: event.name,
-            venueId: event.venueId,
-          }),
+          status: 'CONNECTED' as any,
         },
       });
 
@@ -1016,20 +1019,7 @@ export class CheckinService {
       message: `Generated ${conversationsCreated} conversations with sample messages.`,
       conversationsCreated,
       totalAttendees: activePresences.length,
-      testAttendeesUsed: testPersons.length,
+      testAttendeesUsed: testPresences.length,
     };
-  }
-
-  // ═════════════════════════════════════════════════════════════════
-  // FOUNDER MODE — Force Check-in (bypasses geofence)
-  // ═════════════════════════════════════════════════════════════════
-
-  async forceCheckIn(data: {
-    personId: string;
-    workspaceId: string;
-    eventId: string;
-    venueId: string;
-  }) {
-    return this.checkIn({ ...data });
   }
 }

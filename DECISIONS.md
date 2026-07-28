@@ -518,4 +518,55 @@ Later: Custom domain (jayam.com)
 
 **Related:**
 - FD-024 (Conceptual Integrity) — Every feature strengthens an existing concept
+- Constitution §1.2 — The Professional Graph
+
+---
+
+## FD-032 — System Conversations
+
+**Date:** 2026-07-28
+**Category:** Product, Architecture
+
+Every person has a permanent, trusted conversation with Yugrow itself. This System Conversation is created automatically at onboarding completion and serves as the user's ongoing relationship channel with the platform.
+
+### What the Yugrow conversation contains
+
+```
+Yugrow
+│
+├── Welcome message
+├── Product tips & onboarding guidance
+├── Release notes & version updates
+├── Feedback & bug reports
+├── Beta invitations
+├── Survey requests
+├── Feature announcements
+├── Personal replies from the team
+├── Proactive messages (profile incomplete, follow-up reminders, etc.)
+└── Support (human-escalated when needed)
+```
+
+### Architectural principles
+
+1. **No new engine** — System Conversations are a product pattern on top of the existing Conversation Engine. The same models (Conversation, Message, Participant) are reused.
+2. **System actors are identified** — Yugrow is a `system_persona` participant in each conversation. Admins can reply as Yugrow.
+3. **Feedback pipeline** — Every message a professional sends to Yugrow enters a feedback pipeline (initially manual via Founder Console, later automated via Feedback Intelligence Engine).
+4. **Proactive messages** — Yugrow can initiate conversations (tips, reminders, announcements) through the same engine.
+5. **Success stories are special** — Messages flagged as "wins" (e.g., "I met my co-founder") enter a separate pipeline for founder review and potential marketing use.
+
+### What is NOT built yet
+
+The Feedback Intelligence Engine (automated classification, clustering, GitHub issue generation, user notification) remains dormant. Only the System Conversation itself is built in Alpha.
+
+### Why this is a Founder Decision
+
+This defines a long-term product philosophy:
+
+> *Every professional has a permanent, trusted conversation with Yugrow.*
+
+Not a support ticket system. Not a chatbot. A relationship channel. This shapes how Yugrow communicates with every professional for the lifetime of the platform.
+
+**Related:**
+- FUTURE-BOUNDED-CONTEXTS.md — Feedback Intelligence Engine (dormant), System Conversations (design note), Product Memory (design note)
+- PRODUCT-STORY-LANGUAGE.md — Yugrow Chat screen story
 - Constitution §0.2 (Three-Layer Model) — People are Reality; profiles are Interpretation

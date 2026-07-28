@@ -227,6 +227,22 @@ class ApiClient {
     return res.data as List<dynamic>;
   }
 
+  // ── System Conversation (Yugrow Chat) ────────────────────────
+
+  Future<Map<String, dynamic>> initSystemConversation(String personId) async {
+    final res = await _dio.post('/conversations/system/init', data: {'personId': personId});
+    return res.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>?> getSystemConversation(String personId) async {
+    try {
+      final res = await _dio.get('/conversations/system/$personId');
+      return res.data as Map<String, dynamic>?;
+    } catch (_) {
+      return null;
+    }
+  }
+
   // ── Professional Identity ────────────────────────────────────
 
   Future<Map<String, dynamic>> getProfessionalIdentity(String workspaceId) async {
