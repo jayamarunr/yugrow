@@ -85,6 +85,15 @@ Fix bugs found during testing. Prepare for first real meetup.
 | Motion Language | 2026-07-28 |
 | Illustration Language | 2026-07-28 |
 | Product Story Language | 2026-07-28 |
+| **FD-032 — System Conversations** | **2026-07-28** |
+
+## Next Priority
+
+1. **First Meetup Validation** — Real professionals using the app
+2. **Stability Sprint** — Fix issues from meetup
+3. **Play Store Alpha** — 20–50 external testers
+4. **Feedback Intelligence Engine** — After real feedback accumulates
+5. **AI assistance in Yugrow Chat** — After human-first workflow is proven
 
 ---
 
