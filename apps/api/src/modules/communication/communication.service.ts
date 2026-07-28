@@ -350,16 +350,17 @@ export class CommunicationService {
 
     // Send the welcome message
     const welcomeMessage =
-      'Welcome to Yugrow. 💚\n\n' +
-      'This chat is your direct line to us. You can use it to:\n\n' +
-      '• Ask questions\n' +
-      '• Report bugs\n' +
-      '• Suggest ideas\n' +
-      '• Share feedback\n' +
-      '• Tell us what feels confusing\n' +
-      '• Tell us what you love\n\n' +
-      'Every message is read. Some replies come from AI. Some come from our team.\n' +
-      'When your feedback becomes part of Yugrow, we\'ll let you know here.\n\n' +
+      '💚 Welcome to Yugrow\n\n' +
+      'This is your private conversation with the Yugrow team.\n\n' +
+      'Use this space anytime to:\n\n' +
+      '• Report a bug\n' +
+      '• Suggest a feature\n' +
+      '• Ask a question\n' +
+      '• Share screenshots\n' +
+      '• Tell us about your experience\n\n' +
+      'Every message here is reviewed by our team.\n' +
+      'When your feedback leads to an improvement, we\'ll let you know right here.\n\n' +
+      'We\'re building Yugrow together.\n\n' +
       '— Team Yugrow';
 
     await this.prisma.message.create({

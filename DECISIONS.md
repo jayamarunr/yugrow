@@ -549,10 +549,18 @@ Yugrow
 ### Architectural principles
 
 1. **No new engine** — System Conversations are a product pattern on top of the existing Conversation Engine. The same models (Conversation, Message, Participant) are reused.
-2. **System actors are identified** — Yugrow is a `system_persona` participant in each conversation. Admins can reply as Yugrow.
-3. **Feedback pipeline** — Every message a professional sends to Yugrow enters a feedback pipeline (initially manual via Founder Console, later automated via Feedback Intelligence Engine).
-4. **Proactive messages** — Yugrow can initiate conversations (tips, reminders, announcements) through the same engine.
-5. **Success stories are special** — Messages flagged as "wins" (e.g., "I met my co-founder") enter a separate pipeline for founder review and potential marketing use.
+2. **Conversation type vs. persona** — `type: system` distinguishes the conversation category. `persona` identifies the specific system actor (Yugrow, Assistant, Finance, HR, Broadcast, etc.). "System" is permanent. "Yugrow" is one persona.
+3. **Conversation priority** — System conversations are always pinned at the top of the inbox. Order: Pinned → System → Unread → Recent.
+4. **System actors are identified** — Yugrow is a `system_persona` participant in each conversation. Admins can reply as Yugrow.
+5. **Feedback pipeline** — Every message a professional sends to Yugrow enters a feedback pipeline (initially manual via Founder Console, later automated via Feedback Intelligence Engine).
+6. **Proactive messages** — Yugrow can initiate conversations (tips, reminders, announcements) through the same engine.
+7. **Success stories are special** — Messages flagged as "wins" (e.g., "I met my co-founder") enter a separate pipeline for founder review and potential marketing use.
+
+### Non-negotiable rule
+
+> **A System Conversation is never a bot-only channel. A professional must always be able to reach a real human through it. AI may assist, classify, summarize, or draft replies, but it must never become the sole participant.**
+
+This aligns with Yugrow's philosophy of trust and meaningful professional relationships. As AI capabilities grow, the experience must never feel like users are trapped behind automation. During Alpha, founder replies are the primary channel — exploit the fact that Alpha users love talking directly to founders.
 
 ### What is NOT built yet
 
