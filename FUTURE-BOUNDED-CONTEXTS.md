@@ -130,19 +130,28 @@ Sprint (sprint-plan document)
 | Field | Value |
 |-------|-------|
 | **Purpose** | Transform customer feedback into verified product decisions. Owns the pipeline: capture → evidence → validation → user story → sprint → implementation → verification → notify reporter. Ingests feedback from any channel (in-app shake, WhatsApp, Telegram, email, Play Store, GitHub) and unifies into a single feedback record. |
-| **Activation** | When multiple Yugrow products generate enough external feedback that manual triage no longer scales. |
+| **Activation** | When multiple Yugrow products generate enough external feedback that manual triage no longer scales. (1) Feedback volume exceeds manual triage capacity. (2) Multiple Yugrow products begin receiving user feedback. (3) Closing the feedback loop becomes a competitive advantage for retention. |
 | **Status** | Dormant. |
-| **Note** | Every message in a System Conversation (see below) is an input to this engine. The engine is not a support ticketing system — it is an evidence-driven product decision pipeline. Closely related to the System Conversations concept. |
+| **Note** | Every message in a System Conversation (see below) is an input to this engine. The engine is not a support ticketing system — it is an evidence-driven product decision pipeline. Closely related to the System Conversations concept. See also: Product Memory (design note below). |
 
 ### System Conversations *(Design Note — not a bounded context)*
 
 | Field | Value |
 |-------|-------|
-| **Purpose** | Platform-owned conversations that exist by default for every person or workspace. Examples: **Yugrow** (product updates, support, feedback, AI assistance), **Workspace Assistant** (announcements, onboarding), **Event Host** (event updates), **Billing** (future — invoices, payments). Built on the existing Conversation Engine — no new infrastructure required. |
+| **Purpose** | Platform-owned conversations that exist by default for every person or workspace. Examples: **Yugrow** (product updates, support, feedback, AI assistance, release notes, beta access, surveys, security notifications, billing alerts, workspace health, productivity tips), **Workspace Assistant** (announcements, onboarding), **Event Host** (event updates), **Billing** (future — invoices, payments). Built on the existing Conversation Engine — no new infrastructure required. |
 | **Activation** | When the Feedback Intelligence Engine activates, or when user research shows professionals expect a direct communication channel with the platform. |
 | **Status** | Design note. Conversation Engine supports this today. |
-| **Principle** | *Every relationship matters — including the relationship between the professional and Yugrow itself.* |
+| **Principle** | *Every relationship matters — including the relationship between the professional and Yugrow itself. The relationship with the product should not end when a ticket closes.* |
 | **Note** | This is not a separate engine. It's a product pattern on top of the existing Conversation Engine. The first implementation is a default "Yugrow" chat created at onboarding completion, with a welcome message explaining it's their direct line to the team. Supports rich cards (bug status, feature request status, release notes), AI-assisted answers, and human escalation. See `docs/PRODUCT-STORY-LANGUAGE.md` for narrative framing.
+
+### Product Memory *(Design Note — not a bounded context)*
+
+| Field | Value |
+|-------|-------|
+| **Purpose** | The Yugrow conversation remembers its journey with each professional. Past feedback, feature requests, bug reports, milestones — all accessible within the conversation context. "You reported Venue Search in April. Fixed in v1.2." "You were one of the first 100 founders to host an event." |
+| **Activation** | When the System Conversation pattern is active and the Feedback Intelligence Engine has accumulated enough historical feedback data per professional to make recall meaningful. |
+| **Status** | Design note. Not an engine — a capability of the System Conversation + Feedback Engine combination. |
+| **Principle** | *The product should remember the relationship. Not just the last message — the entire journey.* |
 
 ---
 

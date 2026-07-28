@@ -312,7 +312,10 @@ Note:       Created automatically at onboarding completion.
             Not a support chat — a Product Relationship.
             Features: feedback cards, status updates, release notes,
             AI-assisted answers, human escalation.
-            See FUTURE-BOUNDED-CONTEXTS.md — System Conversations.
+            Over time, the conversation remembers the journey:
+            past feedback, feature requests, milestones.
+            See FUTURE-BOUNDED-CONTEXTS.md — System Conversations,
+            Product Memory.
 ```
 
 ### Profile Screen (self)
