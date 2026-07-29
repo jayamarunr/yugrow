@@ -5,6 +5,7 @@ import 'package:yugrow_mobile/core/theme/app_colors.dart';
 import 'package:yugrow_mobile/core/theme/app_spacing.dart';
 import 'package:yugrow_mobile/core/theme/app_radius.dart';
 import 'package:yugrow_mobile/features/arrival/models/arrival_models.dart';
+import 'package:yugrow_mobile/features/arrival/models/event_state.dart';
 
 class EventCard extends StatelessWidget {
   final BusinessEvent event;
@@ -249,16 +250,16 @@ class EventCard extends StatelessWidget {
                     width: double.infinity,
                     height: 44,
                     child: OutlinedButton(
-                      onPressed: onJoin,
+                      onPressed: EventState.canCheckInEvent(event) ? onJoin : null,
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.primary,
-                        side: const BorderSide(color: AppColors.border),
+                        foregroundColor: EventState.canCheckInEvent(event) ? AppColors.primary : AppColors.textDisabled,
+                        side: BorderSide(color: EventState.canCheckInEvent(event) ? AppColors.border : AppColors.textDisabled.withValues(alpha: 0.3)),
                         shape: RoundedRectangleBorder(
                           borderRadius: AppRadius.lgCircular,
                         ),
                       ),
                       child: Text(
-                        "I'm Here",
+                        EventState.checkInStatusForEvent(event) ?? "I'm Here",
                         style: GoogleFonts.inter(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

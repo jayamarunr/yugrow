@@ -150,6 +150,18 @@ class ApiClient {
     return res.data as Map<String, dynamic>;
   }
 
+  // ── Founder Inbox ───────────────────────────────────────────
+
+  Future<Map<String, dynamic>> getFeedbackInbox() async {
+    final res = await _dio.get('/checkin/test/feedback');
+    return res.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> replyToFeedback(String personId, String content) async {
+    final res = await _dio.post('/checkin/test/feedback/reply', data: { 'personId': personId, 'content': content });
+    return res.data as Map<String, dynamic>;
+  }
+
   Future<Map<String, dynamic>> founderLogin() async {
     final res = await _dio.post('/checkin/test/login');
     return res.data as Map<String, dynamic>;
@@ -241,6 +253,63 @@ class ApiClient {
     } catch (_) {
       return null;
     }
+  }
+
+  // ── Founder Tools: System Messages ──────────────────────────
+
+  Future<Map<String, dynamic>> sendReleaseNote({
+    required String personId,
+    required String version,
+    required String title,
+    required List<String> changes,
+    String? actionLabel,
+  }) async {
+    final res = await _dio.post('/conversations/system/release-note', data: {
+      'personId': personId,
+      'version': version,
+      'title': title,
+      'changes': changes,
+      'actionLabel': actionLabel,
+    });
+    return res.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> sendAnnouncement({
+    required String personId,
+    required String title,
+    String? date,
+    String? location,
+    String? description,
+    String? actionLabel,
+  }) async {
+    final res = await _dio.post('/conversations/system/announcement', data: {
+      'personId': personId,
+      'title': title,
+      'date': date,
+      'location': location,
+      'description': description,
+      'actionLabel': actionLabel,
+    });
+    return res.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> sendFeedbackStatus({
+    required String personId,
+    required String title,
+    required String status,
+    String? statusColor,
+    String? sprint,
+    String? note,
+  }) async {
+    final res = await _dio.post('/conversations/system/feedback-status', data: {
+      'personId': personId,
+      'title': title,
+      'status': status,
+      'statusColor': statusColor,
+      'sprint': sprint,
+      'note': note,
+    });
+    return res.data as Map<String, dynamic>;
   }
 
   // ── Professional Identity ────────────────────────────────────

@@ -8,12 +8,16 @@ class BusinessEvent {
   final int professionalCount;
   final int connectionsAttending;
   final int expertiseMatches;
-  final String status; // 'live', 'starting_soon', 'today', 'tomorrow'
+  final String status;
+  final DateTime? startDate;
+  final DateTime? endDate;
   final int startHour;
   final int startMinute;
   final int dayNumber;
   final int totalDays;
   final String description;
+  final String venueAddress;
+  final String organizerName;
   final String ticketUrl;
   final EventType eventType;
   final int businessCount;
@@ -33,11 +37,15 @@ class BusinessEvent {
     this.connectionsAttending = 0,
     this.expertiseMatches = 0,
     required this.status,
+    this.startDate,
+    this.endDate,
     this.startHour = 9,
     this.startMinute = 0,
     this.dayNumber = 1,
     this.totalDays = 1,
     this.description = '',
+    this.venueAddress = '',
+    this.organizerName = '',
     this.ticketUrl = '',
     this.eventType = EventType.conference,
     this.businessCount = 0,

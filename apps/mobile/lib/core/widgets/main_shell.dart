@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../api/api_client.dart';
+import '../auth/auth_service.dart';
 
-class MainShell extends StatefulWidget {
+class MainShell extends ConsumerStatefulWidget {
   final Widget child;
   const MainShell({super.key, required this.child});
 
   @override
-  State<MainShell> createState() => _MainShellState();
+  ConsumerState<MainShell> createState() => _MainShellState();
 }
 
-class _MainShellState extends State<MainShell> {
+class _MainShellState extends ConsumerState<MainShell> {
   final _api = ApiClient();
   bool _hasActivePresence = false;
 
@@ -21,7 +23,9 @@ class _MainShellState extends State<MainShell> {
   }
 
   Future<void> _checkPresence() async {
-    final presence = await _api.getActivePresence('person-self');
+    final pid = ref.read(authProvider).person?['id'] as String?;
+    if (pid == null) return;
+    final presence = await _api.getActivePresence(pid);
     if (mounted) {
       setState(() => _hasActivePresence = presence != null && presence.isNotEmpty);
     }
@@ -30,8 +34,9 @@ class _MainShellState extends State<MainShell> {
   int _currentIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.toString();
     if (location.startsWith('/live')) return 1;
-    if (location.startsWith('/network')) return 2;
-    if (location.startsWith('/me')) return 3;
+    if (location.startsWith('/messages')) return 2;
+    if (location.startsWith('/network')) return 3;
+    if (location.startsWith('/me')) return 4;
     return 0;
   }
 
@@ -46,8 +51,9 @@ class _MainShellState extends State<MainShell> {
           switch (i) {
             case 0: context.go('/');
             case 1: context.go('/live');
-            case 2: context.go('/network');
-            case 3: context.go('/me');
+            case 2: context.go('/messages');
+            case 3: context.go('/network');
+            case 4: context.go('/me');
           }
         },
         items: [
@@ -61,6 +67,7 @@ class _MainShellState extends State<MainShell> {
                 : const Icon(Icons.explore),
             label: 'Live',
           ),
+          const BottomNavigationBarItem(icon: Icon(Icons.chat_outlined), activeIcon: Icon(Icons.chat), label: 'Messages'),
           const BottomNavigationBarItem(icon: Icon(Icons.people_outline), activeIcon: Icon(Icons.people), label: 'Network'),
           const BottomNavigationBarItem(icon: Icon(Icons.person_outline), activeIcon: Icon(Icons.person), label: 'Me'),
         ],

@@ -83,7 +83,11 @@ export class CommunicationService {
       orderBy: { updatedAt: 'desc' },
     });
 
-    return conversations;
+    // Attach contextType to each conversation for frontend type detection
+    return conversations.map((c) => ({
+      ...c,
+      contextType: c.contextType,
+    }));
   }
 
   async getConversation(conversationId: string, personId: string) {
@@ -105,7 +109,12 @@ export class CommunicationService {
 
   // ── Send message ─────────────────────────────────────────────────
 
-  async sendMessage(conversationId: string, senderPersonId: string, content: string) {
+  async sendMessage(
+    conversationId: string,
+    senderPersonId: string,
+    content: string,
+    type?: string,
+  ) {
     const conversation = await this.prisma.conversation.findUnique({
       where: { id: conversationId },
     });
@@ -122,6 +131,7 @@ export class CommunicationService {
       data: {
         conversationId,
         senderPersonId,
+        type: (type?.toUpperCase() as any) ?? 'TEXT',
         content: content.trim(),
       },
     });
@@ -136,6 +146,7 @@ export class CommunicationService {
       conversationId,
       senderPersonId,
       messageLength: content.length,
+      type: type ?? 'TEXT',
     });
 
     return message;
@@ -375,15 +386,71 @@ export class CommunicationService {
   }
 
   /// Send a proactive message from Yugrow to a professional.
-  async sendSystemMessage(personId: string, content: string): Promise<void> {
+  async sendSystemMessage(
+    personId: string,
+    content: string,
+    type?: string,
+  ): Promise<void> {
     const { conversationId } = await this.initSystemConversation(personId);
     await this.prisma.message.create({
       data: {
         conversationId,
         senderPersonId: CommunicationService.YUGROW_SYSTEM_PERSON_ID,
+        type: (type?.toUpperCase() as any) ?? 'TEXT',
         content,
       },
     });
+  }
+
+  /// Send a release note to a professional.
+  async sendReleaseNote(
+    personId: string,
+    data: { version: string; title: string; changes: string[]; actionLabel?: string },
+  ): Promise<void> {
+    await this.sendSystemMessage(personId, JSON.stringify(data), 'RELEASE_NOTE');
+  }
+
+  /// Send an announcement to a professional.
+  async sendAnnouncement(
+    personId: string,
+    data: { title: string; date?: string; location?: string; description?: string; actionLabel?: string },
+  ): Promise<void> {
+    await this.sendSystemMessage(personId, JSON.stringify(data), 'ANNOUNCEMENT');
+  }
+
+  /// Send a feedback status update to a professional.
+  async sendFeedbackStatus(
+    personId: string,
+    data: { title: string; status: string; statusColor?: string; sprint?: string; note?: string },
+  ): Promise<void> {
+    await this.sendSystemMessage(personId, JSON.stringify(data), 'FEEDBACK_STATUS');
+  }
+
+  /// Send a proactive message from Yugrow to all professionals with system conversations.
+  async broadcastSystemMessage(
+    content: string,
+    type?: string,
+  ): Promise<{ sent: number }> {
+    // Find all system conversations
+    const convs = await this.prisma.conversation.findMany({
+      where: { contextType: 'system', contextId: 'yugrow-chat' },
+      select: { id: true, relationshipId: true },
+    });
+
+    const yugrowId = CommunicationService.YUGROW_SYSTEM_PERSON_ID;
+
+    for (const conv of convs) {
+      await this.prisma.message.create({
+        data: {
+          conversationId: conv.id,
+          senderPersonId: yugrowId,
+          type: (type?.toUpperCase() as any) ?? 'TEXT',
+          content,
+        },
+      });
+    }
+
+    return { sent: convs.length };
   }
 
   /// Get the Yugrow system conversation for a person (with messages).

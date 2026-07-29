@@ -51,9 +51,9 @@ export class CommunicationController {
   @Post(':id/messages')
   async sendMessage(
     @Param('id') id: string,
-    @Body() body: { senderPersonId: string; content: string },
+    @Body() body: { senderPersonId: string; content: string; type?: string },
   ) {
-    return this.communicationService.sendMessage(id, body.senderPersonId, body.content);
+    return this.communicationService.sendMessage(id, body.senderPersonId, body.content, body.type);
   }
 
   // ── Get messages in a conversation ───────────────────────────────
@@ -88,5 +88,76 @@ export class CommunicationController {
   @Post('system/ensure')
   async ensureSystemPersona() {
     return this.communicationService.ensureSystemPersona();
+  }
+
+  // ═════════════════════════════════════════════════════════════════
+  // FOUNDER TOOLS — Send structured messages as Yugrow
+  // ═════════════════════════════════════════════════════════════════
+
+  /// Send a release note to a professional.
+  @Post('system/release-note')
+  async sendReleaseNote(@Body() body: {
+    personId: string;
+    version: string;
+    title: string;
+    changes: string[];
+    actionLabel?: string;
+  }) {
+    await this.communicationService.sendReleaseNote(body.personId, {
+      version: body.version,
+      title: body.title,
+      changes: body.changes,
+      actionLabel: body.actionLabel,
+    });
+    return { message: 'Release note sent.' };
+  }
+
+  /// Send an announcement to a professional.
+  @Post('system/announcement')
+  async sendAnnouncement(@Body() body: {
+    personId: string;
+    title: string;
+    date?: string;
+    location?: string;
+    description?: string;
+    actionLabel?: string;
+  }) {
+    await this.communicationService.sendAnnouncement(body.personId, {
+      title: body.title,
+      date: body.date,
+      location: body.location,
+      description: body.description,
+      actionLabel: body.actionLabel,
+    });
+    return { message: 'Announcement sent.' };
+  }
+
+  /// Send a feedback status update to a professional.
+  @Post('system/feedback-status')
+  async sendFeedbackStatus(@Body() body: {
+    personId: string;
+    title: string;
+    status: string;
+    statusColor?: string;
+    sprint?: string;
+    note?: string;
+  }) {
+    await this.communicationService.sendFeedbackStatus(body.personId, {
+      title: body.title,
+      status: body.status,
+      statusColor: body.statusColor,
+      sprint: body.sprint,
+      note: body.note,
+    });
+    return { message: 'Feedback status sent.' };
+  }
+
+  /// Broadcast a message to all professionals with system conversations.
+  @Post('system/broadcast')
+  async broadcastSystemMessage(@Body() body: {
+    content: string;
+    type?: string;
+  }) {
+    return this.communicationService.broadcastSystemMessage(body.content, body.type);
   }
 }

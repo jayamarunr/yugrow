@@ -200,12 +200,20 @@ export class IdentityService {
   }
 
   async updateProfessionalIdentity(personId: string, workspaceId: string, data: any) {
-    const existing = await this.prisma.professionalIdentity.findFirst({
+    let existing = await this.prisma.professionalIdentity.findFirst({
       where: { personId, workspaceId },
     });
 
+    // Auto-create if it doesn't exist (same pattern as GET)
     if (!existing) {
-      throw new NotFoundException('Professional identity not found. Create it first by calling GET.');
+      const person = await this.prisma.person.findUnique({ where: { id: personId } });
+      existing = await this.prisma.professionalIdentity.create({
+        data: {
+          personId,
+          workspaceId,
+          name: person ? `${person.firstName ?? ''} ${person.lastName ?? ''}`.trim() : 'Unknown',
+        },
+      });
     }
 
     const updated = await this.prisma.professionalIdentity.update({

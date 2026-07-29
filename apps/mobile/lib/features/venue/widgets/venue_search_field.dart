@@ -51,9 +51,9 @@ class _VenueSearchFieldState extends State<VenueSearchField> {
       mainAxisSize: MainAxisSize.min,
       children: [
         // ── Helper text ──
-        Text(
+        const Text(
           'Where is your event?',
-          style: const TextStyle(fontSize: 12, color: Colors.grey),
+          style: TextStyle(fontSize: 12, color: Colors.grey),
         ),
         const SizedBox(height: 8),
 
@@ -75,8 +75,8 @@ class _VenueSearchFieldState extends State<VenueSearchField> {
                     color: Colors.green[100],
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(LucideIcons.map_pin,
-                      size: 18, color: const Color(0xFF166534)),
+                  child: const Icon(LucideIcons.map_pin,
+                      size: 18, color: Color(0xFF166534)),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -127,21 +127,21 @@ class _VenueSearchFieldState extends State<VenueSearchField> {
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: Colors.grey[300]!),
               ),
-              child: Row(
+              child: const Row(
                 children: [
-                  const Icon(LucideIcons.map_pin,
+                  Icon(LucideIcons.map_pin,
                       size: 18, color: Color(0xFF0F766E)),
-                  const SizedBox(width: 10),
+                  SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       'Search or create a venue...',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey,
                       ),
                     ),
                   ),
-                  const Icon(Icons.keyboard_arrow_up,
+                  Icon(Icons.keyboard_arrow_up,
                       size: 18, color: Colors.grey),
                 ],
               ),

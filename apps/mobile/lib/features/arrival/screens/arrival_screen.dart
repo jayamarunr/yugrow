@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yugrow_mobile/core/theme/app_colors.dart';
 import 'package:yugrow_mobile/core/theme/app_spacing.dart';
 import 'package:yugrow_mobile/core/theme/app_radius.dart';
+import 'package:yugrow_mobile/core/auth/auth_service.dart';
 import '../models/arrival_models.dart';
 import '../repository/arrival_repository.dart';
-import '../../discovery/screens/discovery_screen.dart';
+import '../../checkin/live_screen.dart';
 import '../../../core/api/api_client.dart';
 import '../../../core/widgets/founder_mode_banner.dart';
 
-class ArrivalScreen extends StatefulWidget {
+class ArrivalScreen extends ConsumerStatefulWidget {
   const ArrivalScreen({super.key});
 
   @override
-  State<ArrivalScreen> createState() => _ArrivalScreenState();
+  ConsumerState<ArrivalScreen> createState() => _ArrivalScreenState();
 }
 
-class _ArrivalScreenState extends State<ArrivalScreen> {
+class _ArrivalScreenState extends ConsumerState<ArrivalScreen> {
   final _repository = ArrivalRepository();
   final _api = ApiClient();
 
@@ -31,6 +33,9 @@ class _ArrivalScreenState extends State<ArrivalScreen> {
   bool _isCheckingIn = false;
   bool _isCheckedIn = false;
   bool _restoringPresence = true;
+
+  String? get _personId => ref.read(authProvider).person?['id'] as String?;
+  String? get _workspaceId => ref.read(authProvider).workspace?['id'] as String?;
 
   @override
   void initState() {
@@ -50,29 +55,27 @@ class _ArrivalScreenState extends State<ArrivalScreen> {
   }
 
   Future<void> _restorePresence() async {
+    final pid = _personId;
+    if (pid == null) return;
     try {
-      final presence = await _api.getActivePresence('person-self');
+      final presence = await _api.getActivePresence(pid);
       if (mounted) {
         if (presence != null && presence.isNotEmpty) {
           final eventData = presence['event'] as Map<String, dynamic>?;
-          if (eventData != null) {
-            setState(() {
-              _selectedEvent = BusinessEvent(
-                id: eventData['id'] as String? ?? '',
-                name: eventData['name'] as String? ?? 'Event',
-                venue: (eventData['venue'] as Map<String, dynamic>?)?['name'] as String? ?? '',
-                distance: '',
-                professionalCount: 0,
-                businessCount: 0,
-                status: 'live',
+          if (eventData != null && context.mounted) {
+            // AH-018: Active presence found — navigate directly to Live
+            final eventId = eventData['id'] as String? ?? '';
+            if (eventId.isNotEmpty) {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (_) => LiveScreen(eventId: eventId),
+                ),
               );
-              _isCheckedIn = true;
-              _restoringPresence = false;
-            });
+            }
+            return;
           }
-        } else {
-          setState(() => _restoringPresence = false);
         }
+        setState(() => _restoringPresence = false);
       }
     } catch (_) {
       if (mounted) setState(() => _restoringPresence = false);
@@ -81,15 +84,24 @@ class _ArrivalScreenState extends State<ArrivalScreen> {
 
 
 
-  void _onCheckIn() {
-    HapticFeedback.mediumImpact();
-    final eventName = _selectedEvent?.name ?? '';
-    setState(() {
-      _isCheckingIn = true;
-    });
+  Future<void> _onCheckIn() async {
+    final pid = _personId;
+    final wid = _workspaceId;
+    final event = _selectedEvent;
+    if (pid == null || wid == null || event == null) return;
 
-    // Simulate instant check-in with a tiny delay for the animation
-    Future.delayed(const Duration(milliseconds: 300), () {
+    HapticFeedback.mediumImpact();
+    setState(() => _isCheckingIn = true);
+
+    try {
+      // AH-022: Use authenticated personId and workspaceId from auth provider
+      await _api.checkIn({
+        'personId': pid,
+        'workspaceId': wid,
+        'eventId': event.id,
+        'venueId': '',
+      });
+
       if (mounted) {
         HapticFeedback.heavyImpact();
         setState(() {
@@ -97,22 +109,31 @@ class _ArrivalScreenState extends State<ArrivalScreen> {
           _isCheckedIn = true;
         });
 
-        // After showing confirmation, navigate to Discovery
-        Future.delayed(const Duration(seconds: 3), () {
-          if (mounted) {
+        // AH-021: After celebration, navigate to Live
+        Future.delayed(const Duration(seconds: 2), () {
+          if (mounted && context.mounted) {
             setState(() {
               _isCheckedIn = false;
               _selectedEvent = null;
             });
-            Navigator.of(context).push(
+            Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (_) => DiscoveryScreen(eventName: eventName),
+                builder: (_) => LiveScreen(eventId: event.id),
               ),
             );
           }
         });
       }
-    });
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isCheckingIn = false);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Check-in failed: ${e.toString()}'),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: AppColors.error,
+        ));
+      }
+    }
   }
 
   void _onBack() {

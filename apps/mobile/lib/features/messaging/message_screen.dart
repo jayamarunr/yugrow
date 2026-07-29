@@ -7,6 +7,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_service.dart';
+import 'widgets/message_renderer.dart';
 
 class MessageScreen extends ConsumerStatefulWidget {
   final String conversationId;
@@ -179,8 +180,8 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
         title: Row(
           children: [
             if (isSystemConv)
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
+              const Padding(
+                padding: EdgeInsets.only(right: 8),
                 child: Icon(Icons.favorite, color: Colors.white, size: 18),
               ),
             Expanded(
@@ -250,83 +251,17 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                               _messages[i] as Map<String, dynamic>;
                           final isMe =
                               m['senderPersonId'] == _personId;
-                          final content = m['content'] as String? ?? '';
                           final time =
                               _formatTime(m['createdAt'] as String?);
                           final isLast =
                               i == _messages.length - 1 && isMe;
 
-                          return Align(
-                            alignment: isMe
-                                ? Alignment.centerRight
-                                : Alignment.centerLeft,
-                            child: Column(
-                              crossAxisAlignment: isMe
-                                  ? CrossAxisAlignment.end
-                                  : CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  margin:
-                                      const EdgeInsets.only(bottom: 2),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 14, vertical: 10),
-                                  decoration: BoxDecoration(
-                                    color: isMe
-                                        ? const Color(0xFF0F766E)
-                                        : Colors.grey[200],
-                                    borderRadius:
-                                        BorderRadius.circular(18)
-                                            .copyWith(
-                                      bottomRight: isMe
-                                          ? const Radius.circular(4)
-                                          : null,
-                                      bottomLeft: !isMe
-                                          ? const Radius.circular(4)
-                                          : null,
-                                    ),
-                                  ),
-                                  constraints: BoxConstraints(
-                                      maxWidth:
-                                          MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.75),
-                                  child: Text(
-                                    content,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: isMe
-                                          ? Colors.white
-                                          : Colors.black87,
-                                    ),
-                                  ),
-                                ),
-                                // Timestamp + read receipt
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    left: isMe ? 0 : 4,
-                                    right: isMe ? 4 : 0,
-                                    bottom: 6,
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(time,
-                                          style: TextStyle(
-                                              fontSize: 10,
-                                              color: Colors.grey[500])),
-                                      if (isLast) ...[
-                                        const SizedBox(width: 4),
-                                        Icon(LucideIcons.check_check,
-                                            size: 12,
-                                            color: Colors.grey[400]),
-                                      ],
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
+                          // Mark as last for read receipt display
+                          if (isLast) {
+                            m['isLast'] = true;
+                          }
+
+                          return buildMessage(m, isMe: isMe, time: time);
                         },
                       ),
           ),

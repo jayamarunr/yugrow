@@ -144,6 +144,21 @@ export class CheckinController {
     return this.checkinService.checkIn(body);
   }
 
+  // ── Founder Inbox: System Conversation Feedback ─────────────
+
+  @Get('test/feedback')
+  async getFeedbackInbox() {
+    return this.checkinService.getFeedbackInbox();
+  }
+
+  @Post('test/feedback/reply')
+  async replyToFeedback(@Body() body: {
+    personId: string;
+    content: string;
+  }) {
+    return this.checkinService.replyToFeedback(body.personId, body.content);
+  }
+
   // ═════════════════════════════════════════════════════════════════
   // PRESENCE ("I'm Here")
   // ═════════════════════════════════════════════════════════════════

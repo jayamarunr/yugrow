@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/api/api_client.dart';
+import '../../core/auth/auth_service.dart';
 import '../profile/widgets/profile_card.dart';
 
-class LiveScreen extends StatefulWidget {
+class LiveScreen extends ConsumerStatefulWidget {
   final String eventId;
   const LiveScreen({super.key, required this.eventId});
   @override
-  State<LiveScreen> createState() => _LiveScreenState();
+  ConsumerState<LiveScreen> createState() => _LiveScreenState();
 }
 
-class _LiveScreenState extends State<LiveScreen> {
+class _LiveScreenState extends ConsumerState<LiveScreen> {
   final _api = ApiClient();
   List<dynamic> _attendees = [];
   bool _loading = true;
+
+  String? get _personId => ref.read(authProvider).person?['id'] as String?;
+  String? get _workspaceId => ref.read(authProvider).workspace?['id'] as String?;
 
   @override
   void initState() {
@@ -21,20 +26,25 @@ class _LiveScreenState extends State<LiveScreen> {
   }
 
   Future<void> _loadAttendees() async {
+    final pid = _personId;
+    if (pid == null) return;
     try {
-      final attendees = await _api.getLiveAttendees(widget.eventId, viewerPersonId: 'person-001');
+      final attendees = await _api.getLiveAttendees(widget.eventId, viewerPersonId: pid);
       if (mounted) setState(() { _attendees = attendees; _loading = false; });
     } catch (e) {
       if (mounted) setState(() => _loading = false);
     }
   }
 
-  Future<void> _connect(String personId) async {
+  Future<void> _connect(String targetPersonId) async {
+    final pid = _personId;
+    final wid = _workspaceId;
+    if (pid == null || wid == null) return;
     try {
       await _api.sendConnectionRequest({
-        'fromPersonId': 'person-001',
-        'toPersonId': personId,
-        'workspaceId': 'workspace-001',
+        'fromPersonId': pid,
+        'toPersonId': targetPersonId,
+        'workspaceId': wid,
         'eventId': widget.eventId,
         'venueId': '',
       });
@@ -51,6 +61,7 @@ class _LiveScreenState extends State<LiveScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final pid = _personId;
     return Scaffold(
       appBar: AppBar(title: const Text('People Here Now')),
       body: _loading
@@ -109,12 +120,13 @@ class _LiveScreenState extends State<LiveScreen> {
                           .whereType<String>()
                           .where((s) => s.isNotEmpty)
                           .join(' · ');
+                      final isMe = pid != null && a['personId'] == pid;
                       return ProfileCard(
                         compact: true,
                         name: name,
                         headline: headline.isNotEmpty ? headline : null,
                         onTap: () {},
-                        trailing: a['personId'] != 'person-001'
+                        trailing: !isMe
                             ? TextButton(
                                 onPressed: () => _connect(a['personId']),
                                 child: const Text('Connect',

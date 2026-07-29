@@ -9,6 +9,7 @@ import '../../features/home/home_screen.dart';
 import '../../features/network/network_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../features/messaging/message_screen.dart';
+import '../../features/messaging/conversations_screen.dart';
 import '../../features/events/public_event_screen.dart';
 import '../auth/auth_service.dart';
 import '../widgets/main_shell.dart';
@@ -59,6 +60,7 @@ final appRouter = GoRouter(
         GoRoute(path: '/', builder: (_, __) => const HomeScreen()),
         GoRoute(path: '/live', builder: (_, __) => const ArrivalScreen()),
         GoRoute(path: '/network', builder: (_, __) => const NetworkScreen()),
+        GoRoute(path: '/messages', builder: (_, __) => const ConversationsScreen()),
         GoRoute(path: '/me', builder: (_, __) => const ProfileScreen()),
         GoRoute(path: '/conversations/:id', builder: (_, state) => MessageScreen(conversationId: state.pathParameters['id']!)),
       ],

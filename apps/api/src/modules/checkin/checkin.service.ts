@@ -1022,4 +1022,81 @@ export class CheckinService {
       testAttendeesUsed: testPresences.length,
     };
   }
+
+  // ═════════════════════════════════════════════════════════════════
+  // FOUNDER INBOX — System Conversation Feedback
+  // ═════════════════════════════════════════════════════════════════
+
+  async getFeedbackInbox() {
+    // Find all system conversations (contextType = 'system', contextId = 'yugrow-chat')
+    const convs = await this.prisma.conversation.findMany({
+      where: { contextType: 'system', contextId: 'yugrow-chat' },
+      include: {
+        messages: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+          select: { id: true, content: true, createdAt: true, senderPersonId: true },
+        },
+        _count: { select: { messages: true } },
+      },
+      orderBy: { updatedAt: 'desc' },
+    });
+
+    // Resolve the person info for each conversation
+    const yugrowId = CommunicationService.YUGROW_SYSTEM_PERSON_ID;
+    const inboxItems = [];
+
+    for (const conv of convs) {
+      // Find the real person from the relationship
+      const rel = await this.prisma.relationship.findUnique({
+        where: { id: conv.relationshipId },
+      });
+      if (!rel) continue;
+
+      const realPersonId = rel.sourceEntityId === yugrowId ? rel.targetEntityId : rel.sourceEntityId;
+      const person = await this.prisma.person.findUnique({ where: { id: realPersonId } });
+      if (!person) continue;
+
+      const prof = await this.prisma.professionalIdentity.findUnique({
+        where: { personId: realPersonId },
+        select: { name: true, title: true, company: true },
+      });
+
+      const lastMsg = conv.messages[0];
+      inboxItems.push({
+        personId: realPersonId,
+        name: prof?.name ?? `${person.firstName} ${person.lastName}`.trim(),
+        title: prof?.title ?? null,
+        company: prof?.company ?? null,
+        email: person.email,
+        lastMessage: lastMsg ? {
+          id: lastMsg.id,
+          content: lastMsg.content,
+          createdAt: lastMsg.createdAt,
+          isFromProfessional: lastMsg.senderPersonId !== yugrowId,
+        } : null,
+        messageCount: conv._count.messages,
+        updatedAt: conv.updatedAt,
+      });
+    }
+
+    // Sort: unread (professional sent last) first, then by recency
+    inboxItems.sort((a, b) => {
+      const aNeedsReply = a.lastMessage?.isFromProfessional ?? false;
+      const bNeedsReply = b.lastMessage?.isFromProfessional ?? false;
+      if (aNeedsReply !== bNeedsReply) return aNeedsReply ? -1 : 1;
+      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+    });
+
+    return {
+      total: inboxItems.length,
+      unread: inboxItems.filter(i => i.lastMessage?.isFromProfessional).length,
+      items: inboxItems,
+    };
+  }
+
+  async replyToFeedback(personId: string, content: string) {
+    await this.communicationService.sendSystemMessage(personId, content);
+    return { message: 'Reply sent.', personId };
+  }
 }

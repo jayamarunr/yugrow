@@ -201,13 +201,16 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
 
   Future<void> _checkInNow() async {
     if (_createdEvent == null) return;
+    final pid = ref.read(authProvider).person?['id'] as String?;
+    final wid = ref.read(authProvider).workspace?['id'] as String?;
+    if (pid == null || wid == null) return;
     final eventId = _createdEvent!['id'] as String;
     final venueId = (_createdEvent!['venue'] as Map<String, dynamic>?)?['id'] as String? ?? '';
 
     try {
       await _api.checkIn({
-        'personId': 'person-self',
-        'workspaceId': 'personal',
+        'personId': pid,
+        'workspaceId': wid,
         'eventId': eventId,
         'venueId': venueId,
       });
@@ -234,15 +237,6 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
       case 'INVITE_ONLY': return 'Invite Only';
       default: return _visibility;
     }
-  }
-
-  String get _accessDescription {
-    final isPublic = _visibility == 'PUBLIC';
-    final isInstant = _attendance == 'OPEN';
-    if (isPublic && isInstant) return 'Anyone can discover and join this event immediately.';
-    if (isPublic && !isInstant) return 'Anyone can discover this event. You approve who joins.';
-    if (!isPublic && isInstant) return 'Only people with your private link can discover and join this event.';
-    return 'Only people with your private link can request to join.';
   }
 
   @override
@@ -690,6 +684,17 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
     final venueData = event?['venue'] as Map<String, dynamic>?;
     final venueName = venueData?['name'] as String? ?? '';
     final eventId = event?['id'] as String? ?? '';
+    final startDateStr = event?['startDate'] as String?;
+    final endDateStr = event?['endDate'] as String?;
+
+    // Determine if check-in should be available
+    DateTime? startDate;
+    DateTime? endDate;
+    if (startDateStr != null) startDate = DateTime.tryParse(startDateStr);
+    if (endDateStr != null) endDate = DateTime.tryParse(endDateStr);
+    final now = DateTime.now();
+    final isEventLive = startDate != null && endDate != null
+        && now.isAfter(startDate) && now.isBefore(endDate);
 
     return SingleChildScrollView(
       child: Center(
@@ -779,12 +784,13 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
                 width: double.infinity,
                 height: 48,
                 child: FilledButton.icon(
-                  onPressed: _checkInNow,
+                  onPressed: isEventLive ? _checkInNow : null,
                   icon: const Icon(LucideIcons.log_in, size: 18),
-                  label: const Text("I'm Here Now",
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                  label: Text(
+                    isEventLive ? "I'm Here Now" : 'Check-in opens at event start',
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
                   style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF0F766E),
+                    backgroundColor: isEventLive ? const Color(0xFF0F766E) : Colors.grey[400],
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),

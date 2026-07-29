@@ -92,10 +92,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 // ── Workspace ──
                 _sectionHeader('Workspace', theme),
                 _menuTile(theme, Icons.swap_horiz_outlined, 'Personal',
-                    'Switch to a different workspace'),
+                    'Switch to a different workspace', () {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Workspace switching — coming soon')));
+                }),
                 const Divider(height: 1),
                 _menuTile(theme, Icons.business_outlined, 'Create Workspace',
-                    'Start a new workspace for your company or community'),
+                    'Start a new workspace for your company or community', () {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Create Workspace — coming soon')));
+                }),
                 const SizedBox(height: 24),
 
                 // ── Settings ──

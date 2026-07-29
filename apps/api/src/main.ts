@@ -13,7 +13,16 @@ async function bootstrap() {
   // Security
   app.use(helmet());
   app.enableCors({
-    origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:8080'],
+    origin: process.env.CORS_ORIGIN?.split(',') || [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:3002',
+      'http://localhost:4000',
+      'http://localhost:8080',
+      'http://10.41.81.235:3000',
+      'http://10.41.81.235:3002',
+      'http://10.41.81.235:4000',
+    ],
     credentials: true,
   });
 

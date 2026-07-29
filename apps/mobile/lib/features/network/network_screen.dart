@@ -5,17 +5,19 @@
 // No flat list. No chronology. Relationship nurturing.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yugrow_mobile/core/api/api_client.dart';
+import 'package:yugrow_mobile/core/auth/auth_service.dart';
 
-class NetworkScreen extends StatefulWidget {
+class NetworkScreen extends ConsumerStatefulWidget {
   const NetworkScreen({super.key});
 
   @override
-  State<NetworkScreen> createState() => _NetworkScreenState();
+  ConsumerState<NetworkScreen> createState() => _NetworkScreenState();
 }
 
-class _NetworkScreenState extends State<NetworkScreen> {
+class _NetworkScreenState extends ConsumerState<NetworkScreen> {
   final _api = ApiClient();
   bool _loading = true;
   List<Map<String, dynamic>> _conversations = [];
@@ -27,12 +29,19 @@ class _NetworkScreenState extends State<NetworkScreen> {
   }
 
   Future<void> _load() async {
+    final pid = ref.read(authProvider).person?['id'] as String?;
+    if (pid == null) return;
     setState(() => _loading = true);
     try {
-      final convos = await _api.getConversations('person-self');
+      final convos = await _api.getConversations(pid);
+      // AH-020: Exclude system conversations — they're shown via _buildYugrowTile
+      final filtered = convos.where((c) {
+        final ctx = (c as Map<String, dynamic>)['contextType'] as String?;
+        return ctx != 'system';
+      }).toList();
       if (mounted) {
         setState(() {
-          _conversations = convos.cast<Map<String, dynamic>>();
+          _conversations = filtered.cast<Map<String, dynamic>>();
           _loading = false;
         });
       }
@@ -55,6 +64,12 @@ class _NetworkScreenState extends State<NetworkScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            // ── Yugrow System Conversation ────────────────────
+            _sectionHeader('Yugrow', Icons.favorite),
+            const SizedBox(height: 8),
+            _buildYugrowTile(theme),
+            const SizedBox(height: 24),
+
             // ── Needs Follow-up ────────────────────────────────
             _sectionHeader('Needs Follow-up', Icons.watch_later_outlined),
             const SizedBox(height: 8),
@@ -62,7 +77,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
                 Icons.flag_outlined, theme),
             const SizedBox(height: 24),
 
-            // ── Active Conversations ───────────────────────────
+            // ── Recent Conversations ──────────────────────────
             _sectionHeader('Active Conversations', Icons.chat_outlined),
             const SizedBox(height: 8),
             if (_loading)
@@ -132,10 +147,46 @@ class _NetworkScreenState extends State<NetworkScreen> {
     );
   }
 
+  Widget _buildYugrowTile(ThemeData theme) {
+    return Card(
+      color: theme.primaryColor.withValues(alpha: 0.05),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: theme.primaryColor.withValues(alpha: 0.2)),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: CircleAvatar(
+          backgroundColor: theme.primaryColor.withValues(alpha: 0.15),
+          child: Icon(Icons.favorite, color: theme.primaryColor, size: 20),
+        ),
+        title: Text('Yugrow',
+            style: TextStyle(fontWeight: FontWeight.w600, color: theme.primaryColor)),
+        subtitle: Text('Your direct line to the team',
+            style: TextStyle(fontSize: 12, color: theme.disabledColor)),
+        trailing: const Icon(Icons.chevron_right, size: 18),
+        onTap: () => _openYugrowChat(),
+      ),
+    );
+  }
+
+  Future<void> _openYugrowChat() async {
+    final pid = ref.read(authProvider).person?['id'] as String?;
+    if (pid == null) return;
+    try {
+      final result = await _api.initSystemConversation(pid);
+      final sysConvId = result['conversationId'] as String?;
+      if (sysConvId != null) {
+        if (mounted) context.push('/conversations/$sysConvId');
+      }
+    } catch (_) {}
+  }
+
   Widget _buildConversationTile(Map<String, dynamic> conversation, ThemeData theme) {
     final id = conversation['id'] as String? ?? '';
-    final otherPerson = conversation['otherPersonName'] as String? ?? 'Conversation';
-    final lastMessage = conversation['lastMessage'] as String? ?? '';
+    final otherPerson = conversation['otherPersonName'] as String? ?? 'Chat';
+    final lastMsg = (conversation['messages'] as List<dynamic>?)?.firstOrNull as Map<String, dynamic>?;
+    final lastContent = lastMsg?['content'] as String? ?? '';
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
@@ -148,8 +199,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
           ),
         ),
         title: Text(otherPerson, style: const TextStyle(fontWeight: FontWeight.w500)),
-        subtitle: lastMessage.isNotEmpty
-            ? Text(lastMessage, maxLines: 1, overflow: TextOverflow.ellipsis,
+        subtitle: lastContent.isNotEmpty
+            ? Text(lastContent, maxLines: 1, overflow: TextOverflow.ellipsis,
                 style: TextStyle(color: theme.disabledColor, fontSize: 13))
             : null,
         trailing: const Icon(Icons.chevron_right, size: 18),

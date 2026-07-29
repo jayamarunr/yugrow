@@ -169,3 +169,15 @@ Optional:
 - **Note** — Cross-references to existing documents or relevant context
 
 Entries without an activation condition will be rejected. Every dormant context must have a clear, testable trigger for when it ceases to be dormant.
+
+---
+
+### Feedback Stream *(Design Note — precursor to Feedback Intelligence Engine)*
+
+| Field | Value |
+|-------|-------|
+| **Purpose** | The public memory of Yugrow's product improvement journey. A single shared conversation where every bug, idea, and improvement exists exactly once — not scattered across WhatsApp, email, Discord, or DMs. Every user-visible product improvement must be traceable to evidence (professional feedback, founder observation, analytics, interview, crash report, or operational necessity). |
+| **Activation** | After the First Meetup, when the founder needs to consolidate feedback from multiple testers into a single visible stream — specifically when duplicate reports become frequent enough that a shared view reduces friction. |
+| **Status** | Design note. Not a separate engine — a `feedback` conversation type on the existing Conversation Engine. |
+| **Principle** | *Feedback should be visible, not siloed. Every tester should see what others have reported before reporting it themselves. Every feature should be traceable to the evidence that justified it.* |
+| **Note** | This is the **human-powered precursor** to the dormant Feedback Intelligence Engine. In Alpha, all triage is manual (founder reads, classifies, updates status). The Feedback Intelligence Engine later automates this pipeline. **Constraints:** exactly one shared feedback conversation, no direct messaging between users, no community features (roles, channels, reactions, mentions, threads), founder-controlled status updates. Each feedback item is a post with threaded replies (like GitHub Issues, not WhatsApp chat). Status lifecycle: New → Accepted → Planned → In Progress → Released → Closed. Status updates notify all affected professionals via their private Yugrow conversation. Feedback items render as structured cards, not chat bubbles — showing title, reporter, status, affected count, and replies. **Future vision:** AI groups duplicates, suggests priority, drafts user story. Same workflow, only faster. **Not a feature — a product learning system.** The user-facing name should be collaborative, not transactional: "Build Yugrow Together" or "Help Improve Yugrow" rather than "Feedback Stream." The internal conversation type remains `feedback`. **Three relationship model:** (1) Person ↔ Person (events → private conversations), (2) Yugrow ↔ Person (system conversations), (3) Everyone ↔ Product (feedback stream). The third relationship is what most products miss. The conversation type is `feedback` — distinct from `private` (one-to-one) and `system` (Yugrow ↔ professional). **Implementation plan:** `docs/sprints/SPRINT-E-FEEDBACK-STREAM.md` — dormant until activation condition met. See also: Conversation Engine (existing), Feedback Intelligence Engine (dormant), FD-032 (System Conversations). |

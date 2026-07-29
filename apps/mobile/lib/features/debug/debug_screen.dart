@@ -8,10 +8,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/api/api_client.dart';
-import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_spacing.dart';
-import '../../core/theme/app_radius.dart';
-import '../../features/arrival/models/arrival_models.dart';
 
 class FounderConsole extends StatefulWidget {
   const FounderConsole({super.key});

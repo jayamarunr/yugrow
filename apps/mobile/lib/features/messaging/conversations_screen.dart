@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/api/api_client.dart';
+import '../../core/auth/auth_service.dart';
 
-class ConversationsScreen extends StatefulWidget {
+class ConversationsScreen extends ConsumerStatefulWidget {
   const ConversationsScreen({super.key});
   @override
-  State<ConversationsScreen> createState() => _ConversationsScreenState();
+  ConsumerState<ConversationsScreen> createState() => _ConversationsScreenState();
 }
 
-class _ConversationsScreenState extends State<ConversationsScreen> {
+class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
   final _api = ApiClient();
   List<dynamic> _conversations = [];
   Map<String, dynamic>? _systemConversation;
   bool _loading = true;
+
+  String? get _personId => ref.read(authProvider).person?['id'] as String?;
 
   @override
   void initState() {
@@ -21,25 +25,37 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
   }
 
   Future<void> _load() async {
+    final pid = _personId;
+    if (pid == null) return;
     try {
       // Load regular conversations
-      final convos = await _api.getConversations('person-001');
+      final convos = await _api.getConversations(pid);
 
       // Load Yugrow system conversation
       Map<String, dynamic>? systemConv;
       try {
-        final result = await _api.initSystemConversation('person-001');
+        final result = await _api.initSystemConversation(pid);
         final sysConvId = result['conversationId'] as String?;
         if (sysConvId != null) {
-          systemConv = await _api.getConversation(sysConvId, 'person-001');
+          systemConv = await _api.getConversation(sysConvId, pid);
         }
       } catch (_) {
         // System conversation may not be available — ignore
       }
 
       if (mounted) {
+        // AH-019: Exclude system conversations from regular list
+        final filtered = convos.where((c) {
+          final ctx = (c as Map<String, dynamic>)['contextType'] as String?;
+          if (systemConv != null) {
+            final sysId = systemConv['id'] as String?;
+            final convId = c['id'] as String?;
+            if (sysId != null && convId == sysId) return false;
+          }
+          return ctx != 'system';
+        }).toList();
         setState(() {
-          _conversations = convos;
+          _conversations = filtered;
           _systemConversation = systemConv;
           _loading = false;
         });

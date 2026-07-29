@@ -67,7 +67,7 @@ class CheckinCompleteScreen extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(LucideIcons.map_pin, size: 14, color: const Color(0xFF0F766E)),
+                      const Icon(LucideIcons.map_pin, size: 14, color: Color(0xFF0F766E)),
                       const SizedBox(width: 6),
                       Text(eventName,
                           style: const TextStyle(

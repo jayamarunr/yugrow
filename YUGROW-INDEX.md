@@ -44,6 +44,7 @@ Last Updated: 2026-07-28
 - Authentication
 - Professional Identity
 - Conversation Engine
+- System Conversations (FD-032)
 - Design Language — `docs/YUGROW-DESIGN-LANGUAGE.md`
 - Brand Language — `docs/YUGROW-BRAND-LANGUAGE.md`
 - Motion Language — `docs/YUGROW-MOTION-LANGUAGE.md`
@@ -56,9 +57,9 @@ Last Updated: 2026-07-28
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | Validation Phase — Alpha Stability |
-| **Current Goal** | Fix bugs found during testing. Prepare for first real meetup. |
-| **Tag** | `checkin-mvp-v1` (milestone achieved) |
+| **Sprint** | Alpha Hardening |
+| **Current Goal** | Zero new features. Journey testing, UI polish, mobile testing, crash hunting, performance measurement. Prepare for First Meetup. |
+| **Tag** | `alpha-hardening` |
 | **Next Milestone** | First successful meetup with real users |
 
 ---

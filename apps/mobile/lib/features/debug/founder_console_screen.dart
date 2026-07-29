@@ -7,7 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/api/api_client.dart';
-import '../../core/config/environment.dart';
+import 'feedback_inbox_screen.dart';
 
 class FounderConsole extends StatefulWidget {
   const FounderConsole({super.key});
@@ -50,6 +50,34 @@ class _FounderConsoleState extends State<FounderConsole> {
   // ── Test Status Dashboard ─────────────────────────────────────
   Map<String, dynamic>? _testStatus;
 
+  // ── Send Message Forms ───────────────────────────────────────
+  bool _showReleaseForm = false;
+  bool _showAnnouncementForm = false;
+  bool _showFeedbackStatusForm = false;
+  bool _sendingMessage = false;
+
+  // Release Note form
+  final _releasePersonCtrl = TextEditingController(text: 'person-001');
+  final _releaseVersionCtrl = TextEditingController(text: '0.9.8');
+  final _releaseTitleCtrl = TextEditingController(text: "What's New");
+  final _releaseChangesCtrl = TextEditingController(text: 'Venue search improved\nProfile cards\nFaster check-in');
+  final _releaseActionCtrl = TextEditingController(text: 'Read More');
+
+  // Announcement form
+  final _announcePersonCtrl = TextEditingController(text: 'person-001');
+  final _announceTitleCtrl = TextEditingController(text: 'Professional Meetup');
+  final _announceDateCtrl = TextEditingController(text: 'Saturday');
+  final _announceLocationCtrl = TextEditingController(text: 'Chennai');
+  final _announceDescCtrl = TextEditingController(text: '');
+  final _announceActionCtrl = TextEditingController(text: 'Register');
+
+  // Feedback Status form
+  final _feedbackPersonCtrl = TextEditingController(text: 'person-001');
+  final _feedbackTitleCtrl = TextEditingController(text: 'Duplicate Events');
+  final _feedbackStatusCtrl = TextEditingController(text: 'Accepted');
+  final _feedbackSprintCtrl = TextEditingController(text: 'Sprint 12');
+  final _feedbackNoteCtrl = TextEditingController(text: '');
+
   @override
   void initState() {
     super.initState();
@@ -62,6 +90,22 @@ class _FounderConsoleState extends State<FounderConsole> {
     _venueCtrl.dispose();
     _cityCtrl.dispose();
     _radiusCtrl.dispose();
+    _releasePersonCtrl.dispose();
+    _releaseVersionCtrl.dispose();
+    _releaseTitleCtrl.dispose();
+    _releaseChangesCtrl.dispose();
+    _releaseActionCtrl.dispose();
+    _announcePersonCtrl.dispose();
+    _announceTitleCtrl.dispose();
+    _announceDateCtrl.dispose();
+    _announceLocationCtrl.dispose();
+    _announceDescCtrl.dispose();
+    _announceActionCtrl.dispose();
+    _feedbackPersonCtrl.dispose();
+    _feedbackTitleCtrl.dispose();
+    _feedbackStatusCtrl.dispose();
+    _feedbackSprintCtrl.dispose();
+    _feedbackNoteCtrl.dispose();
     super.dispose();
   }
 
@@ -534,6 +578,41 @@ class _FounderConsoleState extends State<FounderConsole> {
               ]),
               const SizedBox(height: 12),
 
+              // ── Founder Inbox ────────────────────────────────
+              _section('Founder Inbox 💬', cardColor, [
+                _founderButton(
+                  'View Feedback Inbox',
+                  Icons.inbox_outlined,
+                  _openFeedbackInbox,
+                ),
+              ]),
+              const SizedBox(height: 12),
+
+              // ── Send Messages ────────────────────────────────
+              _section('Send Messages 📨', cardColor, [
+                _founderButton(
+                  'Send Release Note',
+                  Icons.newspaper,
+                  () => setState(() => _showReleaseForm = !_showReleaseForm),
+                ),
+                if (_showReleaseForm) _buildReleaseForm(mutedColor),
+
+                _founderButton(
+                  'Send Announcement',
+                  Icons.campaign,
+                  () => setState(() => _showAnnouncementForm = !_showAnnouncementForm),
+                ),
+                if (_showAnnouncementForm) _buildAnnouncementForm(mutedColor),
+
+                _founderButton(
+                  'Send Feedback Status',
+                  Icons.feedback,
+                  () => setState(() => _showFeedbackStatusForm = !_showFeedbackStatusForm),
+                ),
+                if (_showFeedbackStatusForm) _buildFeedbackStatusForm(mutedColor),
+              ]),
+              const SizedBox(height: 12),
+
               // ── Warning ──────────────────────────────────────
               Container(
                 padding: const EdgeInsets.all(12),
@@ -974,6 +1053,216 @@ class _FounderConsoleState extends State<FounderConsole> {
           alignment: Alignment.centerLeft,
         ),
       ),
+    );
+  }
+
+  // ── Release Note Form ──────────────────────────────────────────
+
+  Widget _buildReleaseForm(Color mutedColor) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF0FDF4),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFBBF7D0)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Release Note', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+          const SizedBox(height: 12),
+          TextField(controller: _releasePersonCtrl, decoration: const InputDecoration(labelText: 'Person ID', border: OutlineInputBorder(), isDense: true)),
+          const SizedBox(height: 8),
+          TextField(controller: _releaseVersionCtrl, decoration: const InputDecoration(labelText: 'Version', border: OutlineInputBorder(), isDense: true)),
+          const SizedBox(height: 8),
+          TextField(controller: _releaseTitleCtrl, decoration: const InputDecoration(labelText: 'Title', border: OutlineInputBorder(), isDense: true)),
+          const SizedBox(height: 8),
+          TextField(controller: _releaseChangesCtrl, decoration: const InputDecoration(labelText: 'Changes (one per line)', border: OutlineInputBorder(), isDense: true), maxLines: 3),
+          const SizedBox(height: 8),
+          TextField(controller: _releaseActionCtrl, decoration: const InputDecoration(labelText: 'Action Label (optional)', border: OutlineInputBorder(), isDense: true)),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: _sendingMessage ? null : _sendReleaseNote,
+                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0F766E), foregroundColor: Colors.white),
+                  child: _sendingMessage
+                      ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                      : const Text('Send Release Note'),
+                ),
+              ),
+              const SizedBox(width: 8),
+              TextButton(onPressed: () => setState(() { _showReleaseForm = false; }), child: const Text('Cancel')),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Announcement Form ──────────────────────────────────────────
+
+  Widget _buildAnnouncementForm(Color mutedColor) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEFF6FF),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFBFDBFE)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Announcement', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+          const SizedBox(height: 12),
+          TextField(controller: _announcePersonCtrl, decoration: const InputDecoration(labelText: 'Person ID', border: OutlineInputBorder(), isDense: true)),
+          const SizedBox(height: 8),
+          TextField(controller: _announceTitleCtrl, decoration: const InputDecoration(labelText: 'Title', border: OutlineInputBorder(), isDense: true)),
+          const SizedBox(height: 8),
+          TextField(controller: _announceDateCtrl, decoration: const InputDecoration(labelText: 'Date (optional)', border: OutlineInputBorder(), isDense: true)),
+          const SizedBox(height: 8),
+          TextField(controller: _announceLocationCtrl, decoration: const InputDecoration(labelText: 'Location (optional)', border: OutlineInputBorder(), isDense: true)),
+          const SizedBox(height: 8),
+          TextField(controller: _announceDescCtrl, decoration: const InputDecoration(labelText: 'Description (optional)', border: OutlineInputBorder(), isDense: true), maxLines: 2),
+          const SizedBox(height: 8),
+          TextField(controller: _announceActionCtrl, decoration: const InputDecoration(labelText: 'Action Label (optional)', border: OutlineInputBorder(), isDense: true)),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: _sendingMessage ? null : _sendAnnouncement,
+                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0F766E), foregroundColor: Colors.white),
+                  child: _sendingMessage
+                      ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                      : const Text('Send Announcement'),
+                ),
+              ),
+              const SizedBox(width: 8),
+              TextButton(onPressed: () => setState(() { _showAnnouncementForm = false; }), child: const Text('Cancel')),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Feedback Status Form ───────────────────────────────────────
+
+  Widget _buildFeedbackStatusForm(Color mutedColor) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF7ED),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFFFE5B4)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Feedback Status', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+          const SizedBox(height: 12),
+          TextField(controller: _feedbackPersonCtrl, decoration: const InputDecoration(labelText: 'Person ID', border: OutlineInputBorder(), isDense: true)),
+          const SizedBox(height: 8),
+          TextField(controller: _feedbackTitleCtrl, decoration: const InputDecoration(labelText: 'Feedback Title', border: OutlineInputBorder(), isDense: true)),
+          const SizedBox(height: 8),
+          TextField(controller: _feedbackStatusCtrl, decoration: const InputDecoration(labelText: 'Status (e.g. Accepted, Planned, Fixed)', border: OutlineInputBorder(), isDense: true)),
+          const SizedBox(height: 8),
+          TextField(controller: _feedbackSprintCtrl, decoration: const InputDecoration(labelText: 'Sprint (optional)', border: OutlineInputBorder(), isDense: true)),
+          const SizedBox(height: 8),
+          TextField(controller: _feedbackNoteCtrl, decoration: const InputDecoration(labelText: 'Note (optional)', border: OutlineInputBorder(), isDense: true), maxLines: 2),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: _sendingMessage ? null : _sendFeedbackStatus,
+                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0F766E), foregroundColor: Colors.white),
+                  child: _sendingMessage
+                      ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                      : const Text('Send Feedback Status'),
+                ),
+              ),
+              const SizedBox(width: 8),
+              TextButton(onPressed: () => setState(() { _showFeedbackStatusForm = false; }), child: const Text('Cancel')),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Send Actions ───────────────────────────────────────────────
+
+  Future<void> _sendReleaseNote() async {
+    final personId = _releasePersonCtrl.text.trim();
+    if (personId.isEmpty) { _showResult('Person ID required', isError: true); return; }
+    setState(() => _sendingMessage = true);
+    try {
+      final changes = _releaseChangesCtrl.text.split('\n').map((l) => l.trim()).where((l) => l.isNotEmpty).toList();
+      await _api.sendReleaseNote(
+        personId: personId,
+        version: _releaseVersionCtrl.text.trim(),
+        title: _releaseTitleCtrl.text.trim(),
+        changes: changes,
+        actionLabel: _releaseActionCtrl.text.trim().isEmpty ? null : _releaseActionCtrl.text.trim(),
+      );
+      _showResult('Release note sent to $personId');
+      setState(() => _showReleaseForm = false);
+    } catch (e) {
+      _showResult('Failed: $e', isError: true);
+    }
+    setState(() => _sendingMessage = false);
+  }
+
+  Future<void> _sendAnnouncement() async {
+    final personId = _announcePersonCtrl.text.trim();
+    if (personId.isEmpty) { _showResult('Person ID required', isError: true); return; }
+    setState(() => _sendingMessage = true);
+    try {
+      await _api.sendAnnouncement(
+        personId: personId,
+        title: _announceTitleCtrl.text.trim(),
+        date: _announceDateCtrl.text.trim().isEmpty ? null : _announceDateCtrl.text.trim(),
+        location: _announceLocationCtrl.text.trim().isEmpty ? null : _announceLocationCtrl.text.trim(),
+        description: _announceDescCtrl.text.trim().isEmpty ? null : _announceDescCtrl.text.trim(),
+        actionLabel: _announceActionCtrl.text.trim().isEmpty ? null : _announceActionCtrl.text.trim(),
+      );
+      _showResult('Announcement sent to $personId');
+      setState(() => _showAnnouncementForm = false);
+    } catch (e) {
+      _showResult('Failed: $e', isError: true);
+    }
+    setState(() => _sendingMessage = false);
+  }
+
+  Future<void> _sendFeedbackStatus() async {
+    final personId = _feedbackPersonCtrl.text.trim();
+    if (personId.isEmpty) { _showResult('Person ID required', isError: true); return; }
+    setState(() => _sendingMessage = true);
+    try {
+      await _api.sendFeedbackStatus(
+        personId: personId,
+        title: _feedbackTitleCtrl.text.trim(),
+        status: _feedbackStatusCtrl.text.trim(),
+        sprint: _feedbackSprintCtrl.text.trim().isEmpty ? null : _feedbackSprintCtrl.text.trim(),
+        note: _feedbackNoteCtrl.text.trim().isEmpty ? null : _feedbackNoteCtrl.text.trim(),
+      );
+      _showResult('Feedback status sent to $personId');
+      setState(() => _showFeedbackStatusForm = false);
+    } catch (e) {
+      _showResult('Failed: $e', isError: true);
+    }
+    setState(() => _sendingMessage = false);
+  }
+
+  void _openFeedbackInbox() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const FeedbackInboxScreen()),
     );
   }
 }

@@ -9,7 +9,9 @@ import {
   Delete,
   Body,
   Param,
+  Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { IdentityService } from './identity.service';
 import { RequireCapability } from '../../common/decorators/capabilities.decorator';
@@ -71,19 +73,23 @@ export class IdentityController {
 
   @Get('professional/:workspaceId')
   @ApiBearerAuth()
-  @RequireCapability('identity.profile.read')
-  async getProfessionalIdentity(@Param('workspaceId') workspaceId: string) {
-    return this.identity.getProfessionalIdentity('current-person-id', workspaceId);
+  async getProfessionalIdentity(
+    @Param('workspaceId') workspaceId: string,
+    @Req() req: Request,
+  ) {
+    const personId = (req as any).user?.personId;
+    return this.identity.getProfessionalIdentity(personId, workspaceId);
   }
 
   @Patch('professional/:workspaceId')
   @ApiBearerAuth()
-  @RequireCapability('identity.profile.update')
   async updateProfessionalIdentity(
     @Param('workspaceId') workspaceId: string,
     @Body() dto: UpdateProfessionalDto,
+    @Req() req: Request,
   ) {
-    return this.identity.updateProfessionalIdentity('current-person-id', workspaceId, dto);
+    const personId = (req as any).user?.personId;
+    return this.identity.updateProfessionalIdentity(personId, workspaceId, dto);
   }
 
   // ─── Roles (delegated to Permission Engine) ─────────────────

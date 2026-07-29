@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:intl/intl.dart';
 import 'package:yugrow_mobile/core/theme/app_colors.dart';
 import 'package:yugrow_mobile/core/theme/app_spacing.dart';
 import 'package:yugrow_mobile/core/theme/app_radius.dart';
 import 'package:yugrow_mobile/features/arrival/models/arrival_models.dart';
+import 'package:yugrow_mobile/features/arrival/models/event_state.dart';
 
 class EventDetailScreen extends StatelessWidget {
   final BusinessEvent event;
@@ -102,20 +104,66 @@ class EventDetailScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      const Icon(LucideIcons.map_pin, size: 16, color: AppColors.textSecondary),
-                      const SizedBox(width: 8),
-                      Text(
-                        event.distance,
-                        style: GoogleFonts.inter(
-                          fontSize: 15,
-                          color: AppColors.textSecondary,
+
+                  // Full address
+                  if (event.venueAddress.isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        const Icon(LucideIcons.map_pin, size: 16, color: AppColors.textSecondary),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            event.venueAddress,
+                            style: GoogleFonts.inter(
+                              fontSize: 15,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  ],
+
+                  // Date and time
+                  if (event.startDate != null) ...[
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        const Icon(LucideIcons.calendar, size: 16, color: AppColors.textSecondary),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _formatEventDateTime(event.startDate!, event.endDate),
+                            style: GoogleFonts.inter(
+                              fontSize: 15,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+
+                  // Host / Organizer
+                  if (event.organizerName.isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        const Icon(LucideIcons.user, size: 16, color: AppColors.textSecondary),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Hosted by ${event.organizerName}',
+                            style: GoogleFonts.inter(
+                              fontSize: 15,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
 
                   // Full ecosystem breakdown
                   const SizedBox(height: AppSpacing.lg),
@@ -295,20 +343,24 @@ class EventDetailScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 56,
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        onCheckIn();
-                      },
+                      onPressed: EventState.canCheckInEvent(event)
+                          ? () {
+                              Navigator.of(context).pop();
+                              onCheckIn();
+                            }
+                          : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: EventState.canCheckInEvent(event) ? AppColors.primary : AppColors.textDisabled,
                         foregroundColor: AppColors.textInverse,
                         shape: RoundedRectangleBorder(
                           borderRadius: AppRadius.lgCircular,
                         ),
                         elevation: 0,
+                        disabledBackgroundColor: AppColors.textDisabled.withValues(alpha: 0.3),
+                        disabledForegroundColor: AppColors.textSecondary,
                       ),
                       child: Text(
-                        "I'm Here",
+                        EventState.checkInStatusForEvent(event) ?? "I'm Here",
                         style: GoogleFonts.inter(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -355,6 +407,16 @@ class EventDetailScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+String _formatEventDateTime(DateTime startDate, DateTime? endDate) {
+  final dateStr = DateFormat('EEEE, MMMM d').format(startDate);
+  final startStr = DateFormat('h:mm a').format(startDate);
+  if (endDate != null) {
+    final endStr = DateFormat('h:mm a').format(endDate);
+    return '$dateStr · $startStr – $endStr';
+  }
+  return '$dateStr · $startStr';
 }
 
 class _EcoRow extends StatelessWidget {

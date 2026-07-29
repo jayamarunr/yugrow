@@ -11,6 +11,7 @@ import 'package:yugrow_mobile/core/theme/app_colors.dart';
 import 'package:yugrow_mobile/core/theme/app_spacing.dart';
 import 'package:yugrow_mobile/core/theme/app_radius.dart';
 import '../arrival/models/arrival_models.dart';
+import '../arrival/models/event_state.dart';
 import '../arrival/repository/arrival_repository.dart';
 import '../arrival/widgets/greeting_header.dart';
 import '../arrival/widgets/event_card.dart';
@@ -48,9 +49,11 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     try {
       final events = await _repository.getNearbyEvents();
+      // AH-015: Only show events whose calendar date is today
+      final todayEvents = events.where((e) => EventState.isToday(e.startDate)).toList();
       final user = await _repository.getCurrentUser();
       setState(() {
-        _events = events;
+        _events = todayEvents;
         _currentUser = user;
         _isLoading = false;
       });

@@ -26,15 +26,16 @@ Last Updated: 2026-07-28
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | Alpha Stability — 2026-07-28 |
-| **Focus** | Bug fixes, design foundation, session workflow |
-| **Next** | Web Sprint 1 — Landing page redesign |
+| **Sprint** | Alpha Hardening — AH-015–023 |
+| **Focus** | Zero new features. Journey testing, UI polish, mobile testing, crash hunting, performance measurement. |
+| **Completed** | AH-023 (EventState helper), AH-015 (today events), AH-016 (check-in gates), AH-017 (event detail), AH-018 (presence-aware Live), AH-019 (conversation dedup), AH-020 (Yugrow styling), AH-021 (check-in flow), AH-022 (auth identity) |
+| **Next** | First Meetup |
 
 ---
 
 ## Current Milestone
 
-**First Independent Success** — Host a real meetup with real professionals using Yugrow end-to-end.
+**First Independent Success** — Host a real meetup with real professionals using Yugrow end-to-end. No founder explaining. Observe, take notes, fix, repeat.
 
 ---
 
@@ -54,14 +55,14 @@ Last Updated: 2026-07-28
 | ✅ Illustration Language | Frozen | Empty states, photography |
 | ✅ Product Story Language | Approved | Narrative arc per screen |
 | ✅ Engineering Rules | Approved | 30 governance rules |
-| 🟡 Founder Console | Stable | v2 complete, enhancements welcome |
+| 🟡 Founder Console | Stable | Feedback Inbox + Send Messages (release notes, announcements, feedback status) |
+| 🟡 System Conversations | ✅ Alpha | MessageRenderer, welcome message, pinned Yugrow chat, structured message cards |
 | 🟡 Tailwind CSS | Workaround | FD-032, precompilation needed |
 | 🟡 Flutter Web Build | Blocked | font-subset.exe Windows policy |
-| ⬜ Notifications | Not built | Future sprint |
+| ⬜ Notifications | Not built | Future sprint (dormant) |
 | ⬜ Broadcast | Dormant | Phase 4 |
 | ⬜ CRM | Dormant | Phase 5 |
 | ⬜ Feedback Engine | Dormant | Activation conditions defined |
-| ⬜ System Conversations | Design note | Activation conditions defined |
 
 ---
 

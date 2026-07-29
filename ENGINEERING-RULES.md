@@ -107,6 +107,35 @@ Dependencies: CONSTITUTION.md, DECISIONS.md
 
 ---
 
+## 10. Alpha Hardening
+
+| Rule | Detail |
+|------|--------|
+| **R31** | During Alpha Hardening, no new feature may be implemented unless it directly improves the First Independent Success journey. Every implementation must improve at least one of: completion rate, clarity, reliability, performance, trust, accessibility, visual consistency, error recovery, or user confidence. If it does not improve one of these, it must be deferred until after First Meetup validation. |
+| **R32** | **Nothing Embarrassing.** Before any build is shown to another human, there must be: no dead buttons, no placeholder text, no lorem ipsum, no unhandled errors, no inconsistent spacing, no inconsistent colours, no "Coming Soon" unless absolutely necessary, no console errors during normal usage, and no screen that leaves the user wondering what to do next. The goal is not perfection — the goal is that nothing breaks trust. A stranger should think: "This feels like a real product." |
+
+### Journey-based bug classification
+
+During Alpha Hardening, bugs and improvements are classified by the journey step they affect:
+
+```
+Signup
+Onboarding
+Profile
+Event Creation
+Venue
+Check-In
+Discovery
+Connection
+Conversation
+Feedback
+Founder Console
+```
+
+This ensures the team knows exactly where users fail — not just *that* they fail.
+
+---
+
 ## Enforcement
 
 These rules are enforced through code review:
