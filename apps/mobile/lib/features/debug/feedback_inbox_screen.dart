@@ -1,9 +1,13 @@
-// ─── Yugrow Feedback Inbox — Founder Tool ──────────────────────
+// â”€â”€â”€ Yugrow Feedback Inbox â€” Founder Tool â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Lists all system conversation feedback from professionals.
 // Founder can read messages and reply as Yugrow.
 
 import 'package:flutter/material.dart';
+import 'package:yugrow_mobile/core/theme/app_colors.dart';
 import '../../core/api/api_client.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
+import 'package:yugrow_mobile/core/theme/app_typography.dart';
 
 class FeedbackInboxScreen extends StatefulWidget {
   const FeedbackInboxScreen({super.key});
@@ -80,27 +84,27 @@ class _FeedbackInboxScreenState extends State<FeedbackInboxScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.inbox_outlined, size: 64, color: theme.disabledColor),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppSpacing.lg),
                       Text('No feedback yet', style: theme.textTheme.titleLarge),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AppSpacing.sm),
                       Text('Messages from professionals will appear here', style: theme.textTheme.bodyMedium),
                     ],
                   ),
                 )
               : ListView(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(AppSpacing.lg),
                   children: [
-                    // ── Reply Panel ──────────────────────────
+                    // â”€â”€ Reply Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     if (_replyPersonId != null)
                       Card(
                         color: theme.primaryColor.withValues(alpha: 0.05),
                         child: Padding(
-                          padding: const EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(AppSpacing.md),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              Text('Replying as Yugrow 💚', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: theme.primaryColor)),
-                              const SizedBox(height: 8),
+                              Text('Replying as Yugrow ðŸ’š', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: theme.primaryColor)),
+                              const SizedBox(height: AppSpacing.sm),
                               TextField(
                                 controller: _replyCtrl,
                                 maxLines: 3,
@@ -109,7 +113,7 @@ class _FeedbackInboxScreenState extends State<FeedbackInboxScreen> {
                                   border: OutlineInputBorder(),
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: AppSpacing.sm),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
@@ -117,7 +121,7 @@ class _FeedbackInboxScreenState extends State<FeedbackInboxScreen> {
                                     onPressed: () => setState(() { _replyPersonId = null; _replyCtrl.clear(); }),
                                     child: const Text('Cancel'),
                                   ),
-                                  const SizedBox(width: 8),
+                                  const SizedBox(width: AppSpacing.sm),
                                   ElevatedButton(
                                     onPressed: _sending ? null : _sendReply,
                                     child: _sending
@@ -131,7 +135,7 @@ class _FeedbackInboxScreenState extends State<FeedbackInboxScreen> {
                         ),
                       ),
 
-                    // ── Feedback List ─────────────────────────
+                    // â”€â”€ Feedback List â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     ...items.map((item) {
                       final i = item as Map<String, dynamic>;
                       final name = i['name'] as String? ?? 'Unknown';
@@ -143,13 +147,13 @@ class _FeedbackInboxScreenState extends State<FeedbackInboxScreen> {
                       final msgTime = lastMsg?['createdAt'] as String? ?? '';
 
                       return Card(
-                        margin: const EdgeInsets.only(bottom: 8),
+                        margin: const EdgeInsets.only(bottom: AppSpacing.sm),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: AppRadius.mdCircular,
                           side: needsReply ? BorderSide(color: theme.primaryColor.withValues(alpha: 0.3)) : BorderSide.none,
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(AppSpacing.md),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -160,7 +164,7 @@ class _FeedbackInboxScreenState extends State<FeedbackInboxScreen> {
                                     backgroundColor: theme.primaryColor.withValues(alpha: 0.1),
                                     child: Text(name[0], style: TextStyle(fontSize: 14, color: theme.primaryColor)),
                                   ),
-                                  const SizedBox(width: 8),
+                                  const SizedBox(width: AppSpacing.sm),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -168,7 +172,7 @@ class _FeedbackInboxScreenState extends State<FeedbackInboxScreen> {
                                         Text(name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                                         if (title != null || company != null)
                                           Text(
-                                            [title, company].whereType<String>().join(' · '),
+                                            [title, company].whereType<String>().join(' Â· '),
                                             style: TextStyle(fontSize: 11, color: theme.disabledColor),
                                           ),
                                       ],
@@ -176,26 +180,26 @@ class _FeedbackInboxScreenState extends State<FeedbackInboxScreen> {
                                   ),
                                   if (needsReply)
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                                       decoration: BoxDecoration(
                                         color: Colors.orange[50],
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: AppRadius.smCircular,
                                       ),
-                                      child: Text('Reply', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Colors.orange[800])),
+                                      child: Text('Reply', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.warning)),
                                     ),
                                 ],
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: AppSpacing.sm),
                               Text(
                                 msgContent.length > 120 ? '${msgContent.substring(0, 120)}...' : msgContent,
                                 style: TextStyle(fontSize: 13, color: Colors.grey[700]),
                               ),
                               if (msgTime.isNotEmpty)
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 4),
+                                  padding: const EdgeInsets.only(top: AppSpacing.xs),
                                   child: Text(_formatTime(msgTime), style: TextStyle(fontSize: 10, color: theme.disabledColor)),
                                 ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: AppSpacing.sm),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
@@ -206,10 +210,10 @@ class _FeedbackInboxScreenState extends State<FeedbackInboxScreen> {
                                         _replyCtrl.text = '';
                                       }),
                                       icon: const Icon(Icons.reply, size: 14),
-                                      label: const Text('Reply', style: TextStyle(fontSize: 12)),
+                                      label: const Text('Reply', style: AppTypography.caption),
                                       style: OutlinedButton.styleFrom(
                                         padding: const EdgeInsets.symmetric(horizontal: 12),
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                        shape: RoundedRectangleBorder(borderRadius: AppRadius.smCircular),
                                       ),
                                     ),
                                 ],
@@ -236,6 +240,7 @@ class _FeedbackInboxScreenState extends State<FeedbackInboxScreen> {
       return '${dt.month}/${dt.day}';
     } catch (_) {
       return '';
+
     }
   }
 }

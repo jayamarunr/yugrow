@@ -119,14 +119,7 @@ class AppTypography {
         color: AppColors.textPrimary,
       );
 
-  // ── Body Text ────────────────────────────────────
-  static TextStyle get body => const TextStyle(
-        fontFamily: 'Inter',
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        color: AppColors.textSecondary,
-        height: 1.4,
-      );
+
 
   // ── Button Label ─────────────────────────────────
   static TextStyle get buttonLabel => const TextStyle(
@@ -135,4 +128,15 @@ class AppTypography {
         fontWeight: FontWeight.w600,
         color: AppColors.textInverse,
       );
+
+  // ── YDS Canonical API (matches packages/design-system/lib/src/typography.dart) ──
+  static const TextStyle body = TextStyle(fontFamily: 'Inter', fontSize: 16, fontWeight: FontWeight.w400, height: 1.6, color: AppColors.textPrimary);
+  static const TextStyle bodyBold = TextStyle(fontFamily: 'Inter', fontSize: 16, fontWeight: FontWeight.w600, height: 1.6, color: AppColors.textPrimary);
+  static const TextStyle bodySmall = TextStyle(fontFamily: 'Inter', fontSize: 14, fontWeight: FontWeight.w400, height: 1.5, color: AppColors.textSecondary);
+  static const TextStyle caption = TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w500, height: 1.4, letterSpacing: 0.01, color: AppColors.textSecondary);
+  static const TextStyle h3 = TextStyle(fontFamily: 'Inter', fontSize: 20, fontWeight: FontWeight.w600, height: 1.4, color: AppColors.textPrimary);
+  static const TextStyle h2 = TextStyle(fontFamily: 'Inter', fontSize: 24, fontWeight: FontWeight.w600, height: 1.3, letterSpacing: -0.01, color: AppColors.textPrimary);
+  static const TextStyle h1 = TextStyle(fontFamily: 'Inter', fontSize: 32, fontWeight: FontWeight.w700, height: 1.2, letterSpacing: -0.02, color: AppColors.textPrimary);
+  static const TextStyle button = TextStyle(fontFamily: 'Inter', fontSize: 16, fontWeight: FontWeight.w600, height: 1.0, color: AppColors.textInverse);
+  static const TextStyle buttonSmall = TextStyle(fontFamily: 'Inter', fontSize: 14, fontWeight: FontWeight.w600, height: 1.0, color: AppColors.primary);
 }

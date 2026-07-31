@@ -3,9 +3,12 @@
 // On success, saves JWT and redirects to home.
 
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/auth/auth_service.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -47,7 +50,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(AppSpacing.xl),
             child: Form(
               key: _formKey,
               child: Column(
@@ -58,8 +61,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     width: 64,
                     height: 64,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF0F766E),
-                      borderRadius: BorderRadius.circular(16),
+                      color: AppColors.primary,
+                      borderRadius: AppRadius.xlCircular,
                     ),
                     child: const Center(
                       child: Text('Y',
@@ -69,14 +72,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               fontWeight: FontWeight.bold)),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AppSpacing.xl),
                   Text('Welcome back',
                       style: theme.textTheme.titleLarge
                           ?.copyWith(fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: AppSpacing.sm),
                   Text('Sign in to your account',
-                      style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-                  const SizedBox(height: 32),
+                      style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
+                  const SizedBox(height: AppSpacing.xxl),
 
                   // Email
                   TextFormField(
@@ -86,12 +89,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       labelText: 'Email',
                       prefixIcon: const Icon(Icons.email_outlined, size: 20),
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                          borderRadius: AppRadius.mdCircular),
                     ),
                     validator: (v) =>
                         v == null || !v.contains('@') ? 'Enter a valid email' : null,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.lg),
 
                   // Password
                   TextFormField(
@@ -109,23 +112,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             setState(() => _obscurePassword = !_obscurePassword),
                       ),
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                          borderRadius: AppRadius.mdCircular),
                     ),
                     validator: (v) =>
                         v == null || v.length < 6 ? 'At least 6 characters' : null,
                     onFieldSubmitted: (_) => _submit(),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.sm),
 
                   // Error
                   if (auth.error != null)
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                       child: Text(auth.error!,
-                          style: TextStyle(color: Colors.red[700], fontSize: 13)),
+                          style: TextStyle(color: AppColors.error, fontSize: 13)),
                     ),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.lg),
 
                   // Submit
                   SizedBox(
@@ -135,7 +138,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       onPressed: auth.isLoading ? null : _submit,
                       style: FilledButton.styleFrom(
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
+                            borderRadius: AppRadius.mdCircular),
                       ),
                       child: auth.isLoading
                           ? const SizedBox(
@@ -147,14 +150,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           : const Text('Sign In', style: TextStyle(fontSize: 15)),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: AppSpacing.xl),
 
                   // Signup link
                   Wrap(
                     alignment: WrapAlignment.center,
                     children: [
                       Text("Don't have an account?",
-                          style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+                          style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
                       TextButton(
                         onPressed: () => context.go('/auth/signup'),
                         child: const Text('Create one'),

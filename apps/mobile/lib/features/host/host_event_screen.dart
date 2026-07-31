@@ -1,8 +1,9 @@
-// ─── Alpha Host Flow ──────────────────────────────────────────────
-// Sprint 6.9 — Create a real event in under 60 seconds.
+// â”€â”€â”€ Alpha Host Flow â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Sprint 6.9 â€” Create a real event in under 60 seconds.
 // NOT a full event management system. No ticketing, payments, Zoom.
 
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -14,6 +15,9 @@ import '../../core/api/api_client.dart';
 import '../../core/auth/auth_service.dart';
 import '../venue/models/venue.dart';
 import '../venue/widgets/venue_search_field.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
+import 'package:yugrow_mobile/core/theme/app_typography.dart';
 
 
 class HostEventScreen extends ConsumerStatefulWidget {
@@ -28,7 +32,7 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
   final _nameCtrl = TextEditingController();
   final _venueCtrl = TextEditingController();
 
-  // ── State ─────────────────────────────────────────────────────
+  // â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _startTime = const TimeOfDay(hour: 18, minute: 0);
   TimeOfDay _endTime = const TimeOfDay(hour: 21, minute: 0);
@@ -51,7 +55,7 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
     'Design', 'Marketing', 'Sales', 'HR', 'Legal', 'Finance',
   ];
 
-  // ── Venue search (via VenueSearchField) ────────────────────────
+  // â”€â”€ Venue search (via VenueSearchField) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Venue? _selectedVenueObj;
 
   @override
@@ -242,17 +246,17 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF1A1A2E) : const Color(0xFFF8F9FB);
-    final textColor = isDark ? Colors.white : const Color(0xFF111827);
-    final mutedColor = isDark ? Colors.grey[400]! : const Color(0xFF6B7280);
+    final bgColor = isDark ? const Color(0xFF1A1A2E) : AppColors.background;
+    final textColor = isDark ? Colors.white : AppColors.textPrimary;
+    final mutedColor = isDark ? AppColors.textDisabled : AppColors.textSecondary;
     final cardColor = isDark ? const Color(0xFF16213E) : Colors.white;
 
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
         title: const Text('Create Professional Event'),
-        backgroundColor: const Color(0xFF0F766E),
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.textInverse,
       ),
       body: _created ? _buildSuccess() : _buildForm(textColor, mutedColor, cardColor),
     );
@@ -260,24 +264,24 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
 
   Widget _buildForm(Color textColor, Color mutedColor, Color cardColor) {
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       children: [
-        _sectionDivider('🤝', 'What are you hosting?'),
+        _sectionDivider('ðŸ¤', 'What are you hosting?'),
 
-        // ── Event Type ────────────────────────────────────────
+        // â”€â”€ Event Type â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         _label('Type'),
-        const SizedBox(height: 6),
+        const SizedBox(height: AppSpacing.sm),
         Wrap(
           spacing: 6, runSpacing: 6,
           children: [
-            ('🤝 Networking Meetup', 'NETWORKING_MEETUP'),
-            ('🎓 Workshop', 'WORKSHOP'),
-            ('🎤 Conference', 'CONFERENCE'),
-            ('🏢 Expo', 'EXPO'),
-            ('📚 Seminar', 'SEMINAR'),
-            ('🚀 Pitch Night', 'PITCH_NIGHT'),
-            ('👥 Community Meetup', 'COMMUNITY_MEETUP'),
-            ('🏢 Company Event', 'COMPANY_EVENT'),
+            ('ðŸ¤ Networking Meetup', 'NETWORKING_MEETUP'),
+            ('ðŸŽ“ Workshop', 'WORKSHOP'),
+            ('ðŸŽ¤ Conference', 'CONFERENCE'),
+            ('ðŸ¢ Expo', 'EXPO'),
+            ('ðŸ“š Seminar', 'SEMINAR'),
+            ('ðŸš€ Pitch Night', 'PITCH_NIGHT'),
+            ('ðŸ‘¥ Community Meetup', 'COMMUNITY_MEETUP'),
+            ('ðŸ¢ Company Event', 'COMPANY_EVENT'),
           ].map((e) {
             final label = e.$1;
             final value = e.$2;
@@ -285,8 +289,8 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
             return ChoiceChip(
               label: Text(label, style: TextStyle(fontSize: 12, color: selected ? Colors.white : null, fontWeight: selected ? FontWeight.w600 : null)),
               selected: selected,
-              selectedColor: const Color(0xFF0F766E),
-              backgroundColor: const Color(0xFFF3F4F6),
+              selectedColor: AppColors.primary,
+              backgroundColor: AppColors.surfaceHover,
               visualDensity: VisualDensity.compact,
               onSelected: (v) {
                 if (v) setState(() => _eventType = value);
@@ -294,162 +298,162 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
             );
           }).toList(),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.xl),
 
-        // ── Event Name ────────────────────────────────────────
+        // â”€â”€ Event Name â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         _label('Event Name'),
-        const SizedBox(height: 6),
+        const SizedBox(height: AppSpacing.sm),
         TextField(
           controller: _nameCtrl,
           decoration: const InputDecoration(
             hintText: 'e.g. AI Meetup Chennai',
             border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
             filled: true,
-            fillColor: Color(0xFFF9FAFB),
-            contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            fillColor: AppColors.surface,
+            contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.lg),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.xl),
 
-        _sectionDivider('📍', 'Where is it?'),
+        _sectionDivider('ðŸ“', 'Where is it?'),
 
-        // ── Venue (VenueSearchField) ───────────────────────────
+        // â”€â”€ Venue (VenueSearchField) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         VenueSearchField(
           api: _api,
           onVenueSelected: (venue) {
             setState(() => _selectedVenueObj = venue);
           },
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.xl),
 
-        _sectionDivider('📅', 'When is it?'),
+        _sectionDivider('ðŸ“…', 'When is it?'),
 
-        // ── Date ──────────────────────────────────────────────
-        const SizedBox(height: 6),
+        // â”€â”€ Date â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        const SizedBox(height: AppSpacing.sm),
         InkWell(
           onTap: _pickDate,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.lg),
             decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFFD1D5DB)),
-              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: AppColors.border),
+              borderRadius: AppRadius.xsCircular,
               color: cardColor,
             ),
             child: Row(
               children: [
-                const Icon(LucideIcons.calendar, size: 18, color: Color(0xFF0F766E)),
-                const SizedBox(width: 10),
+                const Icon(LucideIcons.calendar, size: 18, color: AppColors.primary),
+                const SizedBox(width: AppSpacing.md),
                 Text(_formattedDate, style: TextStyle(fontSize: 15, color: textColor)),
                 const Spacer(),
-                const Icon(Icons.chevron_right, size: 18, color: Color(0xFF9CA3AF)),
+                const Icon(Icons.chevron_right, size: 18, color: AppColors.textDisabled),
               ],
             ),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.xl),
 
-        // ── Start Time ─────────────────────────────────────────
-        const SizedBox(height: 6),
+        // â”€â”€ Start Time â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        const SizedBox(height: AppSpacing.sm),
         InkWell(
           onTap: _pickTime,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.lg),
             decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFFD1D5DB)),
-              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: AppColors.border),
+              borderRadius: AppRadius.xsCircular,
               color: cardColor,
             ),
             child: Row(
               children: [
-                const Icon(LucideIcons.clock, size: 18, color: Color(0xFF0F766E)),
-                const SizedBox(width: 10),
+                const Icon(LucideIcons.clock, size: 18, color: AppColors.primary),
+                const SizedBox(width: AppSpacing.md),
                 Text(_formattedStartTime, style: TextStyle(fontSize: 15, color: textColor)),
                 const Spacer(),
-                const Icon(Icons.chevron_right, size: 18, color: Color(0xFF9CA3AF)),
+                const Icon(Icons.chevron_right, size: 18, color: AppColors.textDisabled),
               ],
             ),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.xl),
 
-        // ── End Time ───────────────────────────────────────────
-        const SizedBox(height: 6),
+        // â”€â”€ End Time â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        const SizedBox(height: AppSpacing.sm),
         InkWell(
           onTap: _pickEndTime,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.lg),
             decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFFD1D5DB)),
-              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: AppColors.border),
+              borderRadius: AppRadius.xsCircular,
               color: cardColor,
             ),
             child: Row(
               children: [
-                const Icon(LucideIcons.clock, size: 18, color: Color(0xFF0F766E)),
-                const SizedBox(width: 10),
+                const Icon(LucideIcons.clock, size: 18, color: AppColors.primary),
+                const SizedBox(width: AppSpacing.md),
                 Text(_formattedEndTime, style: TextStyle(fontSize: 15, color: textColor)),
                 const Spacer(),
-                const Icon(Icons.chevron_right, size: 18, color: Color(0xFF9CA3AF)),
+                const Icon(Icons.chevron_right, size: 18, color: AppColors.textDisabled),
               ],
             ),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.xl),
 
-        _sectionDivider('📝', 'About the Event'),
+        _sectionDivider('ðŸ“', 'About the Event'),
 
-        // ── Description ───────────────────────────────────────
-        const SizedBox(height: 6),
+        // â”€â”€ Description â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        const SizedBox(height: AppSpacing.sm),
         TextField(
           controller: _descriptionCtrl,
           maxLines: 3,
           maxLength: 250,
           buildCounter: (_, {required currentLength, required isFocused, maxLength}) => Text(
             '$currentLength / $maxLength',
-            style: TextStyle(fontSize: 11, color: currentLength > 200 ? const Color(0xFFDC2626) : mutedColor),
+            style: TextStyle(fontSize: 11, color: currentLength > 200 ? AppColors.error : mutedColor),
           ),
           decoration: const InputDecoration(
             hintText: 'Tell attendees what they will gain from attending.',
             border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
             filled: true,
-            fillColor: Color(0xFFF9FAFB),
-            contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            fillColor: AppColors.surface,
+            contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.lg),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.xl),
 
-        // ── Event Website ─────────────────────────────────────
-        const SizedBox(height: 6),
+        // â”€â”€ Event Website â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        const SizedBox(height: AppSpacing.sm),
         TextField(
           controller: _websiteCtrl,
           decoration: const InputDecoration(
             hintText: 'e.g. meetup.com/ai-summit-chennai',
             border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
             filled: true,
-            fillColor: Color(0xFFF9FAFB),
-            contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            fillColor: AppColors.surface,
+            contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.lg),
             prefixIcon: Icon(LucideIcons.globe, size: 18),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.xl),
 
-        // ── Ticket Link ───────────────────────────────────────
-        const SizedBox(height: 6),
+        // â”€â”€ Ticket Link â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        const SizedBox(height: AppSpacing.sm),
         TextField(
           controller: _ticketCtrl,
           decoration: const InputDecoration(
             hintText: 'e.g. eventbrite.com/e/...',
             border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
             filled: true,
-            fillColor: Color(0xFFF9FAFB),
-            contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            fillColor: AppColors.surface,
+            contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.lg),
             prefixIcon: Icon(LucideIcons.ticket, size: 18),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.xl),
 
-        // ── Event Topics ─────────────────────────────────────
-        const SizedBox(height: 6),
+        // â”€â”€ Event Topics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        const SizedBox(height: AppSpacing.sm),
         Wrap(
           spacing: 6, runSpacing: 6,
           children: _industryOptions.map((tag) {
@@ -458,8 +462,8 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
             return FilterChip(
               label: Text(tag, style: TextStyle(fontSize: 12, color: selected ? Colors.white : null, fontWeight: selected ? FontWeight.w600 : null)),
               selected: selected,
-              selectedColor: const Color(0xFF0F766E),
-              backgroundColor: const Color(0xFFF3F4F6),
+              selectedColor: AppColors.primary,
+              backgroundColor: AppColors.surfaceHover,
               visualDensity: VisualDensity.compact,
               checkmarkColor: Colors.white,
               onSelected: atLimit ? null : (v) {
@@ -472,16 +476,16 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
         ),
         if (_industryTags.length >= 3)
           Padding(
-            padding: const EdgeInsets.only(top: 4),
+            padding: const EdgeInsets.only(top: AppSpacing.xs),
             child: Text('Maximum 3 topics selected.',
               style: TextStyle(fontSize: 11, color: mutedColor)),
           ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.xl),
 
-        _sectionDivider('🌍', 'Access & Settings'),
+        _sectionDivider('ðŸŒ', 'Access & Settings'),
 
-        // ── Access Mode ───────────────────────────────────────
-        const SizedBox(height: 6),
+        // â”€â”€ Access Mode â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        const SizedBox(height: AppSpacing.sm),
         SegmentedButton<String>(
           segments: const [
             ButtonSegment(value: 'PUBLIC', label: Text('Public'), icon: Icon(LucideIcons.globe, size: 16)),
@@ -497,13 +501,13 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
 
         // Sub-options for Public and Link Access
         if (_visibility == 'PUBLIC') ...[
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.xs),
           Padding(
-            padding: const EdgeInsets.only(left: 4),
+            padding: const EdgeInsets.only(left: AppSpacing.xs),
             child: Text('Anyone can discover this event.',
-              style: TextStyle(fontSize: 12, color: mutedColor)),
+              style: AppTypography.caption.copyWith(color: mutedColor)),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
 
           SegmentedButton<String>(
             segments: const [
@@ -515,13 +519,13 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
           ),
         ],
         if (_visibility == 'LINK_ACCESS') ...[
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.xs),
           Padding(
-            padding: const EdgeInsets.only(left: 4),
+            padding: const EdgeInsets.only(left: AppSpacing.xs),
             child: Text('Only people with the invite link can discover it.',
-              style: TextStyle(fontSize: 12, color: mutedColor)),
+              style: AppTypography.caption.copyWith(color: mutedColor)),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           SegmentedButton<String>(
             segments: const [
               ButtonSegment(value: 'OPEN', label: Text('Join Instantly'), icon: Icon(LucideIcons.log_in, size: 16)),
@@ -532,8 +536,8 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
           ),
         ],
 
-        // ── Audience Size ──────────────────────────────────────
-        const SizedBox(height: 6),
+        // â”€â”€ Audience Size â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        const SizedBox(height: AppSpacing.sm),
         SegmentedButton<String>(
           segments: const [
             ButtonSegment(value: 'under_20', label: Text('Under 20')),
@@ -544,27 +548,27 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
           selected: {_expectedSize},
           onSelectionChanged: (s) => setState(() => _expectedSize = s.first),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.xl),
 
-        // ── Hosted By ─────────────────────────────────────────
-        const SizedBox(height: 6),
+        // â”€â”€ Hosted By â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        const SizedBox(height: AppSpacing.sm),
         SegmentedButton<String>(
           segments: const [
-            ButtonSegment(value: 'personal', label: Text('👤 You (Personal)')),
-            ButtonSegment(value: 'company', label: Text('🏢 Yugrow')),
+            ButtonSegment(value: 'personal', label: Text('ðŸ‘¤ You (Personal)')),
+            ButtonSegment(value: 'company', label: Text('ðŸ¢ Yugrow')),
           ],
           selected: {_organizerWorkspace},
           onSelectionChanged: (s) => setState(() => _organizerWorkspace = s.first),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.xl),
 
-        // ── Preview ───────────────────────────────────────────
+        // â”€â”€ Preview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         if (_nameCtrl.text.trim().isNotEmpty)
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             decoration: BoxDecoration(
               color: const Color(0xFFF0F9FF),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: AppRadius.mdCircular,
               border: Border.all(color: const Color(0xFFBAE6FD)),
             ),
             child: Column(
@@ -572,19 +576,19 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
               children: [
                 const Row(
                   children: [
-                    Icon(LucideIcons.eye, size: 14, color: Color(0xFF0284C7)),
-                    SizedBox(width: 6),
+                    Icon(LucideIcons.eye, size: 14, color: AppColors.info),
+                    SizedBox(width: AppSpacing.sm),
                     Text('Attendee Preview',
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF0284C7))),
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.info)),
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: AppSpacing.md),
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(AppSpacing.md),
                   decoration: BoxDecoration(
                     color: cardColor,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: const Color(0xFFE5E7EB)),
+                    borderRadius: AppRadius.mdCircular,
+                    border: Border.all(color: AppColors.border),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -592,50 +596,50 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
                       // Event name
                       Text(_nameCtrl.text,
                         style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AppSpacing.xs),
                       // Event type
                       Text(_eventType.replaceAll('_', ' ').split(' ').map((w) => w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : '').join(' '),
-                        style: TextStyle(fontSize: 12, color: mutedColor)),
+                        style: AppTypography.caption.copyWith(color: mutedColor)),
                       // Topics
-                      if (_industryTags.isNotEmpty) ...[const SizedBox(height: 4),
-                        Text(_industryTags.join(' · '),
-                          style: const TextStyle(fontSize: 12, color: Color(0xFF0F766E))),
+                      if (_industryTags.isNotEmpty) ...[const SizedBox(height: AppSpacing.xs),
+                        Text(_industryTags.join(' Â· '),
+                          style: const TextStyle(fontSize: 12, color: AppColors.primary)),
                       ],
-                      const SizedBox(height: 6),
+                      const SizedBox(height: AppSpacing.sm),
                       Row(
                         children: [
-                          const Icon(LucideIcons.calendar, size: 13, color: Color(0xFF6B7280)),
-                          const SizedBox(width: 4),
-                          Text('$_formattedDate · $_formattedStartTime - $_formattedEndTime',
-                            style: TextStyle(fontSize: 12, color: mutedColor)),
+                          const Icon(LucideIcons.calendar, size: 13, color: AppColors.textSecondary),
+                          const SizedBox(width: AppSpacing.xs),
+                          Text('$_formattedDate Â· $_formattedStartTime - $_formattedEndTime',
+                            style: AppTypography.caption.copyWith(color: mutedColor)),
                         ],
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: AppSpacing.xs),
                       Row(
                         children: [
-                          const Icon(LucideIcons.map_pin, size: 13, color: Color(0xFF6B7280)),
-                          const SizedBox(width: 4),
+                          const Icon(LucideIcons.map_pin, size: 13, color: AppColors.textSecondary),
+                          const SizedBox(width: AppSpacing.xs),
                           Text(_selectedVenueObj?.name ?? 'Venue TBD',
-                            style: TextStyle(fontSize: 12, color: mutedColor)),
+                            style: AppTypography.caption.copyWith(color: mutedColor)),
                         ],
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AppSpacing.sm),
                       Row(
                         children: [
-                          Icon(LucideIcons.globe, size: 13, color: _visibility == 'PUBLIC' ? const Color(0xFF16A34A) : const Color(0xFFD97706)),
-                          const SizedBox(width: 4),
+                          Icon(LucideIcons.globe, size: 13, color: _visibility == 'PUBLIC' ? AppColors.success : AppColors.warning),
+                          const SizedBox(width: AppSpacing.xs),
                           Text(_visibilityLabel,
-                            style: TextStyle(fontSize: 11, color: _visibility == 'PUBLIC' ? const Color(0xFF16A34A) : const Color(0xFFD97706))),
+                            style: TextStyle(fontSize: 11, color: _visibility == 'PUBLIC' ? AppColors.success : AppColors.warning)),
                           const Spacer(),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
                               color: const Color(0xFFF0F9FF),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: AppRadius.mdCircular,
                               border: Border.all(color: const Color(0xFFBAE6FD)),
                             ),
-                            child: Text('$_formattedDate · $_formattedStartTime',
-                              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF0284C7))),
+                            child: Text('$_formattedDate Â· $_formattedStartTime',
+                              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.info)),
                           ),
                         ],
                       ),
@@ -645,21 +649,21 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
               ],
             ),
           ),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.xl),
 
-        // ── Create Button ──────────────────────────────────────
-        const SizedBox(height: 8),
+        // â”€â”€ Create Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        const SizedBox(height: AppSpacing.sm),
         SizedBox(
           width: double.infinity,
           height: 52,
           child: ElevatedButton(
             onPressed: _creating ? null : _create,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF0F766E),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              backgroundColor: AppColors.primary,
+              foregroundColor: AppColors.textInverse,
+              shape: RoundedRectangleBorder(borderRadius: AppRadius.mdCircular),
               elevation: 0,
-              textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              textStyle: AppTypography.bodyBold,
             ),
             child: _creating
                 ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white))
@@ -667,13 +671,13 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(LucideIcons.plus, size: 20),
-                      SizedBox(width: 8),
+                      SizedBox(width: AppSpacing.sm),
                       Text('Create Event'),
                     ],
                   ),
           ),
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: AppSpacing.xxl),
       ],
     );
   }
@@ -699,7 +703,7 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
     return SingleChildScrollView(
       child: Center(
         child: Padding(
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.all(AppSpacing.xxl),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -712,73 +716,73 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
                     Positioned(
                       left: 10, top: 10,
                       child: Container(width: 12, height: 12,
-                          decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFF0F766E))),
+                          decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.primary)),
                     ),
                     Positioned(
                       right: 20, top: 5,
                       child: Container(width: 8, height: 8,
-                          decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFF59E0B))),
+                          decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.warning)),
                     ),
                     Positioned(
                       left: 40, bottom: 10,
                       child: Container(width: 10, height: 10,
-                          decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFF3B82F6))),
+                          decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.info)),
                     ),
                     Positioned(
                       right: 50, bottom: 5,
                       child: Container(width: 6, height: 6,
-                          decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFEF4444))),
+                          decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.error)),
                     ),
                     const SizedBox(
                       width: 64, height: 64,
-                      child: Icon(Icons.check_circle, color: Color(0xFF0F766E), size: 64),
+                      child: Icon(Icons.check_circle, color: AppColors.primary, size: 64),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: AppSpacing.xl),
               Text('Event Created!',
                   style: GoogleFonts.inter(
                       fontSize: 24, fontWeight: FontWeight.w700,
-                      color: const Color(0xFF111827))),
-              const SizedBox(height: 8),
+                      color: AppColors.textPrimary)),
+              const SizedBox(height: AppSpacing.sm),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF0F766E).withValues(alpha: 0.06),
-                  borderRadius: BorderRadius.circular(14),
+                  color: AppColors.primary.withValues(alpha: 0.06),
+                  borderRadius: AppRadius.lgCircular,
                 ),
                 child: Column(
                   children: [
                     Text(name,
                         style: GoogleFonts.inter(
                             fontSize: 18, fontWeight: FontWeight.w600,
-                            color: const Color(0xFF111827))),
+                            color: AppColors.textPrimary)),
                     if (venueName.isNotEmpty) ...[
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AppSpacing.xs),
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(LucideIcons.map_pin, size: 14, color: Color(0xFF0F766E)),
-                          const SizedBox(width: 4),
+                          const Icon(LucideIcons.map_pin, size: 14, color: AppColors.primary),
+                          const SizedBox(width: AppSpacing.xs),
                           Text(venueName,
-                              style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+                              style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary)),
                         ],
                       ),
                     ],
-                    const SizedBox(height: 4),
-                    Text('$_formattedDate · $_formattedStartTime - $_formattedEndTime',
-                        style: TextStyle(fontSize: 13, color: Colors.grey[500])),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text('$_formattedDate Â· $_formattedStartTime - $_formattedEndTime',
+                        style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
                   ],
                 ),
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: AppSpacing.xl),
 
               Text('What would you like to do?',
                   style: GoogleFonts.inter(
                       fontSize: 15, fontWeight: FontWeight.w500,
-                      color: Colors.grey[700])),
-              const SizedBox(height: 16),
+                      color: AppColors.textPrimary)),
+              const SizedBox(height: AppSpacing.lg),
 
               SizedBox(
                 width: double.infinity,
@@ -790,13 +794,13 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
                     isEventLive ? "I'm Here Now" : 'Check-in opens at event start',
                     style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
                   style: FilledButton.styleFrom(
-                    backgroundColor: isEventLive ? const Color(0xFF0F766E) : Colors.grey[400],
+                    backgroundColor: isEventLive ? AppColors.primary : AppColors.textDisabled,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: AppRadius.mdCircular),
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: AppSpacing.md),
               SizedBox(
                 width: double.infinity,
                 height: 48,
@@ -814,18 +818,18 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
                   label: const Text('Copy Invite Link',
                       style: TextStyle(fontSize: 15)),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF0F766E),
-                    side: const BorderSide(color: Color(0xFF0F766E)),
+                    foregroundColor: AppColors.primary,
+                    side: const BorderSide(color: AppColors.primary),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: AppRadius.mdCircular),
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: AppSpacing.md),
               TextButton(
                 onPressed: () => context.go('/'),
                 child: Text('Back to Events',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[500])),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary)),
               ),
             ],
           ),
@@ -835,21 +839,22 @@ class _HostEventScreenState extends ConsumerState<HostEventScreen> {
   }
 
   Widget _label(String text) {
-    return Text(text, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF0F766E)));
+    return Text(text, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.primary));
   }
 
   Widget _sectionDivider(String emoji, String title) {
     return Padding(
-      padding: const EdgeInsets.only(top: 8, bottom: 12),
+      padding: const EdgeInsets.only(top: AppSpacing.sm, bottom: AppSpacing.md),
       child: Row(
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 16)),
-          const SizedBox(width: 8),
-          Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Color(0xFF111827))),
+          Text(emoji, style: AppTypography.body),
+          const SizedBox(width: AppSpacing.sm),
+          Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
           const Expanded(child: SizedBox()),
-          Container(height: 1, color: const Color(0xFFE5E7EB)),
+          Container(height: 1, color: AppColors.border),
         ],
       ),
     );
+
   }
 }

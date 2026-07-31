@@ -1,13 +1,17 @@
-// ─── Yugrow Founder Console v2 ──────────────────────────────────
+// â”€â”€â”€ Yugrow Founder Console v2 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Enhanced founder console for testing, validation, and demos.
 // Accessible from Profile screen. NOT exposed to end users.
 //
-// Sprint 6.7 — Founder Mode only. No public hosting, no navigation changes.
+// Sprint 6.7 â€” Founder Mode only. No public hosting, no navigation changes.
 
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
 import 'package:flutter/services.dart';
 import '../../core/api/api_client.dart';
 import 'feedback_inbox_screen.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
+import 'package:yugrow_mobile/core/theme/app_typography.dart';
 
 class FounderConsole extends StatefulWidget {
   const FounderConsole({super.key});
@@ -19,18 +23,18 @@ class FounderConsole extends StatefulWidget {
 class _FounderConsoleState extends State<FounderConsole> {
   final _api = ApiClient();
 
-  // ── App Info ──────────────────────────────────────────────────
+  // â”€â”€ App Info â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   final String _apiUrl = 'http://localhost:4000/api/v1';
   final String _appVersion = '0.1.1-alpha';
   final String _buildNumber = '1';
   String _lastApiCall = 'None';
   bool _apiHealthy = false;
 
-  // ── Event List ────────────────────────────────────────────────
+  // â”€â”€ Event List â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   List<Map<String, dynamic>> _events = [];
   bool _eventsLoading = false;
 
-  // ── Create Event Form ─────────────────────────────────────────
+  // â”€â”€ Create Event Form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   bool _showCreateForm = false;
   bool _showEditForm = false;
   Map<String, dynamic>? _editingEvent;
@@ -42,15 +46,15 @@ class _FounderConsoleState extends State<FounderConsole> {
   bool _creating = false;
   bool _editing = false;
 
-  // ── Result feedback ───────────────────────────────────────────
+  // â”€â”€ Result feedback â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   String _resultText = '';
   bool _resultIsError = false;
   bool _isLoading = false;
 
-  // ── Test Status Dashboard ─────────────────────────────────────
+  // â”€â”€ Test Status Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Map<String, dynamic>? _testStatus;
 
-  // ── Send Message Forms ───────────────────────────────────────
+  // â”€â”€ Send Message Forms â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   bool _showReleaseForm = false;
   bool _showAnnouncementForm = false;
   bool _showFeedbackStatusForm = false;
@@ -109,7 +113,7 @@ class _FounderConsoleState extends State<FounderConsole> {
     super.dispose();
   }
 
-  // ── Helpers ───────────────────────────────────────────────────
+  // â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Future<void> _refresh() async {
     await Future.wait([_checkApiHealth(), _loadEvents(), _loadTestStatus()]);
@@ -127,7 +131,7 @@ class _FounderConsoleState extends State<FounderConsole> {
       final response = await _api.getActiveEvents();
       setState(() {
         _apiHealthy = true;
-        _lastApiCall = 'GET /checkin/events — ${response.length} events';
+        _lastApiCall = 'GET /checkin/events â€” ${response.length} events';
       });
     } catch (e) {
       setState(() {
@@ -173,7 +177,7 @@ class _FounderConsoleState extends State<FounderConsole> {
     }
   }
 
-  // ── Create Event ──────────────────────────────────────────────
+  // â”€â”€ Create Event â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Future<void> _createEvent() async {
     final name = _nameCtrl.text.trim();
@@ -238,7 +242,7 @@ class _FounderConsoleState extends State<FounderConsole> {
     }
   }
 
-  // ── Edit Event ────────────────────────────────────────────────
+  // â”€â”€ Edit Event â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   void _openEditForm(Map<String, dynamic> event) {
     setState(() {
@@ -279,7 +283,7 @@ class _FounderConsoleState extends State<FounderConsole> {
     }
   }
 
-  // ── End Event ─────────────────────────────────────────────────
+  // â”€â”€ End Event â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Future<void> _endEvent(String id, String name) async {
     final confirm = await _confirmDialog(
@@ -299,7 +303,7 @@ class _FounderConsoleState extends State<FounderConsole> {
     });
   }
 
-  // ── Duplicate Event ───────────────────────────────────────────
+  // â”€â”€ Duplicate Event â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Future<void> _duplicateEvent(String id, String name) async {
     await _withLoading(() async {
@@ -314,7 +318,7 @@ class _FounderConsoleState extends State<FounderConsole> {
     });
   }
 
-  // ── Seed Attendees ────────────────────────────────────────────
+  // â”€â”€ Seed Attendees â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Future<void> _seedAttendees(String eventId, String eventName) async {
     await _withLoading(() async {
@@ -328,7 +332,7 @@ class _FounderConsoleState extends State<FounderConsole> {
     });
   }
 
-  // ── Clear Presence ────────────────────────────────────────────
+  // â”€â”€ Clear Presence â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Future<void> _clearPresence() async {
     final confirm = await _confirmDialog(
@@ -348,11 +352,11 @@ class _FounderConsoleState extends State<FounderConsole> {
     });
   }
 
-  // ── Reset Demo Data ───────────────────────────────────────────
+  // â”€â”€ Reset Demo Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Future<void> _resetDemoData() async {
     final confirm = await _confirmDialog(
-      '⚠️ Reset Demo Data',
+      'âš ï¸ Reset Demo Data',
       'This will delete ALL test attendees, their workspaces, '
       'and related data. Events and venues will be preserved.\n\n'
       'This cannot be undone.',
@@ -371,7 +375,7 @@ class _FounderConsoleState extends State<FounderConsole> {
     });
   }
 
-  // ── Founder Login ────────────────────────────────────────────
+  // â”€â”€ Founder Login â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Future<void> _founderLogin() async {
     await _withLoading(() async {
@@ -390,7 +394,7 @@ class _FounderConsoleState extends State<FounderConsole> {
     });
   }
 
-  // ── Dialog ────────────────────────────────────────────────────
+  // â”€â”€ Dialog â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Future<bool> _confirmDialog(String title, String message) async {
     final result = await showDialog<bool>(
@@ -405,7 +409,7 @@ class _FounderConsoleState extends State<FounderConsole> {
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
             child: const Text('Confirm'),
           ),
         ],
@@ -414,25 +418,25 @@ class _FounderConsoleState extends State<FounderConsole> {
     return result ?? false;
   }
 
-  // ═══════════════════════════════════════════════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   // BUILD
-  // ═══════════════════════════════════════════════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF1A1A2E) : const Color(0xFFF8F9FB);
+    final bgColor = isDark ? const Color(0xFF1A1A2E) : AppColors.background;
     final cardColor = isDark ? const Color(0xFF16213E) : Colors.white;
-    final textColor = isDark ? Colors.white : const Color(0xFF111827);
-    final mutedColor = isDark ? Colors.grey[400]! : const Color(0xFF6B7280);
-    const dangerColor = Color(0xFFDC2626);
+    final textColor = isDark ? Colors.white : AppColors.textPrimary;
+    final mutedColor = isDark ? AppColors.textDisabled : AppColors.textSecondary;
+    const dangerColor = AppColors.error;
 
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
         title: const Text('Founder Mode'),
-        backgroundColor: const Color(0xFF0F766E),
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.textInverse,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh, size: 20),
@@ -443,18 +447,18 @@ class _FounderConsoleState extends State<FounderConsole> {
       body: Stack(
         children: [
           ListView(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+            padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, 100),
             children: [
-              // ── Result Banner ────────────────────────────────
+              // â”€â”€ Result Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               if (_resultText.isNotEmpty)
                 Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  margin: const EdgeInsets.only(bottom: AppSpacing.md),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
                   decoration: BoxDecoration(
                     color: _resultIsError
                         ? const Color(0xFFFEF2F2)
                         : const Color(0xFFF0FDF4),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: AppRadius.smCircular,
                     border: Border.all(
                       color: _resultIsError
                           ? const Color(0xFFFECACA)
@@ -466,15 +470,15 @@ class _FounderConsoleState extends State<FounderConsole> {
                       Icon(
                         _resultIsError ? Icons.error_outline : Icons.check_circle_outline,
                         size: 18,
-                        color: _resultIsError ? dangerColor : const Color(0xFF16A34A),
+                        color: _resultIsError ? dangerColor : AppColors.success,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: Text(
                           _resultText,
                           style: TextStyle(
                             fontSize: 13,
-                            color: _resultIsError ? dangerColor : const Color(0xFF16A34A),
+                            color: _resultIsError ? dangerColor : AppColors.success,
                           ),
                         ),
                       ),
@@ -482,36 +486,36 @@ class _FounderConsoleState extends State<FounderConsole> {
                   ),
                 ),
 
-              // ── App Info ─────────────────────────────────────
+              // â”€â”€ App Info â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               _section('App', cardColor, [
                 _row('Version', _appVersion, textColor, mutedColor),
                 _row('Build', _buildNumber, textColor, mutedColor),
               ]),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
 
-              // ── API Health ───────────────────────────────────
+              // â”€â”€ API Health â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               _section('API Health', cardColor, [
                 _row('URL', _apiUrl, textColor, mutedColor),
-                _row('Status', _apiHealthy ? 'Connected ✓' : 'Disconnected ✗',
-                    _apiHealthy ? const Color(0xFF16A34A) : dangerColor, mutedColor),
+                _row('Status', _apiHealthy ? 'Connected âœ“' : 'Disconnected âœ—',
+                    _apiHealthy ? AppColors.success : dangerColor, mutedColor),
                 _row('Last Call', _lastApiCall, textColor, mutedColor),
                 _founderButton('Refresh API Status', Icons.refresh, _checkApiHealth),
               ]),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
 
-              // ── Current Event Dashboard ──────────────────────
+              // â”€â”€ Current Event Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               if (_testStatus != null && (_testStatus!['hasSeededAttendees'] == true || (_testStatus!['events'] as List?)?.isNotEmpty == true))
                 _section('Current Event', cardColor, [
                   ...(_testStatus!['events'] as List).map((e) {
                     final event = e as Map<String, dynamic>;
                     return _buildEventDashboard(event, textColor, mutedColor);
                   }),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.xs),
                 ]),
               if (_testStatus != null && (_testStatus!['hasSeededAttendees'] == true || (_testStatus!['events'] as List?)?.isNotEmpty == true))
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.md),
 
-              // ── Event Management ─────────────────────────────
+              // â”€â”€ Event Management â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               _section('Event Management', cardColor, [
                 // Create button
                 _founderButton(
@@ -532,12 +536,12 @@ class _FounderConsoleState extends State<FounderConsole> {
                 // Event list
                 if (_eventsLoading)
                   const Padding(
-                    padding: EdgeInsets.all(16),
+                    padding: EdgeInsets.all(AppSpacing.lg),
                     child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
                   )
                 else if (_events.isEmpty && !_showCreateForm)
                   Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(AppSpacing.lg),
                     child: Text(
                       'No active events. Create one to get started.',
                       style: TextStyle(fontSize: 13, color: mutedColor),
@@ -546,9 +550,9 @@ class _FounderConsoleState extends State<FounderConsole> {
                 else
                   ..._events.map((event) => _buildEventTile(event, textColor, mutedColor, cardColor)),
               ]),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
 
-              // ── Auth ─────────────────────────────────────────
+              // â”€â”€ Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               _section('Auth', cardColor, [
                 _founderButton(
                   'Sign in as Founder',
@@ -556,9 +560,9 @@ class _FounderConsoleState extends State<FounderConsole> {
                   _founderLogin,
                 ),
               ]),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
 
-              // ── Test Data Tools ──────────────────────────────
+              // â”€â”€ Test Data Tools â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               _section('Test Data', cardColor, [
                 _founderButton(
                   'Seed 20 Test Attendees',
@@ -576,20 +580,20 @@ class _FounderConsoleState extends State<FounderConsole> {
                   _resetDemoData,
                 ),
               ]),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
 
-              // ── Founder Inbox ────────────────────────────────
-              _section('Founder Inbox 💬', cardColor, [
+              // â”€â”€ Founder Inbox â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              _section('Founder Inbox ðŸ’¬', cardColor, [
                 _founderButton(
                   'View Feedback Inbox',
                   Icons.inbox_outlined,
                   _openFeedbackInbox,
                 ),
               ]),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
 
-              // ── Send Messages ────────────────────────────────
-              _section('Send Messages 📨', cardColor, [
+              // â”€â”€ Send Messages â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              _section('Send Messages ðŸ“¨', cardColor, [
                 _founderButton(
                   'Send Release Note',
                   Icons.newspaper,
@@ -611,45 +615,45 @@ class _FounderConsoleState extends State<FounderConsole> {
                 ),
                 if (_showFeedbackStatusForm) _buildFeedbackStatusForm(mutedColor),
               ]),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
 
-              // ── Warning ──────────────────────────────────────
+              // â”€â”€ Warning â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(AppSpacing.md),
                 decoration: BoxDecoration(
                   color: const Color(0xFFFFF3CD),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: AppRadius.smCircular,
                   border: Border.all(color: const Color(0xFFFFE58F)),
                 ),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '🔒 Founder Mode Only',
+                      'ðŸ”’ Founder Mode Only',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF856404),
+                        color: AppColors.warning,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    SizedBox(height: AppSpacing.xs),
                     Text(
                       'These tools are for founder testing only. '
                       'They will be removed or redesigned before '
                       'the public Host experience is built.',
-                      style: TextStyle(fontSize: 12, color: Color(0xFF856404)),
+                      style: AppTypography.caption.copyWith(color: AppColors.warning),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: AppSpacing.xxl),
             ],
           ),
 
-          // ── Loading Overlay ──────────────────────────────────
+          // â”€â”€ Loading Overlay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           if (_isLoading)
             Container(
-              color: Colors.black26,
+              color: AppColors.textDisabled,
               child: const Center(child: CircularProgressIndicator()),
             ),
         ],
@@ -657,15 +661,15 @@ class _FounderConsoleState extends State<FounderConsole> {
     );
   }
 
-  // ── Create Event Form ─────────────────────────────────────────
+  // â”€â”€ Create Event Form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildCreateForm(Color mutedColor) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      padding: const EdgeInsets.all(14),
+      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: const Color(0xFFF0FDF4),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: AppRadius.mdCircular,
         border: Border.all(color: const Color(0xFFBBF7D0)),
       ),
       child: Column(
@@ -673,7 +677,7 @@ class _FounderConsoleState extends State<FounderConsole> {
         children: [
           const Text('New Test Event',
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           TextField(
             controller: _nameCtrl,
             decoration: const InputDecoration(
@@ -683,7 +687,7 @@ class _FounderConsoleState extends State<FounderConsole> {
               isDense: true,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: AppSpacing.md),
           TextField(
             controller: _venueCtrl,
             decoration: const InputDecoration(
@@ -693,7 +697,7 @@ class _FounderConsoleState extends State<FounderConsole> {
               isDense: true,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: AppSpacing.md),
           TextField(
             controller: _cityCtrl,
             decoration: const InputDecoration(
@@ -703,7 +707,7 @@ class _FounderConsoleState extends State<FounderConsole> {
               isDense: true,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: AppSpacing.md),
           DropdownButtonFormField<String>(
             initialValue: _visibility,
             decoration: const InputDecoration(
@@ -718,27 +722,27 @@ class _FounderConsoleState extends State<FounderConsole> {
             ],
             onChanged: (v) => setState(() => _visibility = v ?? 'PUBLIC'),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: AppSpacing.sm),
           Text(
-            'Starts today at 6 PM · Ends at 9 PM',
-            style: TextStyle(fontSize: 12, color: mutedColor),
+            'Starts today at 6 PM Â· Ends at 9 PM',
+            style: AppTypography.caption.copyWith(color: mutedColor),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           Row(
             children: [
               Expanded(
                 child: ElevatedButton(
                   onPressed: _creating ? null : _createEvent,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0F766E),
-                    foregroundColor: Colors.white,
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.textInverse,
                   ),
                   child: _creating
                       ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                       : const Text('Create Event'),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.sm),
               TextButton(
                 onPressed: () => setState(() => _showCreateForm = false),
                 child: const Text('Cancel'),
@@ -750,15 +754,15 @@ class _FounderConsoleState extends State<FounderConsole> {
     );
   }
 
-  // ── Edit Event Form ───────────────────────────────────────────
+  // â”€â”€ Edit Event Form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildEditForm(Color mutedColor) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      padding: const EdgeInsets.all(14),
+      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: const Color(0xFFEFF6FF),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: AppRadius.mdCircular,
         border: Border.all(color: const Color(0xFFBFDBFE)),
       ),
       child: Column(
@@ -766,7 +770,7 @@ class _FounderConsoleState extends State<FounderConsole> {
         children: [
           const Text('Edit Event',
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           TextField(
             controller: _nameCtrl,
             decoration: const InputDecoration(
@@ -775,7 +779,7 @@ class _FounderConsoleState extends State<FounderConsole> {
               isDense: true,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: AppSpacing.md),
           DropdownButtonFormField<String>(
             initialValue: _visibility,
             decoration: const InputDecoration(
@@ -790,22 +794,22 @@ class _FounderConsoleState extends State<FounderConsole> {
             ],
             onChanged: (v) => setState(() => _visibility = v ?? 'PUBLIC'),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           Row(
             children: [
               Expanded(
                 child: ElevatedButton(
                   onPressed: _editing ? null : _saveEdit,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0F766E),
-                    foregroundColor: Colors.white,
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.textInverse,
                   ),
                   child: _editing
                       ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                       : const Text('Save'),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.sm),
               TextButton(
                 onPressed: () {
                   setState(() {
@@ -822,7 +826,7 @@ class _FounderConsoleState extends State<FounderConsole> {
     );
   }
 
-  // ── Event Dashboard ──────────────────────────────────────────
+  // â”€â”€ Event Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildEventDashboard(Map<String, dynamic> event, Color textColor, Color mutedColor) {
     final eventName = event['eventName'] as String? ?? 'Unknown';
@@ -831,20 +835,20 @@ class _FounderConsoleState extends State<FounderConsole> {
     final seeded = event['seededAttendees'] as int? ?? 0;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(eventName,
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: textColor)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Row(
             children: [
-              _statBox('Total', '$total', const Color(0xFF0F766E)),
-              const SizedBox(width: 8),
-              _statBox('Real', '$real', const Color(0xFF16A34A)),
-              const SizedBox(width: 8),
-              _statBox('Seeded', '$seeded', const Color(0xFFD97706)),
+              _statBox('Total', '$total', AppColors.primary),
+              const SizedBox(width: AppSpacing.sm),
+              _statBox('Real', '$real', AppColors.success),
+              const SizedBox(width: AppSpacing.sm),
+              _statBox('Seeded', '$seeded', AppColors.warning),
             ],
           ),
         ],
@@ -858,7 +862,7 @@ class _FounderConsoleState extends State<FounderConsole> {
         padding: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: AppRadius.smCircular,
         ),
         child: Column(
           children: [
@@ -873,7 +877,7 @@ class _FounderConsoleState extends State<FounderConsole> {
     );
   }
 
-  // ── Event Tile ────────────────────────────────────────────────
+  // â”€â”€ Event Tile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildEventTile(Map<String, dynamic> event, Color textColor, Color mutedColor, Color cardColor) {
     final name = event['name'] as String? ?? 'Untitled';
@@ -884,12 +888,12 @@ class _FounderConsoleState extends State<FounderConsole> {
     final visibility = event['visibility'] as String? ?? 'PUBLIC';
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: const Color(0xFFF9FAFB),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        color: AppColors.surface,
+        borderRadius: AppRadius.smCircular,
+        border: Border.all(color: AppColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -901,34 +905,34 @@ class _FounderConsoleState extends State<FounderConsole> {
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: textColor)),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                 decoration: BoxDecoration(
                   color: status == 'ACTIVE'
                       ? const Color(0xFFBBF7D0)
                       : const Color(0xFFFEF3C7),
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: AppRadius.xsCircular,
                 ),
                 child: Text(status,
                   style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600,
-                    color: status == 'ACTIVE' ? const Color(0xFF16A34A) : const Color(0xFFD97706))),
+                    color: status == 'ACTIVE' ? AppColors.success : AppColors.warning)),
               ),
             ],
           ),
           if (venue.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: Text('$venue · $visibility',
-                style: TextStyle(fontSize: 12, color: mutedColor)),
+              padding: const EdgeInsets.only(top: AppSpacing.xs),
+              child: Text('$venue Â· $visibility',
+                style: AppTypography.caption.copyWith(color: mutedColor)),
             ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Row(
             children: [
               _smallButton('Edit', () => _openEditForm(event)),
-              const SizedBox(width: 6),
+              const SizedBox(width: AppSpacing.sm),
               _smallButton('End', () => _endEvent(id, name)),
-              const SizedBox(width: 6),
+              const SizedBox(width: AppSpacing.sm),
               _smallButton('Duplicate', () => _duplicateEvent(id, name)),
-              const SizedBox(width: 6),
+              const SizedBox(width: AppSpacing.sm),
               _smallButton('Seed', () => _seedAttendees(id, name)),
             ],
           ),
@@ -945,15 +949,15 @@ class _FounderConsoleState extends State<FounderConsole> {
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           textStyle: const TextStyle(fontSize: 11),
-          side: const BorderSide(color: Color(0xFFD1D5DB)),
-          foregroundColor: const Color(0xFF374151),
+          side: const BorderSide(color: AppColors.border),
+          foregroundColor: AppColors.textPrimary,
         ),
         child: Text(label),
       ),
     );
   }
 
-  // ── Event Picker Dialog ───────────────────────────────────────
+  // â”€â”€ Event Picker Dialog â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Future<void> _showEventPicker(
     String title,
@@ -987,20 +991,20 @@ class _FounderConsoleState extends State<FounderConsole> {
     }
   }
 
-  // ── Reusable Widgets ──────────────────────────────────────────
+  // â”€â”€ Reusable Widgets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _section(String title, Color cardColor, List<Widget> children) {
     return Container(
       decoration: BoxDecoration(
         color: cardColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        borderRadius: AppRadius.mdCircular,
+        border: Border.all(color: AppColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 14, 16, 4),
+            padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.xs),
             child: Row(
               children: [
                 Text(
@@ -1008,7 +1012,7 @@ class _FounderConsoleState extends State<FounderConsole> {
                   style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF0F766E),
+                    color: AppColors.primary,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -1016,7 +1020,7 @@ class _FounderConsoleState extends State<FounderConsole> {
             ),
           ),
           ...children,
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
         ],
       ),
     );
@@ -1024,15 +1028,15 @@ class _FounderConsoleState extends State<FounderConsole> {
 
   Widget _row(String label, String value, Color textColor, Color mutedColor) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(fontSize: 14, color: mutedColor)),
+          Text(label, style: AppTypography.bodySmall.copyWith(color: mutedColor)),
           Flexible(
             child: Text(
               value,
-              style: TextStyle(fontSize: 14, color: textColor),
+              style: AppTypography.bodySmall.copyWith(color: textColor),
               textAlign: TextAlign.right,
             ),
           ),
@@ -1043,57 +1047,57 @@ class _FounderConsoleState extends State<FounderConsole> {
 
   Widget _founderButton(String label, IconData icon, VoidCallback onTap) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
       child: TextButton.icon(
         onPressed: onTap,
         icon: Icon(icon, size: 16),
         label: Text(label),
         style: TextButton.styleFrom(
-          foregroundColor: const Color(0xFF0F766E),
+          foregroundColor: AppColors.primary,
           alignment: Alignment.centerLeft,
         ),
       ),
     );
   }
 
-  // ── Release Note Form ──────────────────────────────────────────
+  // â”€â”€ Release Note Form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildReleaseForm(Color mutedColor) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      padding: const EdgeInsets.all(14),
+      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: const Color(0xFFF0FDF4),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: AppRadius.mdCircular,
         border: Border.all(color: const Color(0xFFBBF7D0)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text('Release Note', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           TextField(controller: _releasePersonCtrl, decoration: const InputDecoration(labelText: 'Person ID', border: OutlineInputBorder(), isDense: true)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           TextField(controller: _releaseVersionCtrl, decoration: const InputDecoration(labelText: 'Version', border: OutlineInputBorder(), isDense: true)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           TextField(controller: _releaseTitleCtrl, decoration: const InputDecoration(labelText: 'Title', border: OutlineInputBorder(), isDense: true)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           TextField(controller: _releaseChangesCtrl, decoration: const InputDecoration(labelText: 'Changes (one per line)', border: OutlineInputBorder(), isDense: true), maxLines: 3),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           TextField(controller: _releaseActionCtrl, decoration: const InputDecoration(labelText: 'Action Label (optional)', border: OutlineInputBorder(), isDense: true)),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           Row(
             children: [
               Expanded(
                 child: ElevatedButton(
                   onPressed: _sendingMessage ? null : _sendReleaseNote,
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0F766E), foregroundColor: Colors.white),
+                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: AppColors.textInverse),
                   child: _sendingMessage
                       ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                       : const Text('Send Release Note'),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.sm),
               TextButton(onPressed: () => setState(() { _showReleaseForm = false; }), child: const Text('Cancel')),
             ],
           ),
@@ -1102,46 +1106,46 @@ class _FounderConsoleState extends State<FounderConsole> {
     );
   }
 
-  // ── Announcement Form ──────────────────────────────────────────
+  // â”€â”€ Announcement Form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildAnnouncementForm(Color mutedColor) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      padding: const EdgeInsets.all(14),
+      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: const Color(0xFFEFF6FF),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: AppRadius.mdCircular,
         border: Border.all(color: const Color(0xFFBFDBFE)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text('Announcement', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           TextField(controller: _announcePersonCtrl, decoration: const InputDecoration(labelText: 'Person ID', border: OutlineInputBorder(), isDense: true)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           TextField(controller: _announceTitleCtrl, decoration: const InputDecoration(labelText: 'Title', border: OutlineInputBorder(), isDense: true)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           TextField(controller: _announceDateCtrl, decoration: const InputDecoration(labelText: 'Date (optional)', border: OutlineInputBorder(), isDense: true)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           TextField(controller: _announceLocationCtrl, decoration: const InputDecoration(labelText: 'Location (optional)', border: OutlineInputBorder(), isDense: true)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           TextField(controller: _announceDescCtrl, decoration: const InputDecoration(labelText: 'Description (optional)', border: OutlineInputBorder(), isDense: true), maxLines: 2),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           TextField(controller: _announceActionCtrl, decoration: const InputDecoration(labelText: 'Action Label (optional)', border: OutlineInputBorder(), isDense: true)),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           Row(
             children: [
               Expanded(
                 child: ElevatedButton(
                   onPressed: _sendingMessage ? null : _sendAnnouncement,
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0F766E), foregroundColor: Colors.white),
+                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: AppColors.textInverse),
                   child: _sendingMessage
                       ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                       : const Text('Send Announcement'),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.sm),
               TextButton(onPressed: () => setState(() { _showAnnouncementForm = false; }), child: const Text('Cancel')),
             ],
           ),
@@ -1150,44 +1154,44 @@ class _FounderConsoleState extends State<FounderConsole> {
     );
   }
 
-  // ── Feedback Status Form ───────────────────────────────────────
+  // â”€â”€ Feedback Status Form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildFeedbackStatusForm(Color mutedColor) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      padding: const EdgeInsets.all(14),
+      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: const Color(0xFFFFF7ED),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: AppRadius.mdCircular,
         border: Border.all(color: const Color(0xFFFFE5B4)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text('Feedback Status', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           TextField(controller: _feedbackPersonCtrl, decoration: const InputDecoration(labelText: 'Person ID', border: OutlineInputBorder(), isDense: true)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           TextField(controller: _feedbackTitleCtrl, decoration: const InputDecoration(labelText: 'Feedback Title', border: OutlineInputBorder(), isDense: true)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           TextField(controller: _feedbackStatusCtrl, decoration: const InputDecoration(labelText: 'Status (e.g. Accepted, Planned, Fixed)', border: OutlineInputBorder(), isDense: true)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           TextField(controller: _feedbackSprintCtrl, decoration: const InputDecoration(labelText: 'Sprint (optional)', border: OutlineInputBorder(), isDense: true)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           TextField(controller: _feedbackNoteCtrl, decoration: const InputDecoration(labelText: 'Note (optional)', border: OutlineInputBorder(), isDense: true), maxLines: 2),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           Row(
             children: [
               Expanded(
                 child: ElevatedButton(
                   onPressed: _sendingMessage ? null : _sendFeedbackStatus,
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0F766E), foregroundColor: Colors.white),
+                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: AppColors.textInverse),
                   child: _sendingMessage
                       ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                       : const Text('Send Feedback Status'),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.sm),
               TextButton(onPressed: () => setState(() { _showFeedbackStatusForm = false; }), child: const Text('Cancel')),
             ],
           ),
@@ -1196,7 +1200,7 @@ class _FounderConsoleState extends State<FounderConsole> {
     );
   }
 
-  // ── Send Actions ───────────────────────────────────────────────
+  // â”€â”€ Send Actions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Future<void> _sendReleaseNote() async {
     final personId = _releasePersonCtrl.text.trim();
@@ -1264,5 +1268,6 @@ class _FounderConsoleState extends State<FounderConsole> {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => const FeedbackInboxScreen()),
     );
+
   }
 }

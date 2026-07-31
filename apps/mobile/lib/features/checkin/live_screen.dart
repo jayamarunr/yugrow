@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_service.dart';
 import '../profile/widgets/profile_card.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
 
 class LiveScreen extends ConsumerStatefulWidget {
   final String eventId;
@@ -69,36 +71,36 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
           : _attendees.isEmpty
               ? Center(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: AppSpacing.xxxl),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.celebration_outlined, size: 72, color: theme.primaryColor.withValues(alpha: 0.4)),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: AppSpacing.xl),
                         Text("You're checked in!", style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600)),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AppSpacing.sm),
                         Text(
                           'Waiting for other professionals to arrive...',
                           textAlign: TextAlign.center,
                           style: theme.textTheme.bodyMedium?.copyWith(color: theme.disabledColor),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: AppSpacing.xl),
                         OutlinedButton.icon(
                           onPressed: () {},
                           icon: const Icon(Icons.share, size: 18),
                           label: const Text('Share Event'),
                           style: OutlinedButton.styleFrom(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            shape: RoundedRectangleBorder(borderRadius: AppRadius.mdCircular),
                             minimumSize: const Size(200, 44),
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: AppSpacing.md),
                         TextButton.icon(
                           onPressed: _loadAttendees,
                           icon: const Icon(Icons.refresh, size: 18),
                           label: const Text('Refresh'),
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: AppSpacing.xxl),
                         Text(
                           'Nearby professionals will appear here automatically.',
                           textAlign: TextAlign.center,

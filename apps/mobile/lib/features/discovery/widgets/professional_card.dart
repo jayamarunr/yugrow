@@ -85,7 +85,7 @@ class ProfessionalCard extends StatelessWidget {
                                 ),
                                 if (p.isRecentlyArrived)
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 8),
+                                    padding: const EdgeInsets.only(left: AppSpacing.sm),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -97,7 +97,7 @@ class ProfessionalCard extends StatelessWidget {
                                             shape: BoxShape.circle,
                                           ),
                                         ),
-                                        const SizedBox(width: 4),
+                                        const SizedBox(width: AppSpacing.xs),
                                         Text(
                                           'Checked in',
                                           style: AppTypography.checkedInBadge,
@@ -107,7 +107,7 @@ class ProfessionalCard extends StatelessWidget {
                                   ),
                               ],
                             ),
-                            const SizedBox(height: 2),
+                            const SizedBox(height: AppSpacing.xs),
                             Text(
                               p.title,
                               maxLines: 1,
@@ -131,7 +131,7 @@ class ProfessionalCard extends StatelessWidget {
                   if (p.lookingFor.isNotEmpty) ...[
                     const SizedBox(height: AppSpacing.md),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                       decoration: BoxDecoration(
                         color: AppColors.primary.withValues(alpha: 0.06),
                         borderRadius: BorderRadius.circular(AppRadius.sm),
@@ -140,7 +140,7 @@ class ProfessionalCard extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(LucideIcons.crosshair, size: 10, color: AppColors.primary.withValues(alpha: 0.6)),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: AppSpacing.xs),
                           Flexible(
                             child: Text(
                               p.lookingFor,
@@ -160,7 +160,7 @@ class ProfessionalCard extends StatelessWidget {
                   Row(
                     children: [
                         const Icon(LucideIcons.clock, size: 12, color: AppColors.textDisabled),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: AppSpacing.xs),
                         Text(
                           p.timeAgo,
                           style: AppTypography.cardMetadata,
@@ -168,7 +168,7 @@ class ProfessionalCard extends StatelessWidget {
                         if (p.mutualConnections > 0) ...[
                           const SizedBox(width: AppSpacing.lg),
                           const Icon(LucideIcons.link_2, size: 12, color: AppColors.primary),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: AppSpacing.xs),
                           Text(
                             '${p.mutualConnections} mutual',
                             style: AppTypography.cardMutual,

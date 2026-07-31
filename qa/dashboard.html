@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yugrow QA Dashboard</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --border: #334155;
+      --text: #f1f5f9;
+      --text-dim: #94a3b8;
+      --green: #22c55e;
+      --red: #ef4444;
+      --orange: #f97316;
+      --yellow: #eab308;
+      --blue: #3b82f6;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px;
+      min-height: 100vh;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .header .build-number {
+      color: var(--text-dim);
+      font-size: 14px;
+    }
+
+    .header .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-badge.pass { background: rgba(34, 197, 94, 0.15); color: var(--green); }
+    .status-badge.fail { background: rgba(239, 68, 68, 0.15); color: var(--red); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .card h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    .card .value {
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .card .sub {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .card .value.green { color: var(--green); }
+    .card .value.red { color: var(--red); }
+    .card .value.orange { color: var(--orange); }
+    .card .value.blue { color: var(--blue); }
+
+    .confidence-ring {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .confidence-ring.high { border: 4px solid var(--green); color: var(--green); }
+    .confidence-ring.medium { border: 4px solid var(--orange); color: var(--orange); }
+    .confidence-ring.low { border: 4px solid var(--red); color: var(--red); }
+
+    .journey-list {
+      margin-bottom: 32px;
+    }
+
+    .journey-list h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .journey-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      gap: 12px;
+    }
+
+    .journey-status {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .journey-status.pass { background: rgba(34, 197, 94, 0.15); }
+    .journey-status.fail { background: rgba(239, 68, 68, 0.15); }
+    .journey-status.skip { background: rgba(148, 163, 184, 0.15); }
+
+    .journey-name {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .journey-severity {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+    }
+
+    .journey-severity.p0 { background: rgba(239, 68, 68, 0.15); color: var(--red); }
+    .journey-severity.p1 { background: rgba(249, 115, 22, 0.15); color: var(--orange); }
+    .journey-severity.p2 { background: rgba(148, 163, 184, 0.15); color: var(--text-dim); }
+
+    .journey-duration {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .journey-detail {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-left: auto;
+    }
+
+    .status-bar {
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .status-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    .status-bar-fill.pass { background: var(--green); }
+    .status-bar-fill.fail { background: var(--red); }
+
+    .last-updated {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 12px;
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px;
+      color: var(--text-dim);
+    }
+
+    .empty-state h2 {
+      font-size: 20px;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 16px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <h1>Yugrow QA Dashboard</h1>
+      <div class="build-number" id="buildInfo">Build —</div>
+    </div>
+    <div>
+      <span class="status-badge" id="statusBadge">—</span>
+    </div>
+  </div>
+
+  <div class="grid" id="metricsGrid">
+    <div class="card" style="text-align:center;">
+      <h3>Confidence</h3>
+      <div class="confidence-ring" id="confidenceRing">—</div>
+      <div class="sub" id="confidenceLabel">—</div>
+    </div>
+    <div class="card">
+      <h3>Passed</h3>
+      <div class="value green" id="passedCount">—</div>
+      <div class="sub" id="passedSub">of — tests</div>
+    </div>
+    <div class="card">
+      <h3>Failed</h3>
+      <div class="value red" id="failedCount">—</div>
+      <div class="sub" id="failedSub">— P0 / — P1 / — P2</div>
+    </div>
+    <div class="card">
+      <h3>Duration</h3>
+      <div class="value blue" id="durationValue">—</div>
+      <div class="sub" id="durationSub">—s per test avg</div>
+    </div>
+  </div>
+
+  <div class="journey-list" id="journeyList">
+    <h2>Journeys</h2>
+    <div id="journeyItems"></div>
+  </div>
+
+  <div class="status-bar" id="overallBar">
+    <div class="status-bar-fill" id="overallBarFill" style="width:0%"></div>
+  </div>
+
+  <div class="last-updated" id="lastUpdated">
+    Last updated: — | Auto-refresh every 30s
+  </div>
+
+  <script>
+    const JOURNEY_NAMES = {
+      'authentication': '01 Authentication',
+      'onboarding': '02 Onboarding',
+      'profile': '03 Profile',
+      'event-discovery': '04 Event',
+      'venue': '05 Venue',
+      'checkin': '06 Check-in',
+      'discovery': '07 Discovery',
+      'connection': '08 Connection',
+      'conversation': '09 Conversation',
+      'founder-walkthrough': '10 Founder Console',
+      'landing': '11 Landing',
+      'dashboard': '12 Dashboard',
+      'messages-network': '13 Messages & Network',
+      'performance': '14 Performance',
+      'accessibility': '15 Accessibility',
+    };
+
+    const JOURNEY_SEVERITY = {
+      'authentication': 'P0', 'onboarding': 'P0', 'profile': 'P1',
+      'event-discovery': 'P0', 'venue': 'P1', 'checkin': 'P0',
+      'discovery': 'P1', 'connection': 'P1', 'conversation': 'P1',
+      'founder-walkthrough': 'P1', 'landing': 'P0', 'dashboard': 'P0',
+      'messages-network': 'P1', 'performance': 'P2', 'accessibility': 'P2',
+    };
+
+    function loadData() {
+      fetch('./QA-LATEST.json?_=' + Date.now())
+        .then(r => {
+          if (!r.ok) throw new Error('No data');
+          return r.json();
+        })
+        .then(renderDashboard)
+        .catch(() => {
+          document.getElementById('journeyItems').innerHTML =
+            '<div class="empty-state"><h2>No QA Data</h2><p>Run <code>make qa</code> or <code>pnpm qa:run</code> to generate the first report.</p></div>';
+        });
+    }
+
+    function renderDashboard(data) {
+      const s = data.summary || {};
+      const sev = data.severity || {};
+      const conf = data.confidence || 0;
+
+      // Build info
+      document.getElementById('buildInfo').textContent =
+        `Build — ${new Date(data.timestamp).toLocaleString()}`;
+
+      // Status badge
+      const badge = document.getElementById('statusBadge');
+      if (s.failed > 0) {
+        badge.textContent = 'FAILING';
+        badge.className = 'status-badge fail';
+      } else {
+        badge.textContent = 'PASSING';
+        badge.className = 'status-badge pass';
+      }
+
+      // Confidence
+      const ring = document.getElementById('confidenceRing');
+      ring.textContent = conf + '%';
+      ring.className = 'confidence-ring ' + (conf >= 90 ? 'high' : conf >= 70 ? 'medium' : 'low');
+      document.getElementById('confidenceLabel').textContent =
+        conf >= 90 ? 'High — ready for review' : conf >= 70 ? 'Medium — needs fixes' : 'Low — do not ship';
+
+      // Passed
+      document.getElementById('passedCount').textContent = s.passed || 0;
+      document.getElementById('passedSub').textContent = `of ${s.total || 0} tests`;
+
+      // Failed
+      document.getElementById('failedCount').textContent = s.failed || 0;
+      document.getElementById('failedSub').textContent =
+        `${sev.p0?.failed || 0} P0 / ${sev.p1?.failed || 0} P1 / ${sev.p2?.failed || 0} P2`;
+
+      // Duration
+      const durationSec = (s.duration || 0) / 1000;
+      document.getElementById('durationValue').textContent =
+        durationSec >= 60 ? (durationSec / 60).toFixed(1) + 'm' : durationSec.toFixed(1) + 's';
+      const avg = s.total > 0 ? (durationSec / s.total).toFixed(1) : 0;
+      document.getElementById('durationSub').textContent = `${avg}s per test avg`;
+
+      // Overall bar
+      const passRate = s.total > 0 ? ((s.passed || 0) / s.total) * 100 : 0;
+      const barFill = document.getElementById('overallBarFill');
+      barFill.style.width = passRate + '%';
+      barFill.className = 'status-bar-fill ' + (passRate >= 90 ? 'pass' : 'fail');
+
+      // Journey items
+      const container = document.getElementById('journeyItems');
+      container.innerHTML = '';
+
+      // Group results by journey file (extract from title)
+      const journeyMap = {};
+      for (const r of data.results || []) {
+        // Extract journey name from the title (before " > ")
+        const parts = r.title.split(' > ');
+        const journeyPart = parts[0] || r.title;
+        if (!journeyMap[journeyPart]) journeyMap[journeyPart] = { results: [], status: 'pass' };
+        journeyMap[journeyPart].results.push(r);
+        if (r.status === 'failed') journeyMap[journeyPart].status = 'fail';
+        if (r.status === 'skipped' && journeyMap[journeyPart].status !== 'fail') journeyMap[journeyPart].status = 'skip';
+      }
+
+      for (const [name, j] of Object.entries(journeyMap)) {
+        const item = document.createElement('div');
+        item.className = 'journey-item';
+
+        const statusIcon = document.createElement('div');
+        statusIcon.className = 'journey-status ' + j.status;
+        statusIcon.textContent = j.status === 'pass' ? '✓' : j.status === 'fail' ? '✗' : '–';
+
+        const nameEl = document.createElement('div');
+        nameEl.className = 'journey-name';
+        nameEl.textContent = name;
+
+        const severityEl = document.createElement('div');
+        const sevKey = JOURNEY_SEVERITY[name.toLowerCase().replace(/[^a-z]/g, '')] || 'P1';
+        severityEl.className = 'journey-severity ' + sevKey.toLowerCase();
+        severityEl.textContent = sevKey;
+
+        const durationEl = document.createElement('div');
+        durationEl.className = 'journey-duration';
+        const totalDur = j.results.reduce((sum, r) => sum + (r.duration || 0), 0);
+        durationEl.textContent = (totalDur / 1000).toFixed(1) + 's';
+
+        const detailEl = document.createElement('div');
+        detailEl.className = 'journey-detail';
+        detailEl.textContent = `${j.results.length} tests`;
+
+        item.appendChild(statusIcon);
+        item.appendChild(nameEl);
+        item.appendChild(severityEl);
+        item.appendChild(durationEl);
+        item.appendChild(detailEl);
+        container.appendChild(item);
+      }
+
+      // Last updated
+      document.getElementById('lastUpdated').textContent =
+        `Last updated: ${new Date(data.timestamp).toLocaleString()} | Auto-refresh every 30s`;
+    }
+
+    // Load initially and auto-refresh
+    loadData();
+    setInterval(loadData, 30000);
+  </script>
+</body>
+</html>

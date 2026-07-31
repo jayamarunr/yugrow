@@ -1,4 +1,4 @@
-// ─── ProfileCard ──────────────────────────────────────────────
+// â”€â”€â”€ ProfileCard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Reusable component for displaying a professional profile.
 // Used across: event attendees, search, connection requests,
 // chat header, profile preview, and the Me screen.
@@ -15,7 +15,11 @@
 //   )
 
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_colors.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
+import 'package:yugrow_mobile/core/theme/app_typography.dart';
 
 class ProfileCard extends StatelessWidget {
   final String name;
@@ -60,40 +64,40 @@ class ProfileCard extends StatelessWidget {
     if (compact) return _buildCompact(theme);
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xs),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.lgCircular),
       child: InkWell(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: AppRadius.lgCircular,
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(theme),
               if (headline != null || company != null) ...[
-                const SizedBox(height: 6),
+                const SizedBox(height: AppSpacing.sm),
                 _buildTitleRow(theme),
               ],
               if (location != null) ...[
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.xs),
                 _buildLocation(theme),
               ],
               if (about != null && about!.isNotEmpty) ...[
-                const SizedBox(height: 12),
-                Text(about!, style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                const SizedBox(height: AppSpacing.md),
+                Text(about!, style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
                     maxLines: 3, overflow: TextOverflow.ellipsis),
               ],
               if (skills.isNotEmpty) ...[
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.md),
                 _buildTags(theme, skills, 'Skills'),
               ],
               if (industries.isNotEmpty) ...[
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.sm),
                 _buildTags(theme, industries, 'Industries'),
               ],
               if (website != null || linkedIn != null) ...[
-                const SizedBox(height: 10),
+                const SizedBox(height: AppSpacing.md),
                 _buildLinks(theme),
               ],
             ],
@@ -105,19 +109,19 @@ class ProfileCard extends StatelessWidget {
 
   Widget _buildCompact(ThemeData theme) {
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xs),
       leading: CircleAvatar(
         radius: 22,
-        backgroundColor: const Color(0xFF0F766E).withValues(alpha: 0.15),
+        backgroundColor: AppColors.primary.withValues(alpha: 0.15),
         child: Text(_initial,
             style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF0F766E))),
+                color: AppColors.primary)),
       ),
       title: Text(name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
       subtitle: headline != null
-          ? Text(headline!, style: TextStyle(fontSize: 12, color: Colors.grey[600]), maxLines: 1)
+          ? Text(headline!, style: AppTypography.caption.copyWith(color: AppColors.textSecondary), maxLines: 1)
           : null,
       trailing: trailing,
       onTap: onTap,
@@ -129,7 +133,7 @@ class ProfileCard extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 28,
-          backgroundColor: const Color(0xFF0F766E).withValues(alpha: 0.15),
+          backgroundColor: AppColors.primary.withValues(alpha: 0.15),
           backgroundImage: photoUrl != null && photoUrl!.isNotEmpty
               ? NetworkImage(photoUrl!)
               : null,
@@ -138,10 +142,10 @@ class ProfileCard extends StatelessWidget {
                   style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF0F766E)))
+                      color: AppColors.primary))
               : null,
         ),
-        const SizedBox(width: 14),
+        const SizedBox(width: AppSpacing.lg),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,8 +174,8 @@ class ProfileCard extends StatelessWidget {
     if (company != null && company!.isNotEmpty) parts.add(company!);
 
     return Text(
-      parts.join(' · '),
-      style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+      parts.join(' Â· '),
+      style: TextStyle(fontSize: 13, color: AppColors.textPrimary),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
     );
@@ -180,10 +184,10 @@ class ProfileCard extends StatelessWidget {
   Widget _buildLocation(ThemeData theme) {
     return Row(
       children: [
-        Icon(LucideIcons.map_pin, size: 12, color: Colors.grey[500]),
-        const SizedBox(width: 4),
+        Icon(LucideIcons.map_pin, size: 12, color: AppColors.textSecondary),
+        const SizedBox(width: AppSpacing.xs),
         Text(location!,
-            style: TextStyle(fontSize: 12, color: Colors.grey[500])),
+            style: AppTypography.caption.copyWith(color: AppColors.textSecondary)),
       ],
     );
   }
@@ -196,20 +200,20 @@ class ProfileCard extends StatelessWidget {
             style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: Colors.grey[500])),
-        const SizedBox(height: 6),
+                color: AppColors.textSecondary)),
+        const SizedBox(height: AppSpacing.sm),
         Wrap(
           spacing: 6,
           runSpacing: 6,
           children: tags.map((tag) => Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF0F766E).withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(12),
+                  color: AppColors.primary.withValues(alpha: 0.08),
+                  borderRadius: AppRadius.mdCircular,
                 ),
                 child: Text(tag,
                     style: const TextStyle(
-                        fontSize: 11, color: Color(0xFF0F766E))),
+                        fontSize: 11, color: AppColors.primary)),
               )).toList(),
         ),
       ],
@@ -222,7 +226,7 @@ class ProfileCard extends StatelessWidget {
         if (website != null && website!.isNotEmpty)
           _linkChip(LucideIcons.globe, website!, theme),
         if (linkedIn != null && linkedIn!.isNotEmpty) ...[
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpacing.md),
           _linkChip(LucideIcons.briefcase, linkedIn!, theme),
         ],
       ],
@@ -237,14 +241,15 @@ class ProfileCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 12, color: Colors.grey[500]),
-          const SizedBox(width: 4),
+          Icon(icon, size: 12, color: AppColors.textSecondary),
+          const SizedBox(width: AppSpacing.xs),
           Text(text,
-              style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+              style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
               maxLines: 1,
               overflow: TextOverflow.ellipsis),
         ],
       ),
     );
+
   }
 }

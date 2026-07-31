@@ -11,6 +11,8 @@ import '../../core/auth/auth_service.dart';
 import '../debug/founder_console_screen.dart';
 import 'widgets/profile_card.dart';
 import 'screens/edit_profile_screen.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -68,7 +70,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
-              padding: const EdgeInsets.only(top: 12, bottom: 32),
+              padding: const EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.xxl),
               children: [
                 // Professional Profile Card
                 ProfileCard(
@@ -87,7 +89,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   onTap: _openEditor,
                   onEdit: _openEditor,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.xl),
 
                 // ── Workspace ──
                 _sectionHeader('Workspace', theme),
@@ -100,7 +102,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     'Start a new workspace for your company or community', () {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Create Workspace — coming soon')));
                 }),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.xl),
 
                 // ── Settings ──
                 _sectionHeader('Settings', theme),
@@ -116,7 +118,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     Theme.of(context).brightness == Brightness.dark ? 'Dark' : 'Light', () {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Appearance settings — coming soon')));
                 }),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.xl),
 
                 // ── About ──
                 _sectionHeader('About', theme),
@@ -125,7 +127,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 _menuTile(theme, Icons.help_outline, 'Help', '', () {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Help — coming soon')));
                 }),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.sm),
 
                 // ── Logout ──
                 Padding(
@@ -143,13 +145,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         foregroundColor: Colors.red[700],
                         side: BorderSide(color: Colors.red[200]!),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
+                            borderRadius: AppRadius.mdCircular),
                         minimumSize: const Size.fromHeight(44),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.sm),
 
                 // ── Founder Console ──
                 Center(
@@ -175,7 +177,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   Widget _sectionHeader(String title, ThemeData theme) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: Text(
         title,
         style: TextStyle(

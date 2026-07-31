@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/api/api_client.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -71,14 +74,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildNoEvent(ThemeData theme) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AppSpacing.xxl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.event_busy, size: 64, color: theme.disabledColor),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.lg),
             Text('No active events nearby', style: theme.textTheme.titleLarge),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Text('Events near you will appear here', style: theme.textTheme.bodyMedium),
           ],
         ),
@@ -89,25 +92,25 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildActiveEvent(ThemeData theme) {
     final venue = _activeEvent!['venue'] as Map<String, dynamic>?;
     return Padding(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AppSpacing.xl),
       child: Column(
         children: [
           const Spacer(flex: 2),
           // Event info
           Container(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(AppSpacing.xl),
             decoration: BoxDecoration(
               color: theme.primaryColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: AppRadius.xxlCircular,
             ),
             child: Column(
               children: [
-                const Icon(Icons.explore, size: 48, color: Color(0xFF2563EB)),
-                const SizedBox(height: 16),
+                const Icon(Icons.explore, size: 48, color: AppColors.info),
+                const SizedBox(height: AppSpacing.lg),
                 Text(_activeEvent!['name'], style: theme.textTheme.headlineMedium, textAlign: TextAlign.center),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.sm),
                 Text(venue?['name'] ?? '', style: theme.textTheme.bodyMedium, textAlign: TextAlign.center),
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.xs),
                 Text('${_activeEvent!['name']} people here now', style: theme.textTheme.bodyMedium),
               ],
             ),
@@ -115,28 +118,28 @@ class _HomeScreenState extends State<HomeScreen> {
           const Spacer(flex: 1),
           // Workspace selector
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
+              borderRadius: AppRadius.mdCircular,
+              border: Border.all(color: AppColors.border),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Checking in as', style: theme.textTheme.bodyMedium),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.sm),
                 _workspaceOption('personal', 'Personal', Icons.person_outline),
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.xs),
                 _workspaceOption('company', 'My Company', Icons.business_outlined),
                 if (_selectedWorkspace == 'company') ...[
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.xs),
                   _workspaceOption('company2', 'Second Company', Icons.business_outlined),
                 ],
               ],
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.xl),
           // I'M HERE button
           SizedBox(
             width: double.infinity,
@@ -146,8 +149,8 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: const Icon(Icons.near_me, size: 28),
               label: Text("I'M HERE", style: theme.textTheme.labelLarge?.copyWith(fontSize: 20)),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2563EB),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                backgroundColor: AppColors.info,
+                shape: RoundedRectangleBorder(borderRadius: AppRadius.xlCircular),
               ),
             ),
           ),
@@ -162,18 +165,18 @@ class _HomeScreenState extends State<HomeScreen> {
     return InkWell(
       onTap: () => setState(() => _selectedWorkspace = id),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFF2563EB).withValues(alpha: 0.1) : null,
-          borderRadius: BorderRadius.circular(8),
+          color: selected ? AppColors.info.withValues(alpha: 0.1) : null,
+          borderRadius: AppRadius.smCircular,
         ),
         child: Row(
           children: [
-            Icon(icon, size: 20, color: selected ? const Color(0xFF2563EB) : const Color(0xFF64748B)),
-            const SizedBox(width: 12),
+            Icon(icon, size: 20, color: selected ? AppColors.info : AppColors.textDisabled),
+            const SizedBox(width: AppSpacing.md),
             Text(label, style: TextStyle(fontWeight: selected ? FontWeight.w600 : FontWeight.normal)),
             const Spacer(),
-            if (selected) const Icon(Icons.check_circle, size: 20, color: Color(0xFF2563EB)),
+            if (selected) const Icon(Icons.check_circle, size: 20, color: AppColors.info),
           ],
         ),
       ),

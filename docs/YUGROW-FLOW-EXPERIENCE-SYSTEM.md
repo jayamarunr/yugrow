@@ -1030,7 +1030,7 @@ TextTheme(
 
 ```css
 :root {
-  --y-color-primary: #0F766E;
+  --y-color-primary: #0F8B6D;
   --y-color-primary-hover: #115E59;
   --y-color-primary-soft: #CCFBF1;
   --y-color-secondary: #4338CA;

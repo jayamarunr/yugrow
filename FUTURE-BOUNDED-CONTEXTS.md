@@ -155,7 +155,17 @@ Sprint (sprint-plan document)
 
 ---
 
-## How to Add a Dormant Context
+### Event Identity Layer *(Design Note — post-Alpha capability)*
+
+| Field | Value |
+|-------|-------|
+| **Purpose** | Solve the trust problem in event discovery. The problem isn't duplicate events — it's not knowing which one is real. Introduce an **Identity Layer** where every event answers "Who is behind this?" rather than "What is this called?" **Host identity becomes primary. Event title becomes secondary.** Four tiers: **Official Events** (paid organiser, OFFICIAL badge, branding, analytics, featured placement), **Community Meetups** (👥, hosted by a professional), **Networking Spots** (📍, hosted by an attendee), **Private Events** (🔒, invite-only). The word "Official" is psychologically stronger than "Verified." |
+| **Activation** | After the First Meetup, when evidence shows that (a) duplicate or misleading events cause real user confusion, (b) an organiser explicitly asks how attendees will know their event is the real one, or (c) an organiser is ready to pay for an Official Event package. |
+| **Status** | Design note. Not a new engine — the existing Event Engine gains an identity attribute. Part of a broader **Identity hierarchy**: Professional → Company → Venue → Event → Workspace → Organisation. |
+| **Principle** | *Trust comes from identity, not moderation. The market self-corrects when identity is visible.* |
+| **Note** | **Design rule:** Never use colour alone. Always combine badge + icon + host identity for accessibility and clarity. Example: `✓ OFFICIAL` badge + 🏢 + "Hosted by XYZ Exhibitions". **Model change:** `Event` gains `type: official \| community \| networking \| private`. `hostId` already present — UI needs to display it prominently. **Monetisation:** Organisers buy an **Official Event Package** — not a blue tick. Package includes OFFICIAL badge, brand logo, featured placement, analytics dashboard, networking enabled, QR check-in, post-event retargeting, lead export, sponsor dashboard. This is selling an **Official Digital Event Presence**, not verification. **Free tiers** (Community, Networking, Private) remain free. **Not Alpha:** Violates R31 — introduces a new capability and touches the Event model. The flow: Idea → Architecture → Documentation → Dormant → Customer Evidence → Activation → Implementation. **Pre-Alpha mitigation (no-code):** Display host name prominently on every event card. Reserve space for an OFFICIAL badge but don't activate it. Collect evidence in CUSTOMER-EVIDENCE.md: "Did users struggle to identify the real event?" "Did organisers ask how to distinguish their event?" Full traceability chain: `FD-0XX → Post-Meetup Sprint → Event Identity Layer → Event.type`. |
+
+---
 
 A new entry must include:
 

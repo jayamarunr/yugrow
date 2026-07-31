@@ -94,7 +94,7 @@ class EventCard extends StatelessWidget {
                                   shape: BoxShape.circle,
                                 ),
                               ),
-                              const SizedBox(width: 6),
+                              const SizedBox(width: AppSpacing.sm),
                               Text(
                                 event.businessCount > 0
                                     ? '${event.businessCount} ${event.primaryMetricLabel} · ${event.professionalCount} ${event.secondaryMetricLabel}'
@@ -126,7 +126,7 @@ class EventCard extends StatelessWidget {
                                 size: 10,
                                 color: _statusColor,
                               ),
-                              const SizedBox(width: 4),
+                              const SizedBox(width: AppSpacing.xs),
                               Text(
                                 event.statusText,
                                 style: GoogleFonts.inter(
@@ -162,7 +162,7 @@ class EventCard extends StatelessWidget {
                   // Day label for multi-day events
                   if (event.dayLabel.isNotEmpty)
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
+                      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
                       child: Text(
                         event.dayLabel,
                         style: GoogleFonts.inter(
@@ -184,7 +184,7 @@ class EventCard extends StatelessWidget {
                       height: 1.3,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.xs),
 
                   // Venue
                   Row(
@@ -194,7 +194,7 @@ class EventCard extends StatelessWidget {
                         size: 14,
                         color: AppColors.textSecondary,
                       ),
-                      const SizedBox(width: 6),
+                      const SizedBox(width: AppSpacing.sm),
                       Text(
                         event.venue,
                         style: GoogleFonts.inter(
@@ -308,7 +308,7 @@ class _StatItem extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, size: 14, color: effectiveColor),
-        const SizedBox(width: 4),
+        const SizedBox(width: AppSpacing.xs),
         Text(
           value,
           style: TextStyle(

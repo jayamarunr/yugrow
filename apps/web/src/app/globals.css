@@ -877,11 +877,14 @@ video {
 
 
 /* Design tokens as CSS variables — set by ThemeContext */
+/* YDS Design Tokens — import from packages/design-system/web/css-variables.css */
+/* Values defined in: packages/design-system/lib/src/colors.dart */
+
 :root {
-  --y-brand-primary: #2563EB;
-  --y-brand-secondary: #7C3AED;
-  --y-bg: #FFFFFF;
-  --y-surface: #F8FAFC;
+  --y-brand-primary: #0F8B6D;
+  --y-brand-secondary: #0B755C;
+  --y-bg: #FAFAFA;
+  --y-surface: #FFFFFF;
   --y-elevated: #FFFFFF;
   --y-text-primary: #0F172A;
   --y-text-secondary: #475569;
@@ -894,8 +897,8 @@ video {
 }
 
 .yugrow-theme-dark {
-  --y-brand-primary: #60A5FA;
-  --y-brand-secondary: #A78BFA;
+  --y-brand-primary: #34D399;
+  --y-brand-secondary: #6EE7B7;
   --y-bg: #0F172A;
   --y-surface: #1E293B;
   --y-elevated: #334155;

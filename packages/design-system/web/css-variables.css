@@ -1,0 +1,135 @@
+/* YDS CSS Custom Properties — Auto-generated from packages/design-system/lib/src/
+ *
+ * Single source of truth for web. Values must match the Dart tokens exactly.
+ * Import this file at the root of your CSS or in globals.css.
+ */
+
+:root {
+  /* ── Brand ──────────────────────────────────────────────────── */
+  --y-brand-primary:   #0F8B6D;
+  --y-brand-hover:     #0B755C;
+  --y-brand-pressed:   #065F46;
+  --y-brand-soft:      #E8F8F2;
+
+  /* ── Surface ────────────────────────────────────────────────── */
+  --y-bg:              #FAFAFA;
+  --y-surface:         #FFFFFF;
+  --y-elevated:        #FFFFFF;
+  --y-surface-hover:   #F8FAFC;
+
+  /* ── Text ───────────────────────────────────────────────────── */
+  --y-text-primary:    #0F172A;
+  --y-text-secondary:  #475569;
+  --y-text-disabled:   #94A3B8;
+  --y-text-inverse:    #FFFFFF;
+  --y-text-link:       #0F8B6D;
+
+  /* ── Border ─────────────────────────────────────────────────── */
+  --y-border:          #E2E8F0;
+  --y-border-hover:    #CBD5E1;
+  --y-border-active:   #0F8B6D;
+
+  /* ── Semantic ───────────────────────────────────────────────── */
+  --y-success:         #059669;
+  --y-success-soft:    #ECFDF5;
+  --y-warning:         #D97706;
+  --y-warning-soft:    #FFFBEB;
+  --y-error:           #DC2626;
+  --y-error-soft:      #FEF2F2;
+  --y-info:            #2563EB;
+
+  /* ── Typography ─────────────────────────────────────────────── */
+  --y-font-family:     'Inter', sans-serif;
+  --y-type-hero:       48px;
+  --y-type-h1:         32px;
+  --y-type-h2:         24px;
+  --y-type-h3:         20px;
+  --y-type-body:       16px;
+  --y-type-body-small: 14px;
+  --y-type-caption:    12px;
+
+  /* ── Spacing (8pt Grid) ─────────────────────────────────────── */
+  --y-space-1: 4px;
+  --y-space-2: 8px;
+  --y-space-3: 12px;
+  --y-space-4: 16px;
+  --y-space-5: 24px;
+  --y-space-6: 32px;
+  --y-space-7: 48px;
+  --y-space-8: 64px;
+
+  /* ── Radius ─────────────────────────────────────────────────── */
+  --y-radius-xs:   4px;
+  --y-radius-sm:   8px;
+  --y-radius-md:   12px;
+  --y-radius-lg:   14px;
+  --y-radius-xl:   16px;
+  --y-radius-2xl:  20px;
+  --y-radius-full: 9999px;
+
+  /* ── Shadows ────────────────────────────────────────────────── */
+  --y-shadow-1: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --y-shadow-2: 0 4px 12px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.04);
+  --y-shadow-3: 0 20px 60px rgba(0,0,0,0.08), 0 8px 20px rgba(0,0,0,0.06);
+
+  /* ── Motion ─────────────────────────────────────────────────── */
+  --y-motion-fast:    150ms;
+  --y-motion-normal:  250ms;
+  --y-motion-slow:    350ms;
+  --y-motion-easing:  cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── Opacity ────────────────────────────────────────────────── */
+  --y-opacity-disabled: 0.5;
+  --y-opacity-hover:    0.9;
+  --y-opacity-pressed:  0.8;
+  --y-opacity-overlay:  0.6;
+  --y-opacity-subtle:   0.08;
+
+  /* ── Icon sizes ─────────────────────────────────────────────── */
+  --y-icon-xs: 14px;
+  --y-icon-sm: 16px;
+  --y-icon-md: 20px;
+  --y-icon-lg: 24px;
+  --y-icon-xl: 32px;
+
+  /* ── Sizing ─────────────────────────────────────────────────── */
+  --y-size-button:    48px;
+  --y-size-button-sm: 36px;
+  --y-size-input:     48px;
+  --y-size-input-sm:  36px;
+  --y-size-list-item: 64px;
+  --y-size-tab-bar:   56px;
+  --y-size-top-bar:   56px;
+  --y-size-chip:      28px;
+}
+
+/* Dark mode overrides */
+.yugrow-theme-dark {
+  --y-brand-primary:   #34D399;
+  --y-brand-hover:     #6EE7B7;
+  --y-brand-pressed:   #A7F3D0;
+  --y-brand-soft:      #022C22;
+
+  --y-bg:              #0F172A;
+  --y-surface:         #1E293B;
+  --y-elevated:        #334155;
+  --y-surface-hover:   #1E293B;
+
+  --y-text-primary:    #F1F5F9;
+  --y-text-secondary:  #94A3B8;
+  --y-text-disabled:   #64748B;
+  --y-text-inverse:    #0F172A;
+  --y-text-link:       #34D399;
+
+  --y-border:          #334155;
+  --y-border-hover:    #475569;
+  --y-border-active:   #34D399;
+
+  --y-success:         #34D399;
+  --y-success-soft:    #022C22;
+  --y-warning:         #FBBF24;
+  --y-warning-soft:    #451A03;
+  --y-error:           #F87171;
+  --y-error-soft:      #450A0A;
+  --y-info:            #60A5FA;
+}

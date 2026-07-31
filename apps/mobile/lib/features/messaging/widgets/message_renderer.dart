@@ -9,9 +9,12 @@
 // No existing code needs to change.
 
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_colors.dart';
 import 'release_message_card.dart';
 import 'announcement_card.dart';
 import 'feedback_status_card.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
 
 /// Supported message types.
 /// Must match backend MessageType enum values.
@@ -63,11 +66,11 @@ Widget _buildTextMessage(Map<String, dynamic> message, {bool? isMe, String? time
       crossAxisAlignment: me ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
         Container(
-          margin: const EdgeInsets.only(bottom: 2),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          margin: const EdgeInsets.only(bottom: AppSpacing.xs),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
           decoration: BoxDecoration(
-            color: me ? const Color(0xFF0F766E) : Colors.grey[200],
-            borderRadius: BorderRadius.circular(18).copyWith(
+            color: me ? AppColors.primary : AppColors.border,
+            borderRadius: AppRadius.xlCircular.copyWith(
               bottomRight: me ? const Radius.circular(4) : null,
               bottomLeft: !me ? const Radius.circular(4) : null,
             ),
@@ -77,21 +80,21 @@ Widget _buildTextMessage(Map<String, dynamic> message, {bool? isMe, String? time
             content,
             style: TextStyle(
               fontSize: 14,
-              color: me ? Colors.white : Colors.black87,
+              color: me ? Colors.white : AppColors.textPrimary,
             ),
           ),
         ),
         if (time != null || isLast)
           Padding(
-            padding: const EdgeInsets.only(left: 4, right: 4, bottom: 6),
+            padding: const EdgeInsets.only(left: AppSpacing.xs, right: AppSpacing.xs, bottom: AppSpacing.sm),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (time != null)
-                  Text(time, style: TextStyle(fontSize: 10, color: Colors.grey[500])),
+                  Text(time, style: TextStyle(fontSize: 10, color: AppColors.textSecondary)),
                 if (isLast) ...[
-                  if (time != null) const SizedBox(width: 4),
-                  Icon(Icons.check, size: 12, color: Colors.grey[400]),
+                  if (time != null) const SizedBox(width: AppSpacing.xs),
+                  Icon(Icons.check, size: 12, color: AppColors.textDisabled),
                 ],
               ],
             ),
@@ -111,41 +114,41 @@ Widget _buildSystemMessage(Map<String, dynamic> message, {bool? isMe, String? ti
       children: [
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           decoration: BoxDecoration(
-            color: const Color(0xFF0F766E).withValues(alpha: 0.06),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFF0F766E).withValues(alpha: 0.15)),
+            color: AppColors.primary.withValues(alpha: 0.06),
+            borderRadius: AppRadius.mdCircular,
+            border: Border.all(color: AppColors.primary.withValues(alpha: 0.15)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Row(
                 children: [
-                  Icon(Icons.favorite, size: 16, color: Color(0xFF0F766E)),
-                  SizedBox(width: 6),
+                  Icon(Icons.favorite, size: 16, color: AppColors.primary),
+                  SizedBox(width: AppSpacing.sm),
                   Text(
                     'Yugrow',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF0F766E),
+                      color: AppColors.primary,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               Text(
                 content,
-                style: const TextStyle(fontSize: 13, color: Color(0xFF1F2937), height: 1.5),
+                style: const TextStyle(fontSize: 13, color: AppColors.textPrimary, height: 1.5),
               ),
             ],
           ),
         ),
         if (time != null)
           Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Text(time, style: TextStyle(fontSize: 10, color: Colors.grey[500])),
+            padding: const EdgeInsets.only(top: AppSpacing.xs),
+            child: Text(time, style: TextStyle(fontSize: 10, color: AppColors.textSecondary)),
           ),
       ],
     ),

@@ -70,7 +70,7 @@ class EventDetailScreen extends StatelessWidget {
                   if (event.dayLabel.isNotEmpty) ...[
                     const SizedBox(height: AppSpacing.sm),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
                       decoration: BoxDecoration(
                         color: AppColors.primarySoft,
                         borderRadius: BorderRadius.circular(AppRadius.full),
@@ -92,7 +92,7 @@ class EventDetailScreen extends StatelessWidget {
                   Row(
                     children: [
                       const Icon(LucideIcons.building_2, size: 16, color: AppColors.textSecondary),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: Text(
                           event.venue,
@@ -107,11 +107,11 @@ class EventDetailScreen extends StatelessWidget {
 
                   // Full address
                   if (event.venueAddress.isNotEmpty) ...[
-                    const SizedBox(height: 6),
+                    const SizedBox(height: AppSpacing.sm),
                     Row(
                       children: [
                         const Icon(LucideIcons.map_pin, size: 16, color: AppColors.textSecondary),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: AppSpacing.sm),
                         Expanded(
                           child: Text(
                             event.venueAddress,
@@ -127,11 +127,11 @@ class EventDetailScreen extends StatelessWidget {
 
                   // Date and time
                   if (event.startDate != null) ...[
-                    const SizedBox(height: 6),
+                    const SizedBox(height: AppSpacing.sm),
                     Row(
                       children: [
                         const Icon(LucideIcons.calendar, size: 16, color: AppColors.textSecondary),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: AppSpacing.sm),
                         Expanded(
                           child: Text(
                             _formatEventDateTime(event.startDate!, event.endDate),
@@ -147,11 +147,11 @@ class EventDetailScreen extends StatelessWidget {
 
                   // Host / Organizer
                   if (event.organizerName.isNotEmpty) ...[
-                    const SizedBox(height: 6),
+                    const SizedBox(height: AppSpacing.sm),
                     Row(
                       children: [
                         const Icon(LucideIcons.user, size: 16, color: AppColors.textSecondary),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: AppSpacing.sm),
                         Expanded(
                           child: Text(
                             'Hosted by ${event.organizerName}',
@@ -243,12 +243,7 @@ class EventDetailScreen extends StatelessWidget {
             // Description
             if (event.description.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.screenMobile,
-                  AppSpacing.xl,
-                  AppSpacing.screenMobile,
-                  0,
-                ),
+                padding: const EdgeInsets.fromLTRB(AppSpacing.screenMobile, AppSpacing.xl, AppSpacing.screenMobile, AppSpacing.none, ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -276,12 +271,7 @@ class EventDetailScreen extends StatelessWidget {
             // People breakdown
             if (event.peopleBreakdown.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.screenMobile,
-                  AppSpacing.xl,
-                  AppSpacing.screenMobile,
-                  0,
-                ),
+                padding: const EdgeInsets.fromLTRB(AppSpacing.screenMobile, AppSpacing.xl, AppSpacing.screenMobile, AppSpacing.none, ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -295,7 +285,7 @@ class EventDetailScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: AppSpacing.md),
                     ...event.peopleBreakdown.entries.map((entry) => Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
+                      padding: const EdgeInsets.only(bottom: AppSpacing.md),
                       child: Row(
                         children: [
                           Container(
@@ -306,7 +296,7 @@ class EventDetailScreen extends StatelessWidget {
                               shape: BoxShape.circle,
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: AppSpacing.md),
                           Expanded(
                             child: Text(
                               entry.key,
@@ -437,7 +427,7 @@ class _EcoRow extends StatelessWidget {
     return Row(
       children: [
         Icon(icon, size: 18, color: AppColors.textSecondary),
-        const SizedBox(width: 12),
+        const SizedBox(width: AppSpacing.md),
         Expanded(
           child: Text(
             label,
@@ -472,7 +462,7 @@ class _OpportunityRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: AppSpacing.md),
       child: Row(
         children: [
           Container(
@@ -480,11 +470,11 @@ class _OpportunityRow extends StatelessWidget {
             height: 28,
             decoration: BoxDecoration(
               color: AppColors.primarySoft,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: AppRadius.smCircular,
             ),
             child: Icon(icon, size: 14, color: AppColors.primary),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(
               text,

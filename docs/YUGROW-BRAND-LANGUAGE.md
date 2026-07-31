@@ -275,7 +275,7 @@ Like **Atlassian** (Jira, Confluence, Trello) or **Zoho** (CRM, Books, People).
 - On light backgrounds: emerald version
 
 ### Colour application
-- Deep Emerald (`#0F766E`) reserved for meaningful moments
+- Yugrow Emerald (`#0F8B6D`) reserved for meaningful moments
 - Never use Deep Emerald for decorative purposes
 - Never place Deep Emerald text on Deep Emerald background
 

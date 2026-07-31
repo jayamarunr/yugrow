@@ -5,10 +5,13 @@
 // No flat list. No chronology. Relationship nurturing.
 
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yugrow_mobile/core/api/api_client.dart';
 import 'package:yugrow_mobile/core/auth/auth_service.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
 
 class NetworkScreen extends ConsumerStatefulWidget {
   const NetworkScreen({super.key});
@@ -62,27 +65,27 @@ class _NetworkScreenState extends ConsumerState<NetworkScreen> {
       body: RefreshIndicator(
         onRefresh: _load,
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           children: [
             // ── Yugrow System Conversation ────────────────────
             _sectionHeader('Yugrow', Icons.favorite),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             _buildYugrowTile(theme),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.xl),
 
             // ── Needs Follow-up ────────────────────────────────
             _sectionHeader('Needs Follow-up', Icons.watch_later_outlined),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             _buildEmptySlot('Connections requiring attention will appear here.',
                 Icons.flag_outlined, theme),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.xl),
 
             // ── Recent Conversations ──────────────────────────
             _sectionHeader('Active Conversations', Icons.chat_outlined),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             if (_loading)
               const Center(child: Padding(
-                padding: EdgeInsets.all(24),
+                padding: EdgeInsets.all(AppSpacing.xl),
                 child: CircularProgressIndicator(strokeWidth: 2),
               ))
             else if (_conversations.isEmpty)
@@ -90,11 +93,11 @@ class _NetworkScreenState extends ConsumerState<NetworkScreen> {
                   Icons.chat_bubble_outline, theme)
             else
               ..._conversations.map((c) => _buildConversationTile(c, theme)),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.xl),
 
             // ── By Event ───────────────────────────────────────
             _sectionHeader('By Event', Icons.event_outlined),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             _buildEmptySlot(
               'Events you attend will appear here. '
               'Each event becomes a folder containing the people you met, '
@@ -110,14 +113,14 @@ class _NetworkScreenState extends ConsumerState<NetworkScreen> {
   Widget _sectionHeader(String title, IconData icon) {
     return Row(
       children: [
-        Icon(icon, size: 18, color: const Color(0xFF0F766E)),
-        const SizedBox(width: 8),
+        Icon(icon, size: 18, color: AppColors.primary),
+        const SizedBox(width: AppSpacing.sm),
         Text(
           title,
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF0F766E),
+            color: AppColors.primary,
           ),
         ),
       ],
@@ -127,16 +130,16 @@ class _NetworkScreenState extends ConsumerState<NetworkScreen> {
   Widget _buildEmptySlot(String message, IconData icon, ThemeData theme) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AppSpacing.xl),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.mdCircular,
         border: Border.all(color: theme.dividerColor.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
           Icon(icon, size: 32, color: theme.disabledColor),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           Text(
             message,
             textAlign: TextAlign.center,
@@ -151,11 +154,11 @@ class _NetworkScreenState extends ConsumerState<NetworkScreen> {
     return Card(
       color: theme.primaryColor.withValues(alpha: 0.05),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.mdCircular,
         side: BorderSide(color: theme.primaryColor.withValues(alpha: 0.2)),
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
         leading: CircleAvatar(
           backgroundColor: theme.primaryColor.withValues(alpha: 0.15),
           child: Icon(Icons.favorite, color: theme.primaryColor, size: 20),
@@ -189,13 +192,13 @@ class _NetworkScreenState extends ConsumerState<NetworkScreen> {
     final lastContent = lastMsg?['content'] as String? ?? '';
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: const Color(0xFF0F766E).withValues(alpha: 0.15),
+          backgroundColor: AppColors.primary.withValues(alpha: 0.15),
           child: Text(
             otherPerson.isNotEmpty ? otherPerson[0].toUpperCase() : '?',
-            style: const TextStyle(color: Color(0xFF0F766E), fontWeight: FontWeight.w600),
+            style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600),
           ),
         ),
         title: Text(otherPerson, style: const TextStyle(fontWeight: FontWeight.w500)),

@@ -1,18 +1,21 @@
-// ─── VenueSearchSheet ────────────────────────────────────────────
+// â”€â”€â”€ VenueSearchSheet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Bottom sheet for venue discovery. Never shows an empty state.
 //
 // Flow (FD-031):
-//   Tap Venue → Bottom Sheet opens
-//     → Search field (always visible)
-//     → Nearby Verified Venues (if available)
-//     → Recent Venues (if available)
-//     → Type to search → Mapbox suggestions → Nominatim fallback
-//     → Create New Venue (always visible at bottom)
+//   Tap Venue â†’ Bottom Sheet opens
+//     â†’ Search field (always visible)
+//     â†’ Nearby Verified Venues (if available)
+//     â†’ Recent Venues (if available)
+//     â†’ Type to search â†’ Mapbox suggestions â†’ Nominatim fallback
+//     â†’ Create New Venue (always visible at bottom)
 //
 // Usage:
 //   final venue = await VenueSearchSheet.show(context, api: apiClient);
 
 import 'package:flutter/material.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
+import '../../../core/theme/app_colors.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import '../../../core/api/api_client.dart';
 import '../models/venue.dart';
@@ -20,6 +23,7 @@ import '../services/venue_search_service.dart';
 import '../services/venue_analytics.dart';
 import 'create_venue_page.dart';
 import 'location_picker_map.dart';
+import 'package:yugrow_mobile/core/theme/app_typography.dart';
 
 class VenueSearchSheet extends StatefulWidget {
   final ApiClient api;
@@ -75,7 +79,7 @@ class _VenueSearchSheetState extends State<VenueSearchSheet> {
         setState(() => _recentVenues = results.venues.take(5).toList());
       }
     } catch (_) {
-      // Silent — recents are best-effort
+      // Silent â€” recents are best-effort
     }
   }
 
@@ -103,7 +107,7 @@ class _VenueSearchSheetState extends State<VenueSearchSheet> {
   Future<void> _selectVenue(Venue venue) async {
     VenueAnalytics.existingVenueSelected(venue.name);
     if (_isExternalId(venue.id)) {
-      // External venue — must import into Yugrow DB first
+      // External venue â€” must import into Yugrow DB first
       final imported = await _importVenue(venue);
       if (imported != null && mounted) {
         Navigator.of(context).pop(imported);
@@ -113,7 +117,7 @@ class _VenueSearchSheetState extends State<VenueSearchSheet> {
         );
       }
     } else if (mounted) {
-      // Already a Yugrow DB venue — safe to use directly
+      // Already a Yugrow DB venue â€” safe to use directly
       Navigator.of(context).pop(venue);
     }
   }
@@ -204,21 +208,21 @@ class _VenueSearchSheetState extends State<VenueSearchSheet> {
       expand: false,
       builder: (context, scrollController) {
         return Padding(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+          padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.md, AppSpacing.xl, AppSpacing.xl),
           child: Column(
             children: [
-              // ── Drag handle ──
+              // â”€â”€ Drag handle â”€â”€
               Container(
                 width: 40,
                 height: 4,
-                margin: const EdgeInsets.only(bottom: 16),
+                margin: const EdgeInsets.only(bottom: AppSpacing.lg),
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: AppColors.border,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
 
-              // ── Title ──
+              // â”€â”€ Title â”€â”€
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -228,9 +232,9 @@ class _VenueSearchSheetState extends State<VenueSearchSheet> {
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
 
-              // ── Search field ──
+              // â”€â”€ Search field â”€â”€
               TextField(
                 controller: _searchCtrl,
                 focusNode: _focusNode,
@@ -240,7 +244,7 @@ class _VenueSearchSheetState extends State<VenueSearchSheet> {
                   prefixIcon: const Icon(LucideIcons.search, size: 20),
                   suffixIcon: _searching
                       ? const Padding(
-                          padding: EdgeInsets.all(12),
+                          padding: EdgeInsets.all(AppSpacing.md),
                           child: SizedBox(
                             width: 18,
                             height: 18,
@@ -257,7 +261,7 @@ class _VenueSearchSheetState extends State<VenueSearchSheet> {
                             )
                           : null,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: AppRadius.mdCircular,
                   ),
                   filled: true,
                   fillColor: theme.colorScheme.surfaceContainerHighest
@@ -267,18 +271,18 @@ class _VenueSearchSheetState extends State<VenueSearchSheet> {
                 ),
                 onChanged: _onSearchChanged,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
 
-              // ── Results area ──
+              // â”€â”€ Results area â”€â”€
               Expanded(
                 child: _hasTyped
                     ? _buildSearchResults(theme)
                     : _buildInitialView(theme, scrollController),
               ),
 
-              // ── Bottom action (always visible) ──
+              // â”€â”€ Bottom action (always visible) â”€â”€
               const Divider(height: 1),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
@@ -287,20 +291,20 @@ class _VenueSearchSheetState extends State<VenueSearchSheet> {
                   label: const Text('Create New Venue'),
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size.fromHeight(44),
-                    side: BorderSide(color: Colors.grey[300]!),
+                    side: BorderSide(color: AppColors.border),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: AppRadius.mdCircular,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: AppSpacing.xs),
               TextButton.icon(
                 onPressed: _openMapPicker,
-                icon: Icon(LucideIcons.map, size: 16, color: Colors.grey[600]),
+                icon: Icon(LucideIcons.map, size: 16, color: AppColors.textSecondary),
                 label: Text(
                   'Drop a Pin on Map',
-                  style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
                 ),
               ),
             ],
@@ -325,16 +329,16 @@ class _VenueSearchSheetState extends State<VenueSearchSheet> {
     return ListView(
       controller: scrollController,
       children: [
-        // ── Recent venues ──
+        // â”€â”€ Recent venues â”€â”€
         if (hasRecent) ...[
           Padding(
-            padding: const EdgeInsets.only(top: 8, bottom: 4),
+            padding: const EdgeInsets.only(top: AppSpacing.sm, bottom: AppSpacing.xs),
             child: Text(
               'Recent Venues',
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: Colors.grey[500],
+                color: AppColors.textSecondary,
               ),
             ),
           ),
@@ -342,18 +346,18 @@ class _VenueSearchSheetState extends State<VenueSearchSheet> {
                 venue: venue,
                 onTap: () => _selectVenue(venue),
               )),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
         ],
 
-        // ── Type suggestions ──
+        // â”€â”€ Type suggestions â”€â”€
         Padding(
-          padding: const EdgeInsets.only(top: 4, bottom: 4),
+          padding: const EdgeInsets.only(top: AppSpacing.xs, bottom: AppSpacing.xs),
           child: Text(
             'Suggestions',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: Colors.grey[500],
+              color: AppColors.textSecondary,
             ),
           ),
         ),
@@ -368,10 +372,10 @@ class _VenueSearchSheetState extends State<VenueSearchSheet> {
                 _onSearchChanged(s);
               },
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: AppRadius.xxlCircular,
               ),
-              side: BorderSide(color: Colors.grey[300]!),
-              backgroundColor: Colors.grey[50],
+              side: BorderSide(color: AppColors.border),
+              backgroundColor: AppColors.background,
             );
           }).toList(),
         ),
@@ -387,20 +391,20 @@ class _VenueSearchSheetState extends State<VenueSearchSheet> {
     if (_results.isEmpty) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.only(top: 40),
+          padding: const EdgeInsets.only(top: AppSpacing.xxxl),
           child: Column(
             children: [
-              Icon(LucideIcons.map_pin_off, size: 40, color: Colors.grey[300]),
-              const SizedBox(height: 12),
+              Icon(LucideIcons.map_pin_off, size: 40, color: AppColors.border),
+              const SizedBox(height: AppSpacing.md),
               Text(
                 'No venues found for "${_searchCtrl.text.trim()}"',
-                style: TextStyle(color: Colors.grey[500], fontSize: 14),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               Text(
                 'Create a new venue or try a different search.',
-                style: TextStyle(color: Colors.grey[400], fontSize: 12),
+                style: TextStyle(color: AppColors.textDisabled, fontSize: 12),
               ),
             ],
           ),
@@ -410,7 +414,7 @@ class _VenueSearchSheetState extends State<VenueSearchSheet> {
 
     return ListView.separated(
       itemCount: _results.length,
-      separatorBuilder: (_, __) => Divider(height: 1, color: Colors.grey[100]),
+      separatorBuilder: (_, __) => Divider(height: 1, color: AppColors.surfaceHover),
       itemBuilder: (context, i) => _VenueResultTile(
         venue: _results[i],
         onTap: () => _selectVenue(_results[i]),
@@ -431,15 +435,15 @@ class _VenueResultTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+      contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: AppSpacing.xs),
       leading: Container(
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(10),
+          color: AppColors.surfaceHover,
+          borderRadius: AppRadius.mdCircular,
         ),
-        child: const Icon(LucideIcons.map_pin, size: 20, color: Color(0xFF0F766E)),
+        child: const Icon(LucideIcons.map_pin, size: 20, color: AppColors.primary),
       ),
       title: Text(
         venue.name,
@@ -453,24 +457,25 @@ class _VenueResultTile extends StatelessWidget {
           if (venue.city.isNotEmpty)
             Text(
               venue.city,
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           if (venue.hasCoordinates)
             Text(
-              '📍 ${venue.latitude!.toStringAsFixed(4)}, ${venue.longitude!.toStringAsFixed(4)}',
-              style: TextStyle(fontSize: 10, color: Colors.grey[400]),
+              'ðŸ“ ${venue.latitude!.toStringAsFixed(4)}, ${venue.longitude!.toStringAsFixed(4)}',
+              style: TextStyle(fontSize: 10, color: AppColors.textDisabled),
             ),
         ],
       ),
       trailing: venue.eventCount > 0
           ? Text(
               '${venue.eventCount}',
-              style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+              style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
             )
           : null,
       onTap: onTap,
     );
+
   }
 }

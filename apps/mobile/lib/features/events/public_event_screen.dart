@@ -1,15 +1,19 @@
-// ─── Public Event Page ──────────────────────────────────────────
+// â”€â”€â”€ Public Event Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Shareable event page that works without authentication.
 // Accessed via /e/:eventId. Anyone with the link can view this page.
 // No shell, no nav, no auth required.
 
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/api/api_client.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
+import 'package:yugrow_mobile/core/theme/app_typography.dart';
 
 class PublicEventScreen extends StatefulWidget {
   final String eventId;
@@ -44,9 +48,9 @@ class _PublicEventScreenState extends State<PublicEventScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FB),
+      backgroundColor: AppColors.background,
       body: _loading
-          ? const Center(child: CircularProgressIndicator(strokeWidth: 2.5, color: Color(0xFF0F766E)))
+          ? const Center(child: CircularProgressIndicator(strokeWidth: 2.5, color: AppColors.primary))
           : _error != null
               ? _buildError()
               : _buildContent(),
@@ -56,19 +60,19 @@ class _PublicEventScreenState extends State<PublicEventScreen> {
   Widget _buildError() {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AppSpacing.xxl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(LucideIcons.calendar_x, size: 64, color: Color(0xFFD1D5DB)),
-            const SizedBox(height: 20),
-            const Text('Event not found',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Color(0xFF111827))),
-            const SizedBox(height: 8),
+            const Icon(LucideIcons.calendar_x, size: 64, color: AppColors.border),
+            const SizedBox(height: AppSpacing.xl),
+            Text('Event not found',
+              style: AppTypography.h3.copyWith(color: AppColors.textPrimary)),
+            const SizedBox(height: AppSpacing.sm),
             Text('This event may have ended or the link is invalid.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: Colors.grey[600])),
-            const SizedBox(height: 24),
+              style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary)),
+            const SizedBox(height: AppSpacing.xl),
           ],
         ),
       ),
@@ -81,7 +85,7 @@ class _PublicEventScreenState extends State<PublicEventScreen> {
     final venueData = event['venue'] as Map<String, dynamic>?;
     final venueName = venueData?['name'] as String? ?? '';
     final startDate = event['startDate'] != null ? DateTime.parse(event['startDate'] as String) : null;
-    final dateStr = startDate != null ? DateFormat('EEEE, MMMM d · h:mm a').format(startDate) : '';
+    final dateStr = startDate != null ? DateFormat('EEEE, MMMM d Â· h:mm a').format(startDate) : '';
     final status = event['status'] as String? ?? 'ACTIVE';
     final isLive = status == 'ACTIVE';
 
@@ -89,8 +93,8 @@ class _PublicEventScreenState extends State<PublicEventScreen> {
       slivers: [
         // App Bar
         SliverAppBar(
-          backgroundColor: const Color(0xFF0F766E),
-          foregroundColor: Colors.white,
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.textInverse,
           title: const Text('Event'),
           actions: [
             IconButton(
@@ -109,55 +113,55 @@ class _PublicEventScreenState extends State<PublicEventScreen> {
         // Content
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(AppSpacing.xl),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Status badge
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                   decoration: BoxDecoration(
                     color: isLive ? const Color(0xFFBBF7D0) : const Color(0xFFFEF3C7),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: AppRadius.xxlCircular,
                   ),
                   child: Text(
-                    isLive ? '● Live now' : 'Ended',
+                    isLive ? 'â— Live now' : 'Ended',
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: isLive ? const Color(0xFF16A34A) : const Color(0xFFD97706),
+                      color: isLive ? AppColors.success : AppColors.warning,
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.lg),
 
                 // Event name
                 Text(name,
-                  style: GoogleFonts.inter(fontSize: 28, fontWeight: FontWeight.w700, color: const Color(0xFF111827))),
-                const SizedBox(height: 8),
+                  style: GoogleFonts.inter(fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                const SizedBox(height: AppSpacing.sm),
 
                 // Date/time
                 if (dateStr.isNotEmpty) ...[
                   Row(children: [
-                    const Icon(LucideIcons.calendar, size: 18, color: Color(0xFF6B7280)),
-                    const SizedBox(width: 8),
-                    Text(dateStr, style: TextStyle(fontSize: 15, color: Colors.grey[700])),
+                    const Icon(LucideIcons.calendar, size: 18, color: AppColors.textSecondary),
+                    const SizedBox(width: AppSpacing.sm),
+                    Text(dateStr, style: TextStyle(fontSize: 15, color: AppColors.textPrimary)),
                   ]),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: AppSpacing.sm),
                 ],
 
                 // Venue
                 if (venueName.isNotEmpty) ...[
                   Row(children: [
-                    const Icon(LucideIcons.map_pin, size: 18, color: Color(0xFF6B7280)),
-                    const SizedBox(width: 8),
-                    Expanded(child: Text(venueName, style: TextStyle(fontSize: 15, color: Colors.grey[700]))),
+                    const Icon(LucideIcons.map_pin, size: 18, color: AppColors.textSecondary),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(child: Text(venueName, style: TextStyle(fontSize: 15, color: AppColors.textPrimary))),
                   ]),
                 ],
 
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.xl),
                 const Divider(),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.xl),
 
                 // Join button
                 SizedBox(
@@ -168,23 +172,23 @@ class _PublicEventScreenState extends State<PublicEventScreen> {
                     icon: const Icon(LucideIcons.log_in, size: 20),
                     label: const Text('Open in Yugrow', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0F766E),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.textInverse,
+                      shape: RoundedRectangleBorder(borderRadius: AppRadius.lgCircular),
                       elevation: 0,
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.md),
                 Center(
                   child: Text('Install Yugrow to check in and network.',
-                    style: TextStyle(fontSize: 13, color: Colors.grey[500])),
+                    style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
                 ),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: AppSpacing.xxl),
                 Center(
                   child: Text('Powered by Yugrow',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[400])),
+                    style: AppTypography.caption.copyWith(color: AppColors.textDisabled)),
                 ),
               ],
             ),
@@ -192,5 +196,6 @@ class _PublicEventScreenState extends State<PublicEventScreen> {
         ),
       ],
     );
+
   }
 }

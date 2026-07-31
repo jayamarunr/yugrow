@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class AppSpacing {
   AppSpacing._();
 
+  static const double none=0;
   static const double xs = 4;    // space-1
   static const double sm = 8;    // space-2
   static const double md = 12;   // space-3
@@ -30,4 +31,5 @@ class AppSpacing {
 
   static const EdgeInsets cardPadding = EdgeInsets.all(cardDense);
   static const EdgeInsets cardPaddingComfortable = EdgeInsets.all(cardComfortable);
+
 }

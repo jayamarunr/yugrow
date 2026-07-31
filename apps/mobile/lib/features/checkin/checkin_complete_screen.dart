@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
+import 'package:yugrow_mobile/core/theme/app_typography.dart';
 
 class CheckinCompleteScreen extends StatelessWidget {
   final String eventName;
@@ -19,7 +23,7 @@ class CheckinCompleteScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.all(AppSpacing.xxl),
           child: Column(
             children: [
               const Spacer(flex: 2),
@@ -33,59 +37,59 @@ class CheckinCompleteScreen extends StatelessWidget {
                     Positioned(
                       left: 10, top: 8,
                       child: Container(width: 10, height: 10,
-                          decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFF0F766E))),
+                          decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.primary)),
                     ),
                     Positioned(
                       right: 15, top: 5,
                       child: Container(width: 8, height: 8,
-                          decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFF59E0B))),
+                          decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.warning)),
                     ),
                     Positioned(
                       right: 40, bottom: 8,
                       child: Container(width: 6, height: 6,
-                          decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFF3B82F6))),
+                          decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.info)),
                     ),
-                    const Icon(Icons.check_circle, color: Color(0xFF0F766E), size: 64),
+                    const Icon(Icons.check_circle, color: AppColors.primary, size: 64),
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.xl),
 
               Text("You're visible!",
                   style: theme.textTheme.titleLarge
                       ?.copyWith(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
 
               if (eventName.isNotEmpty)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+                  margin: const EdgeInsets.only(bottom: AppSpacing.sm),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF0F766E).withValues(alpha: 0.06),
-                    borderRadius: BorderRadius.circular(12),
+                    color: AppColors.primary.withValues(alpha: 0.06),
+                    borderRadius: AppRadius.mdCircular,
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(LucideIcons.map_pin, size: 14, color: Color(0xFF0F766E)),
-                      const SizedBox(width: 6),
+                      const Icon(LucideIcons.map_pin, size: 14, color: AppColors.primary),
+                      const SizedBox(width: AppSpacing.sm),
                       Text(eventName,
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w500,
-                              color: Color(0xFF0F766E))),
+                              color: AppColors.primary)),
                     ],
                   ),
                 ),
 
               Text(
                 'Others can now discover and connect with you.',
-                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               Text(
                 'Professionals nearby can see your profile, send connection requests, and start conversations.',
-                style: TextStyle(color: Colors.grey[400], fontSize: 12),
+                style: TextStyle(color: AppColors.textDisabled, fontSize: 12),
                 textAlign: TextAlign.center,
               ),
 
@@ -99,17 +103,17 @@ class CheckinCompleteScreen extends StatelessWidget {
                   icon: const Icon(LucideIcons.eye, size: 18),
                   label: const Text("See Who's Here"),
                   style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF0F766E),
+                    backgroundColor: AppColors.primary,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: AppRadius.mdCircular),
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: AppSpacing.md),
               TextButton(
                 onPressed: () => context.go('/'),
                 child: Text('Back to Events',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[500])),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary)),
               ),
 
               const Spacer(flex: 1),
@@ -118,5 +122,6 @@ class CheckinCompleteScreen extends StatelessWidget {
         ),
       ),
     );
+
   }
 }

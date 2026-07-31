@@ -139,7 +139,7 @@ class _ProfilePreviewScreenState extends State<ProfilePreviewScreen> {
                       height: 1.2,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.xs),
 
                   // Title + Company
                   Text(
@@ -149,7 +149,7 @@ class _ProfilePreviewScreenState extends State<ProfilePreviewScreen> {
                       color: AppColors.textSecondary,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: AppSpacing.xs),
                   Text(
                     p.company,
                     style: GoogleFonts.inter(
@@ -163,7 +163,7 @@ class _ProfilePreviewScreenState extends State<ProfilePreviewScreen> {
 
                   // Relevance badge
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                     decoration: BoxDecoration(
                       color: AppColors.primarySoft.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(AppRadius.full),
@@ -252,7 +252,7 @@ class _ProfilePreviewScreenState extends State<ProfilePreviewScreen> {
                 child: Row(
                   children: [
                     const Icon(LucideIcons.search, size: 14, color: AppColors.textSecondary),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: Text(
                         p.lookingFor,
@@ -274,7 +274,7 @@ class _ProfilePreviewScreenState extends State<ProfilePreviewScreen> {
                 child: Row(
                   children: [
                     const Icon(LucideIcons.activity, size: 14, color: AppColors.textSecondary),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: Text(
                         p.recentActivity,
@@ -291,12 +291,7 @@ class _ProfilePreviewScreenState extends State<ProfilePreviewScreen> {
 
             // Connect button
             Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.screenMobile,
-                AppSpacing.xl,
-                AppSpacing.screenMobile,
-                AppSpacing.xxxl,
-              ),
+              padding: const EdgeInsets.fromLTRB(AppSpacing.screenMobile, AppSpacing.xl, AppSpacing.screenMobile, AppSpacing.xxxl, ),
               child: Column(
                 children: [
                   // Connected context card
@@ -316,7 +311,7 @@ class _ProfilePreviewScreenState extends State<ProfilePreviewScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               const Icon(LucideIcons.circle_check, size: 20, color: AppColors.success),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: AppSpacing.sm),
                               Text(
                                 "You're Connected",
                                 style: GoogleFonts.inter(
@@ -385,7 +380,7 @@ class _ProfilePreviewScreenState extends State<ProfilePreviewScreen> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       const Icon(LucideIcons.check, size: 20),
-                                      const SizedBox(width: 8),
+                                      const SizedBox(width: AppSpacing.sm),
                                       Text(
                                         'Request Sent',
                                         style: GoogleFonts.inter(
@@ -399,7 +394,7 @@ class _ProfilePreviewScreenState extends State<ProfilePreviewScreen> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       const Icon(LucideIcons.user_plus, size: 20),
-                                      const SizedBox(width: 8),
+                                      const SizedBox(width: AppSpacing.sm),
                                       Text(
                                         'Connect with ${p.name.split(' ')[0]}',
                                         style: GoogleFonts.inter(
@@ -449,12 +444,7 @@ class _Section extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.screenMobile,
-        AppSpacing.xl,
-        AppSpacing.screenMobile,
-        0,
-      ),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.screenMobile, AppSpacing.xl, AppSpacing.screenMobile, AppSpacing.none, ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -483,11 +473,11 @@ class _ReasonRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: Row(
         children: [
           Icon(icon, size: 14, color: AppColors.success),
-          const SizedBox(width: 10),
+          const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(
               text,

@@ -1,13 +1,17 @@
-// ─── Create Venue Dialog ──────────────────────────────────────────
-// ⚠️  DEPRECATED — replaced by CreateVenuePage (full-page flow with
+// â”€â”€â”€ Create Venue Dialog â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// âš ï¸  DEPRECATED â€” replaced by CreateVenuePage (full-page flow with
 //     address autocomplete, reverse geocoding, and radius adjustment).
 //     Kept for reference. New code should use CreateVenuePage instead.
 
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_colors.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:yugrow_mobile/core/api/api_client.dart';
 import 'package:yugrow_mobile/features/venue/models/venue.dart';
 import 'location_picker_map.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
+import 'package:yugrow_mobile/core/theme/app_typography.dart';
 
 class CreateVenueDialog extends StatefulWidget {
   final ApiClient api;
@@ -87,23 +91,23 @@ class _CreateVenueDialogState extends State<CreateVenueDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.check_circle, color: Colors.green, size: 48),
-            const SizedBox(height: 12),
+            const Icon(Icons.check_circle, color: AppColors.success, size: 48),
+            const SizedBox(height: AppSpacing.md),
             Text(_created!.name,
                 style: Theme.of(context).textTheme.titleMedium),
             if (_created!.hasCoordinates)
               Padding(
-                padding: const EdgeInsets.only(top: 4),
+                padding: const EdgeInsets.only(top: AppSpacing.xs),
                 child: Text(
-                  '📍 ${_created!.latitude!.toStringAsFixed(4)}, ${_created!.longitude!.toStringAsFixed(4)}',
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  'ðŸ“ ${_created!.latitude!.toStringAsFixed(4)}, ${_created!.longitude!.toStringAsFixed(4)}',
+                  style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
                 ),
               ),
             Text(_created!.displayName,
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium
-                    ?.copyWith(color: Colors.grey[600])),
+                    ?.copyWith(color: AppColors.textSecondary)),
           ],
         ),
         actions: [
@@ -122,7 +126,7 @@ class _CreateVenueDialogState extends State<CreateVenueDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // ── Name (only manual field) ──
+            // â”€â”€ Name (only manual field) â”€â”€
             TextFormField(
               controller: _nameCtrl,
               decoration: const InputDecoration(
@@ -131,14 +135,14 @@ class _CreateVenueDialogState extends State<CreateVenueDialog> {
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10))),
                 filled: true,
-                fillColor: Color(0xFFF9FAFB),
+                fillColor: AppColors.surface,
               ),
               validator: (v) =>
                   v == null || v.trim().isEmpty ? 'Required' : null,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.lg),
 
-            // ── Map location picker (primary action) ──
+            // â”€â”€ Map location picker (primary action) â”€â”€
             SizedBox(
               width: double.infinity,
               height: 120,
@@ -147,31 +151,31 @@ class _CreateVenueDialogState extends State<CreateVenueDialog> {
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(
                     color: _pickedLocation != null
-                        ? Colors.green
-                        : Colors.grey[300]!,
+                        ? AppColors.success
+                        : AppColors.border,
                     width: 1.5,
                   ),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  padding: const EdgeInsets.all(16),
+                      borderRadius: AppRadius.mdCircular),
+                  padding: const EdgeInsets.all(AppSpacing.lg),
                 ),
                 child: _pickedLocation != null
                     ? Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(Icons.check_circle,
-                              color: Colors.green, size: 28),
-                          const SizedBox(height: 4),
+                              color: AppColors.success, size: 28),
+                          const SizedBox(height: AppSpacing.xs),
                           Text(
                             '${_pickedLocation!.latitude.toStringAsFixed(4)}, ${_pickedLocation!.longitude.toStringAsFixed(4)}',
                             style: const TextStyle(
-                                fontSize: 12, color: Colors.green),
+                                fontSize: 12, color: AppColors.success),
                           ),
                           if (_resolvedAddress != null)
                             Text(
                               _resolvedAddress!,
                               style:
-                                  TextStyle(fontSize: 11, color: Colors.grey[600]),
+                                  TextStyle(fontSize: 11, color: AppColors.textSecondary),
                               textAlign: TextAlign.center,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -179,7 +183,7 @@ class _CreateVenueDialogState extends State<CreateVenueDialog> {
                           Text(
                             'Radius: ${_pickedLocation!.validationRadius.toInt()}m',
                             style: TextStyle(
-                                fontSize: 11, color: Colors.grey[500]),
+                                fontSize: 11, color: AppColors.textSecondary),
                           ),
                         ],
                       )
@@ -187,16 +191,16 @@ class _CreateVenueDialogState extends State<CreateVenueDialog> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(LucideIcons.map_pin,
-                              size: 32, color: Color(0xFF0F766E)),
-                          const SizedBox(height: 6),
+                              size: 32, color: AppColors.primary),
+                          const SizedBox(height: AppSpacing.sm),
                           const Text('Set Location on Map',
                               style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: Color(0xFF0F766E))),
+                                  color: AppColors.primary)),
                           Text('Required for check-in verification',
                               style: TextStyle(
-                                  fontSize: 11, color: Colors.grey[500])),
+                                  fontSize: 11, color: AppColors.textSecondary)),
                         ],
                       ),
               ),
@@ -225,5 +229,6 @@ class _CreateVenueDialogState extends State<CreateVenueDialog> {
         ),
       ],
     );
+
   }
 }

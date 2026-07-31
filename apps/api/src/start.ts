@@ -6,6 +6,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from '@core/index';
 import helmet from 'helmet';
+import { Request, Response } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -38,6 +39,21 @@ async function bootstrap() {
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }),
   );
   app.useGlobalFilters(new GlobalExceptionFilter());
+
+  // Root route before global prefix — responds at /
+  const httpAdapter = app.getHttpAdapter();
+  const instance = httpAdapter.getInstance();
+  instance.get('/', (_req: Request, res: Response) => {
+    res.json({
+      service: 'yugrow-api',
+      version: '0.1.0',
+      status: 'running',
+      docs: '/api/docs',
+      health: '/api/v1/health',
+      timestamp: new Date().toISOString(),
+    });
+  });
+
   app.setGlobalPrefix('api/v1');
 
   const config = new DocumentBuilder()

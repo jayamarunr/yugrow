@@ -18,6 +18,32 @@ Verify there are:
 
 ---
 
+## Step 1b — Run the QA pipeline
+
+Before reviewing, verify quality with automated journeys:
+
+- [ ] Run `make qa` or `pnpm qa:run` — all Playwright journeys execute
+- [ ] Check the QA report at `qa/reports/QA-LATEST.md`
+- [ ] **0 P0 failures** — critical journeys must all PASS
+- [ ] **0 P1 failures recommended** — fix before committing if possible
+- [ ] **Confidence score ≥ 90%** — otherwise do not ship
+- [ ] All evidence collected: screenshots, traces, logs
+- [ ] Visual regression check passed (no unexpected UI changes)
+
+**If QA fails:** Do NOT proceed to review. Fix failures first, re-run QA, then continue.
+
+**If QA passes:** Attach the report to the session summary.
+
+```bash
+# Quick check
+node qa/pipeline.js
+
+# Or for full autonomous loop
+node qa/auto-fix-loop.js
+```
+
+---
+
 ## Step 2 — Review today's implementation
 
 Produce a summary of:

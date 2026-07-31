@@ -1,4 +1,4 @@
-// ─── EditProfileScreen ─────────────────────────────────────────
+// â”€â”€â”€ EditProfileScreen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Full professional identity editor.
 // Required: photo, name, headline, company, designation
 // Optional: about, website, LinkedIn, skills, industries
@@ -7,9 +7,13 @@
 // Saves via PATCH /identity/professional/:workspaceId
 
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_colors.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import '../../../core/api/api_client.dart';
 import '../widgets/profile_card.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
+import 'package:yugrow_mobile/core/theme/app_typography.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final ApiClient api;
@@ -150,7 +154,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           SnackBar(
             content: Text('Failed to save: $e'),
             behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.red[700],
+            backgroundColor: AppColors.error,
           ),
         );
       }
@@ -187,7 +191,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Widget _buildPreview() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.only(top: 16, bottom: 40),
+      padding: const EdgeInsets.only(top: AppSpacing.lg, bottom: AppSpacing.xxxl),
       child: ProfileCard(
         name: _nameCtrl.text.trim().isNotEmpty
             ? _nameCtrl.text.trim()
@@ -218,11 +222,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return Form(
       key: _formKey,
       child: ListView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(AppSpacing.xl),
         children: [
           // Section: Basic Info
           _sectionHeader('Basic Information', theme),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
 
           TextFormField(
             controller: _nameCtrl,
@@ -230,7 +234,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             decoration: _inputDecoration('Full Name *', Icons.person_outlined),
             validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: AppSpacing.lg),
 
           TextFormField(
             controller: _headlineCtrl,
@@ -239,7 +243,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 hint: 'e.g. Founder & CEO'),
             validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: AppSpacing.lg),
 
           TextFormField(
             controller: _companyCtrl,
@@ -248,7 +252,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 hint: 'e.g. Yugrow'),
             validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: AppSpacing.lg),
 
           TextFormField(
             controller: _locationCtrl,
@@ -256,11 +260,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             decoration: _inputDecoration('Location', Icons.location_city_outlined,
                 hint: 'e.g. Chennai'),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.xl),
 
           // Section: About
           _sectionHeader('About', theme),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           TextFormField(
             controller: _aboutCtrl,
             maxLines: 4,
@@ -268,11 +272,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             decoration: _inputDecoration('About you', Icons.article_outlined,
                 hint: 'Tell people what you do...'),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.xl),
 
           // Section: Skills
           _sectionHeader('Skills', theme),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           Row(
             children: [
               Expanded(
@@ -283,24 +287,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   onSubmitted: (_) => _addSkill(),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.sm),
               IconButton.filled(
                 onPressed: _addSkill,
                 icon: const Icon(Icons.add, size: 20),
                 style: IconButton.styleFrom(
-                  backgroundColor: const Color(0xFF0F766E),
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: AppColors.textInverse,
                 ),
               ),
             ],
           ),
           if (_skills.isNotEmpty) ...[
-            const SizedBox(height: 10),
+            const SizedBox(height: AppSpacing.md),
             Wrap(
               spacing: 8,
               runSpacing: 6,
               children: _skills.map((skill) => Chip(
-                label: Text(skill, style: const TextStyle(fontSize: 12)),
+                label: Text(skill, style: AppTypography.caption),
                 deleteIcon: const Icon(Icons.close, size: 16),
                 onDeleted: () => _removeSkill(skill),
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -308,48 +312,48 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               )).toList(),
             ),
           ],
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.xl),
 
           // Section: Industries
           _sectionHeader('Industries', theme),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Text('Select all that apply',
-              style: TextStyle(fontSize: 12, color: Colors.grey[500])),
-          const SizedBox(height: 10),
+              style: AppTypography.caption.copyWith(color: AppColors.textSecondary)),
+          const SizedBox(height: AppSpacing.md),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: _industryOptions.map((industry) {
               final selected = _industries.contains(industry);
               return FilterChip(
-                label: Text(industry, style: const TextStyle(fontSize: 12)),
+                label: Text(industry, style: AppTypography.caption),
                 selected: selected,
                 onSelected: (_) => _toggleIndustry(industry),
-                selectedColor: const Color(0xFF0F766E).withValues(alpha: 0.15),
-                checkmarkColor: const Color(0xFF0F766E),
+                selectedColor: AppColors.primary.withValues(alpha: 0.15),
+                checkmarkColor: AppColors.primary,
                 visualDensity: VisualDensity.compact,
               );
             }).toList(),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.xl),
 
           // Section: Links
           _sectionHeader('Links', theme),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           TextFormField(
             controller: _websiteCtrl,
             keyboardType: TextInputType.url,
             decoration: _inputDecoration('Website', Icons.language_outlined,
                 hint: 'https://yugrow.app'),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: AppSpacing.lg),
           TextFormField(
             controller: _linkedInCtrl,
             keyboardType: TextInputType.url,
             decoration: _inputDecoration('LinkedIn', LucideIcons.briefcase,
                 hint: 'https://linkedin.com/in/...'),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: AppSpacing.xxxl),
         ],
       ),
     );
@@ -369,10 +373,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       labelText: label,
       hintText: hint,
       prefixIcon: Icon(icon, size: 20),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      border: OutlineInputBorder(borderRadius: AppRadius.mdCircular),
       filled: true,
-      fillColor: Colors.grey[50],
-      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      fillColor: AppColors.background,
+      contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.lg),
     );
+
   }
 }

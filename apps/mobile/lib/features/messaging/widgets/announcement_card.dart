@@ -12,7 +12,10 @@
 // }
 
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_colors.dart';
 import 'dart:convert';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
 
 class AnnouncementCard extends StatelessWidget {
   final Map<String, dynamic> message;
@@ -47,8 +50,8 @@ class AnnouncementCard extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.grey[200]!),
+          borderRadius: AppRadius.lgCircular,
+          border: Border.all(color: AppColors.border),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.04),
@@ -63,12 +66,12 @@ class AnnouncementCard extends StatelessWidget {
             // Header
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+              padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.md),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    const Color(0xFF0F766E),
-                    const Color(0xFF0F766E).withValues(alpha: 0.85),
+                    AppColors.primary,
+                    AppColors.primary.withValues(alpha: 0.85),
                   ],
                 ),
                 borderRadius: const BorderRadius.only(
@@ -83,11 +86,11 @@ class AnnouncementCard extends StatelessWidget {
                     height: 32,
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: AppRadius.smCircular,
                     ),
                     child: const Icon(Icons.campaign, size: 18, color: Colors.white),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: Text(
                       title,
@@ -104,7 +107,7 @@ class AnnouncementCard extends StatelessWidget {
 
             // Body
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -115,17 +118,17 @@ class AnnouncementCard extends StatelessWidget {
                   // Location
                   if (location != null)
                     Padding(
-                      padding: const EdgeInsets.only(top: 6),
+                      padding: const EdgeInsets.only(top: AppSpacing.sm),
                       child: _infoRow(Icons.location_on, location),
                     ),
 
                   // Description
                   if (description != null)
                     Padding(
-                      padding: const EdgeInsets.only(top: 10),
+                      padding: const EdgeInsets.only(top: AppSpacing.md),
                       child: Text(
                         description,
-                        style: const TextStyle(fontSize: 13, color: Color(0xFF6B7280), height: 1.5),
+                        style: const TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.5),
                       ),
                     ),
                 ],
@@ -135,15 +138,15 @@ class AnnouncementCard extends StatelessWidget {
             // Action button
             if (actionLabel != null)
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+                padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.none, AppSpacing.lg, AppSpacing.lg),
                 child: SizedBox(
                   width: double.infinity,
                   child: FilledButton(
                     onPressed: () {},
                     style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF0F766E),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.textInverse,
+                      shape: RoundedRectangleBorder(borderRadius: AppRadius.smCircular),
                     ),
                     child: Text(actionLabel, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
                   ),
@@ -153,8 +156,8 @@ class AnnouncementCard extends StatelessWidget {
             // Timestamp
             if (time != null)
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                child: Text(time ?? '', style: TextStyle(fontSize: 10, color: Colors.grey[400])),
+                padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.none, AppSpacing.lg, AppSpacing.md),
+                child: Text(time ?? '', style: TextStyle(fontSize: 10, color: AppColors.textDisabled)),
               ),
           ],
         ),
@@ -165,11 +168,11 @@ class AnnouncementCard extends StatelessWidget {
   Widget _infoRow(IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, size: 14, color: const Color(0xFF0F766E)),
-        const SizedBox(width: 6),
+        Icon(icon, size: 14, color: AppColors.primary),
+        const SizedBox(width: AppSpacing.sm),
         Text(
           text,
-          style: const TextStyle(fontSize: 13, color: Color(0xFF374151), fontWeight: FontWeight.w500),
+          style: const TextStyle(fontSize: 13, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
         ),
       ],
     );

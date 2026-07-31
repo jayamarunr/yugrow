@@ -1,4 +1,4 @@
-// ─── VenueSearchField ─────────────────────────────────────────────
+// â”€â”€â”€ VenueSearchField â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Tappable field that opens the VenueSearchSheet bottom sheet.
 // Shows the selected venue as a confirmation badge.
 //
@@ -9,10 +9,14 @@
 //   )
 
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_colors.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import '../../../core/api/api_client.dart';
 import '../models/venue.dart';
 import 'venue_search_sheet.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
+import 'package:yugrow_mobile/core/theme/app_typography.dart';
 
 class VenueSearchField extends StatefulWidget {
   final ApiClient api;
@@ -50,21 +54,21 @@ class _VenueSearchFieldState extends State<VenueSearchField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        // ── Helper text ──
-        const Text(
+        // â”€â”€ Helper text â”€â”€
+        Text(
           'Where is your event?',
-          style: TextStyle(fontSize: 12, color: Colors.grey),
+          style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.sm),
 
         if (_selected != null)
-          // ── Selected venue confirmation ──
+          // â”€â”€ Selected venue confirmation â”€â”€
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
             decoration: BoxDecoration(
-              color: Colors.green[50],
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.green[200]!),
+              color: AppColors.success,
+              borderRadius: AppRadius.mdCircular,
+              border: Border.all(color: AppColors.success),
             ),
             child: Row(
               children: [
@@ -72,13 +76,13 @@ class _VenueSearchFieldState extends State<VenueSearchField> {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: Colors.green[100],
-                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.success,
+                    borderRadius: AppRadius.smCircular,
                   ),
                   child: const Icon(LucideIcons.map_pin,
-                      size: 18, color: Color(0xFF166534)),
+                      size: 18, color: AppColors.primary),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AppSpacing.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +93,7 @@ class _VenueSearchFieldState extends State<VenueSearchField> {
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF166534),
+                          color: AppColors.primary,
                         ),
                       ),
                       if (_selected!.city.isNotEmpty)
@@ -97,7 +101,7 @@ class _VenueSearchFieldState extends State<VenueSearchField> {
                           _selected!.city,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.green[700],
+                            color: AppColors.success,
                           ),
                         ),
                     ],
@@ -108,46 +112,47 @@ class _VenueSearchFieldState extends State<VenueSearchField> {
                   style: TextButton.styleFrom(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     minimumSize: Size.zero,
-                    foregroundColor: const Color(0xFF166534),
+                    foregroundColor: AppColors.primary,
                   ),
-                  child: const Text('Change', style: TextStyle(fontSize: 12)),
+                  child: const Text('Change', style: AppTypography.caption),
                 ),
               ],
             ),
           )
         else
-          // ── Tappable field to open bottom sheet ──
+          // â”€â”€ Tappable field to open bottom sheet â”€â”€
           InkWell(
             onTap: _openSearchSheet,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: AppRadius.mdCircular,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.lg),
               decoration: BoxDecoration(
-                color: const Color(0xFFF9FAFB),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.grey[300]!),
+                color: AppColors.surface,
+                borderRadius: AppRadius.mdCircular,
+                border: Border.all(color: AppColors.border),
               ),
               child: const Row(
                 children: [
                   Icon(LucideIcons.map_pin,
-                      size: 18, color: Color(0xFF0F766E)),
-                  SizedBox(width: 10),
+                      size: 18, color: AppColors.primary),
+                  SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: Text(
                       'Search or create a venue...',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey,
+                        color: AppColors.textSecondary,
                       ),
                     ),
                   ),
                   Icon(Icons.keyboard_arrow_up,
-                      size: 18, color: Colors.grey),
+                      size: 18, color: AppColors.textSecondary),
                 ],
               ),
             ),
           ),
       ],
     );
+
   }
 }

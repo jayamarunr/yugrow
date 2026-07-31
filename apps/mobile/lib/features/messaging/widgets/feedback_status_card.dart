@@ -1,4 +1,4 @@
-// ─── FeedbackStatusCard ─────────────────────────────────────
+// â”€â”€â”€ FeedbackStatusCard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Renders a feedback status update in the conversation.
 // Communicates the status of a professional's reported feedback.
 //
@@ -12,7 +12,11 @@
 // }
 
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_colors.dart';
 import 'dart:convert';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
+import 'package:yugrow_mobile/core/theme/app_typography.dart';
 
 class FeedbackStatusCard extends StatelessWidget {
   final Map<String, dynamic> message;
@@ -48,8 +52,8 @@ class FeedbackStatusCard extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.grey[200]!),
+          borderRadius: AppRadius.lgCircular,
+          border: Border.all(color: AppColors.border),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.04),
@@ -64,9 +68,9 @@ class FeedbackStatusCard extends StatelessWidget {
             // Header
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+              padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.md),
               decoration: const BoxDecoration(
-                color: Color(0xFFF3F4F6),
+                color: AppColors.surfaceHover,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(14),
                   topRight: Radius.circular(14),
@@ -79,18 +83,18 @@ class FeedbackStatusCard extends StatelessWidget {
                     height: 32,
                     decoration: BoxDecoration(
                       color: statusColor.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: AppRadius.smCircular,
                     ),
                     child: Icon(Icons.feedback, size: 18, color: statusColor),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: AppSpacing.md),
                   const Expanded(
                     child: Text(
                       'Feedback Received',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF6B7280),
+                        color: AppColors.textSecondary,
                       ),
                     ),
                   ),
@@ -100,7 +104,7 @@ class FeedbackStatusCard extends StatelessWidget {
 
             // Body
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -110,23 +114,23 @@ class FeedbackStatusCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF111827),
+                      color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: AppSpacing.md),
 
                   // Status badge
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
                     decoration: BoxDecoration(
                       color: statusColor.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: AppRadius.xxlCircular,
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.check_circle, size: 14, color: statusColor),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: AppSpacing.xs),
                         Text(
                           status,
                           style: TextStyle(
@@ -142,14 +146,14 @@ class FeedbackStatusCard extends StatelessWidget {
                   // Sprint
                   if (sprint != null)
                     Padding(
-                      padding: const EdgeInsets.only(top: 8),
+                      padding: const EdgeInsets.only(top: AppSpacing.sm),
                       child: Row(
                         children: [
-                          Icon(Icons.speed, size: 14, color: Colors.grey[500]),
-                          const SizedBox(width: 4),
+                          Icon(Icons.speed, size: 14, color: AppColors.textSecondary),
+                          const SizedBox(width: AppSpacing.xs),
                           Text(
                             sprint,
-                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                            style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
                           ),
                         ],
                       ),
@@ -158,10 +162,10 @@ class FeedbackStatusCard extends StatelessWidget {
                   // Note
                   if (note != null)
                     Padding(
-                      padding: const EdgeInsets.only(top: 10),
+                      padding: const EdgeInsets.only(top: AppSpacing.md),
                       child: Text(
                         note,
-                        style: const TextStyle(fontSize: 13, color: Color(0xFF6B7280), height: 1.4),
+                        style: const TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.4),
                       ),
                     ),
                 ],
@@ -171,8 +175,8 @@ class FeedbackStatusCard extends StatelessWidget {
             // Timestamp
             if (time != null)
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                child: Text(time ?? '', style: TextStyle(fontSize: 10, color: Colors.grey[400])),
+                padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.none, AppSpacing.lg, AppSpacing.md),
+                child: Text(time ?? '', style: TextStyle(fontSize: 10, color: AppColors.textDisabled)),
               ),
           ],
         ),
@@ -184,5 +188,6 @@ class FeedbackStatusCard extends StatelessWidget {
     hex = hex.replaceFirst('#', '');
     if (hex.length == 6) hex = 'FF$hex';
     return Color(int.parse(hex, radix: 16));
+
   }
 }

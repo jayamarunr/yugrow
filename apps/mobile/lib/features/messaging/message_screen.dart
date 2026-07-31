@@ -1,13 +1,18 @@
-// ─── MessageScreen ───────────────────────────────────────────
-// Yugrow Conversation — text-only chat with context, read receipts,
+// â”€â”€â”€ MessageScreen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Yugrow Conversation â€” text-only chat with context, read receipts,
 // typing indicator, and conversation starter suggestions.
 
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_service.dart';
 import 'widgets/message_renderer.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
+import 'package:yugrow_mobile/core/theme/app_motion.dart';
+import 'package:yugrow_mobile/core/theme/app_typography.dart';
 
 class MessageScreen extends ConsumerStatefulWidget {
   final String conversationId;
@@ -68,7 +73,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     }
     // Default networking suggestions
     return [
-      'Hi! Great meeting you 👋',
+      'Hi! Great meeting you ðŸ‘‹',
       'What brought you to this event?',
       'Would love to stay connected.',
       'Tell me more about your work.',
@@ -127,7 +132,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 200),
+          duration: AppMotion.normal,
           curve: Curves.easeOut,
         );
       }
@@ -181,7 +186,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
           children: [
             if (isSystemConv)
               const Padding(
-                padding: EdgeInsets.only(right: 8),
+                padding: EdgeInsets.only(right: AppSpacing.sm),
                 child: Icon(Icons.favorite, color: Colors.white, size: 18),
               ),
             Expanded(
@@ -192,14 +197,14 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                     otherName,
                     style: TextStyle(
                       fontSize: 16,
-                      color: isSystemConv ? const Color(0xFF0F766E) : null,
+                      color: isSystemConv ? AppColors.primary : null,
                       fontWeight: isSystemConv ? FontWeight.w600 : null,
                     ),
                   ),
                   if (_typing)
                     Text('typing...',
                         style: TextStyle(
-                            fontSize: 11, color: Colors.grey[600])),
+                            fontSize: 11, color: AppColors.textSecondary)),
                 ],
               ),
             ),
@@ -212,24 +217,24 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
           if (_context != null)
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(10),
-              color: const Color(0xFF0F766E).withValues(alpha: 0.06),
+              padding: const EdgeInsets.all(AppSpacing.md),
+              color: AppColors.primary.withValues(alpha: 0.06),
               child: Row(
                 children: [
                   const Icon(LucideIcons.map_pin,
-                      size: 14, color: Color(0xFF0F766E)),
-                  const SizedBox(width: 6),
+                      size: 14, color: AppColors.primary),
+                  const SizedBox(width: AppSpacing.sm),
                   Text(
                     'Met at ${_context!['eventName'] ?? 'an event'}',
                     style: const TextStyle(
-                        fontSize: 12, color: Color(0xFF0F766E)),
+                        fontSize: 12, color: AppColors.primary),
                   ),
                   const Spacer(),
                   Text(
                     _context!['venueName'] != null
                         ? _context!['venueName'] as String
                         : '',
-                    style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                    style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
                   ),
                 ],
               ),
@@ -277,12 +282,12 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                     width: 8,
                     height: 8,
                     child: CircularProgressIndicator(
-                        strokeWidth: 1.5, color: Colors.grey[400]),
+                        strokeWidth: 1.5, color: AppColors.textDisabled),
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: AppSpacing.sm),
                   Text('$otherName is typing...',
                       style: TextStyle(
-                          fontSize: 11, color: Colors.grey[500])),
+                          fontSize: 11, color: AppColors.textSecondary)),
                 ],
               ),
             ),
@@ -291,28 +296,28 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
           if (!hasMessages && !_loading)
             Container(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
               child: Wrap(
                 spacing: 8,
                 runSpacing: 6,
                 children: _contextSuggestions.map((s) => ActionChip(
-                  label: Text(s, style: const TextStyle(fontSize: 12)),
+                  label: Text(s, style: AppTypography.caption),
                   onPressed: () => _insertSuggestion(s),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
-                  side: BorderSide(color: Colors.grey[300]!),
-                  backgroundColor: Colors.grey[50],
+                      borderRadius: AppRadius.xxlCircular),
+                  side: BorderSide(color: AppColors.border),
+                  backgroundColor: AppColors.background,
                 )).toList(),
               ),
             ),
 
           // Input bar
           Container(
-            padding: const EdgeInsets.fromLTRB(12, 8, 8, 12),
+            padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.sm, AppSpacing.sm, AppSpacing.md),
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
               border: Border(
-                  top: BorderSide(color: Colors.grey[200]!)),
+                  top: BorderSide(color: AppColors.border)),
             ),
             child: Row(
               children: [
@@ -325,11 +330,11 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                           : 'Say hello...',
                       isDense: true,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: AppRadius.xxlCircular,
                         borderSide: BorderSide.none,
                       ),
                       filled: true,
-                      fillColor: Colors.grey[100],
+                      fillColor: AppColors.surfaceHover,
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 12),
                     ),
@@ -337,7 +342,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                     onSubmitted: (_) => _send(),
                   ),
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: AppSpacing.xs),
                 IconButton.filled(
                   onPressed: _sending ? null : _send,
                   icon: _sending
@@ -349,10 +354,10 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                         )
                       : const Icon(Icons.send, size: 18),
                   style: IconButton.styleFrom(
-                    backgroundColor: const Color(0xFF0F766E),
-                    foregroundColor: Colors.white,
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.textInverse,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: AppRadius.mdCircular),
                   ),
                 ),
               ],
@@ -371,20 +376,22 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(LucideIcons.message_square,
-                size: 48, color: Colors.grey[300]),
-            const SizedBox(height: 16),
+                size: 48, color: AppColors.border),
+            const SizedBox(height: AppSpacing.lg),
             Text('Say hello!',
                 style: theme.textTheme.titleLarge
                     ?.copyWith(fontWeight: FontWeight.w600)),
-            const SizedBox(height: 6),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               'Start the conversation with ${_otherName ?? "them"}',
-              style: TextStyle(color: Colors.grey[600], fontSize: 14),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
               textAlign: TextAlign.center,
             ),
           ],
         ),
       ),
     );
+
+
   }
 }

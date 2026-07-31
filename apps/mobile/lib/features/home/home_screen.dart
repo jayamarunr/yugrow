@@ -111,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 32,
                 decoration: BoxDecoration(
                   color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: AppRadius.smCircular,
                 ),
                 child: const Center(
                   child: Text(
@@ -125,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: AppSpacing.md),
             Text(
               'Yugrow',
               style: GoogleFonts.inter(
@@ -142,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
             color: AppColors.textSecondary,
             onPressed: () {},
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AppSpacing.sm),
           CircleAvatar(
             radius: 16,
             backgroundColor: AppColors.primarySoft,
@@ -157,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpacing.md),
         ],
       ),
       body: Column(
@@ -328,7 +328,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     },
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(AppSpacing.lg),
                       child: Row(
                         children: [
                           Container(
@@ -336,11 +336,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 44,
                             decoration: BoxDecoration(
                               color: AppColors.primary,
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: AppRadius.mdCircular,
                             ),
                             child: const Icon(LucideIcons.plus, size: 22, color: Colors.white),
                           ),
-                          const SizedBox(width: 14),
+                          const SizedBox(width: AppSpacing.lg),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -353,7 +353,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     color: AppColors.primary,
                                   ),
                                 ),
-                                const SizedBox(height: 2),
+                                const SizedBox(height: AppSpacing.xs),
                                 Text(
                                   'Create a professional event in under a minute',
                                   style: GoogleFonts.inter(

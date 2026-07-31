@@ -10,6 +10,7 @@ import '../models/professional.dart';
 import '../engine/presence_engine.dart' show PresenceEngine, PresenceEvent, PresenceArrival, Presence;
 import 'profile_preview_screen.dart';
 import '../../profile/widgets/profile_card.dart';
+import 'package:yugrow_mobile/core/theme/app_motion.dart';
 
 class DiscoveryScreen extends StatefulWidget {
   final String eventName;
@@ -144,9 +145,9 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> with WidgetsBindingOb
             )
           : Column(
               children: [
-                // Heartbeat banner — animated slide-down with fade
+                // Heartbeat banner â€” animated slide-down with fade
                 AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
+                  duration: AppMotion.slow,
                   transitionBuilder: (child, animation) {
                     return SlideTransition(
                       position: Tween<Offset>(
@@ -178,7 +179,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> with WidgetsBindingOb
                                   shape: BoxShape.circle,
                                 ),
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: AppSpacing.sm),
                               Expanded(
                                 child: Text(
                                   _heartbeatMessage!,
@@ -196,7 +197,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> with WidgetsBindingOb
                       : const SizedBox.shrink(),
                 ),
 
-                // Re-entry banner — arrivals while away
+                // Re-entry banner â€” arrivals while away
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 400),
                   transitionBuilder: (child, animation) {
@@ -214,7 +215,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> with WidgetsBindingOb
                           child: Row(
                             children: [
                               const Icon(LucideIcons.sparkles, size: 14, color: AppColors.success),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: AppSpacing.sm),
                               Expanded(
                                 child: Text(
                                   _reentryMessage!,
@@ -233,16 +234,11 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> with WidgetsBindingOb
 
                 // Header
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.screenMobile,
-                    AppSpacing.lg,
-                    AppSpacing.screenMobile,
-                    AppSpacing.sm,
-                  ),
+                  padding: const EdgeInsets.fromLTRB(AppSpacing.screenMobile, AppSpacing.lg, AppSpacing.screenMobile, AppSpacing.sm, ),
                   child: Row(
                     children: [
                       AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
+                        duration: AppMotion.slow,
                         transitionBuilder: (child, animation) {
                           return ScaleTransition(
                             scale: animation,
@@ -355,7 +351,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> with WidgetsBindingOb
   Widget _buildProfileCard(Professional p) {
     final headline = [p.title, p.company]
         .where((s) => s.isNotEmpty)
-        .join(' · ');
+        .join(' Â· ');
     return ProfileCard(
       compact: true,
       name: p.name,
@@ -369,5 +365,6 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> with WidgetsBindingOb
         );
       },
     );
+
   }
 }

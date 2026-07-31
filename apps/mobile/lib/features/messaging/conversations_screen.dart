@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_service.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
 
 class ConversationsScreen extends ConsumerStatefulWidget {
   const ConversationsScreen({super.key});
@@ -81,27 +83,27 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.chat_outlined, size: 64, color: theme.disabledColor),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppSpacing.lg),
                       Text('No conversations yet', style: theme.textTheme.titleLarge),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AppSpacing.sm),
                       Text('Connect with someone to start chatting', style: theme.textTheme.bodyMedium, textAlign: TextAlign.center),
                     ],
                   ),
                 )
               : ListView(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(AppSpacing.lg),
                   children: [
                     // ── Yugrow System Chat ───────────────────
                     if (hasSystemConv)
                       Card(
-                        margin: const EdgeInsets.only(bottom: 12),
+                        margin: const EdgeInsets.only(bottom: AppSpacing.md),
                         color: theme.primaryColor.withValues(alpha: 0.05),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: AppRadius.mdCircular,
                           side: BorderSide(color: theme.primaryColor.withValues(alpha: 0.2)),
                         ),
                         child: ListTile(
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
                           leading: CircleAvatar(
                             backgroundColor: theme.primaryColor.withValues(alpha: 0.15),
                             child: Icon(Icons.favorite, color: theme.primaryColor, size: 20),
@@ -123,13 +125,13 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
                     if (hasRegularConvs) ...[
                       if (hasSystemConv)
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
+                          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                           child: Text('Connections', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: theme.disabledColor)),
                         ),
                       ..._conversations.map((c) {
                         final conv = c as Map<String, dynamic>;
                         return Card(
-                          margin: const EdgeInsets.only(bottom: 8),
+                          margin: const EdgeInsets.only(bottom: AppSpacing.sm),
                           child: ListTile(
                             leading: const CircleAvatar(child: Icon(Icons.person)),
                             title: Text('Conversation #${conv['id'].toString().substring(0, 8)}'),

@@ -1,6 +1,6 @@
-// ─── LocationPickerMap ────────────────────────────────────────────
+// â”€â”€â”€ LocationPickerMap â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // A full-screen map for dropping a pin to set a venue's coordinates.
-// Uses OpenStreetMap (flutter_map) — no API key required.
+// Uses OpenStreetMap (flutter_map) â€” no API key required.
 // Google Maps can replace this later without changing the calling code.
 //
 // Usage:
@@ -19,6 +19,9 @@ import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import '../models/venue.dart';
 import '../services/geocoding_service.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
+import 'package:yugrow_mobile/core/theme/app_typography.dart';
 
 class LocationPickerMap extends StatefulWidget {
   /// Pre-populate with an existing location (for editing).
@@ -150,7 +153,7 @@ class _LocationPickerMapState extends State<LocationPickerMap> {
       ),
       body: Column(
         children: [
-          // ── Map ──
+          // â”€â”€ Map â”€â”€
           Expanded(
             child: Stack(
               alignment: Alignment.center,
@@ -207,10 +210,10 @@ class _LocationPickerMapState extends State<LocationPickerMap> {
                   bottom: 16,
                   child: Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
                     decoration: BoxDecoration(
                       color: Colors.black87,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: AppRadius.xxlCircular,
                     ),
                     child: const Text(
                       'Tap on the map to move the pin',
@@ -222,9 +225,9 @@ class _LocationPickerMapState extends State<LocationPickerMap> {
             ),
           ),
 
-          // ── Bottom controls ──
+          // â”€â”€ Bottom controls â”€â”€
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               boxShadow: [
@@ -254,7 +257,7 @@ class _LocationPickerMapState extends State<LocationPickerMap> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.xs),
                   // Resolved address (auto-reverse geocoded)
                   if (_resolving)
                     Row(
@@ -267,7 +270,7 @@ class _LocationPickerMapState extends State<LocationPickerMap> {
                             color: Colors.grey[400],
                           ),
                         ),
-                        const SizedBox(width: 6),
+                        const SizedBox(width: AppSpacing.sm),
                         Text(
                           'Resolving address...',
                           style: TextStyle(
@@ -297,7 +300,7 @@ class _LocationPickerMapState extends State<LocationPickerMap> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.md),
 
                   // Validation radius slider
                   Row(
@@ -315,11 +318,11 @@ class _LocationPickerMapState extends State<LocationPickerMap> {
                       ),
                       Text(
                         '${_radius.toInt()}m',
-                        style: const TextStyle(fontSize: 12),
+                        style: AppTypography.caption,
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.sm),
 
                   // Confirm button
                   SizedBox(
@@ -337,5 +340,6 @@ class _LocationPickerMapState extends State<LocationPickerMap> {
         ],
       ),
     );
+
   }
 }

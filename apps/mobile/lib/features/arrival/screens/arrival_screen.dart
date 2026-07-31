@@ -13,6 +13,7 @@ import '../repository/arrival_repository.dart';
 import '../../checkin/live_screen.dart';
 import '../../../core/api/api_client.dart';
 import '../../../core/widgets/founder_mode_banner.dart';
+import 'package:yugrow_mobile/core/theme/app_motion.dart';
 
 class ArrivalScreen extends ConsumerStatefulWidget {
   const ArrivalScreen({super.key});
@@ -63,7 +64,7 @@ class _ArrivalScreenState extends ConsumerState<ArrivalScreen> {
         if (presence != null && presence.isNotEmpty) {
           final eventData = presence['event'] as Map<String, dynamic>?;
           if (eventData != null && context.mounted) {
-            // AH-018: Active presence found — navigate directly to Live
+            // AH-018: Active presence found â€” navigate directly to Live
             final eventId = eventData['id'] as String? ?? '';
             if (eventId.isNotEmpty) {
               Navigator.of(context).pushReplacement(
@@ -187,7 +188,7 @@ class _ArrivalScreenState extends ConsumerState<ArrivalScreen> {
             color: AppColors.textSecondary,
             onPressed: () {},
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AppSpacing.sm),
           CircleAvatar(
             radius: 16,
             backgroundColor: AppColors.primarySoft,
@@ -202,7 +203,7 @@ class _ArrivalScreenState extends ConsumerState<ArrivalScreen> {
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpacing.md),
         ],
       ),
       body: Column(
@@ -384,11 +385,11 @@ class _ArrivalScreenState extends ConsumerState<ArrivalScreen> {
                       size: 18,
                       color: _isNearby ? AppColors.primary : AppColors.textSecondary,
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AppSpacing.sm),
                     Text(
                       _isNearby
                           ? '${event.presentCount > 0 ? event.presentCount : event.professionalCount} professionals here now'
-                          : '${event.distance} away · ${event.businessCount > 0 ? '${event.businessCount} ${event.primaryMetricLabel} · ${event.professionalCount} ${event.secondaryMetricLabel}' : '${event.professionalCount} ${event.primaryMetricLabel}'}',
+                          : '${event.distance} away Â· ${event.businessCount > 0 ? '${event.businessCount} ${event.primaryMetricLabel} Â· ${event.professionalCount} ${event.secondaryMetricLabel}' : '${event.professionalCount} ${event.primaryMetricLabel}'}',
                       style: GoogleFonts.inter(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -401,7 +402,7 @@ class _ArrivalScreenState extends ConsumerState<ArrivalScreen> {
 
               const Spacer(),
 
-              // Get Directions button — only when outside venue
+              // Get Directions button â€” only when outside venue
               if (!_isNearby) ...[
                 SizedBox(
                   width: 240,
@@ -491,7 +492,7 @@ class _ArrivalScreenState extends ConsumerState<ArrivalScreen> {
       body: Center(
         child: AnimatedOpacity(
           opacity: 1.0,
-          duration: const Duration(milliseconds: 300),
+          duration: AppMotion.slow,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -530,7 +531,7 @@ class _ArrivalScreenState extends ConsumerState<ArrivalScreen> {
                   height: 1.4,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: AppSpacing.xs),
               Text(
                 event.venue,
                 style: GoogleFonts.inter(
@@ -544,5 +545,6 @@ class _ArrivalScreenState extends ConsumerState<ArrivalScreen> {
         ),
       ),
     );
+
   }
 }

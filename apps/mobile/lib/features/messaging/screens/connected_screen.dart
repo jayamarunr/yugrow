@@ -1,10 +1,13 @@
-// ─── You're Connected! Screen ─────────────────────────────────
+// â”€â”€â”€ You're Connected! Screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Shown after a connection is accepted.
 // Displays the other person's profile and encourages the first message.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import '../../profile/widgets/profile_card.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
+import 'package:yugrow_mobile/core/theme/app_typography.dart';
 
 class ConnectedScreen extends StatelessWidget {
   final String name;
@@ -21,7 +24,7 @@ class ConnectedScreen extends StatelessWidget {
   });
 
   static const _suggestions = [
-    'Hi! Great meeting you 👋',
+    'Hi! Great meeting you ðŸ‘‹',
     'What brought you to this event?',
     'Would love to stay connected.',
     "Let's grab a coffee after this.",
@@ -35,7 +38,7 @@ class ConnectedScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AppSpacing.xl),
           child: Column(
             children: [
               const Spacer(flex: 2),
@@ -51,11 +54,11 @@ class ConnectedScreen extends StatelessWidget {
                 child: const Icon(Icons.check_circle,
                     color: Colors.green, size: 48),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: AppSpacing.xl),
               Text("You're Connected!",
                   style: theme.textTheme.titleLarge
                       ?.copyWith(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.xl),
 
               // Person's profile card
               ProfileCard(
@@ -63,7 +66,7 @@ class ConnectedScreen extends StatelessWidget {
                 headline: headline,
                 company: company,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.lg),
 
               // Prompt
               Text(
@@ -71,7 +74,7 @@ class ConnectedScreen extends StatelessWidget {
                 style: TextStyle(color: Colors.grey[600], fontSize: 13),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.xl),
 
               // First message suggestions
               SizedBox(
@@ -88,11 +91,11 @@ class ConnectedScreen extends StatelessWidget {
                   label: const Text('Send First Message'),
                   style: FilledButton.styleFrom(
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: AppRadius.mdCircular),
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.lg),
 
               // Suggestion chips
               Wrap(
@@ -100,7 +103,7 @@ class ConnectedScreen extends StatelessWidget {
                 runSpacing: 8,
                 alignment: WrapAlignment.center,
                 children: _suggestions.map((s) => ActionChip(
-                  label: Text(s, style: const TextStyle(fontSize: 12)),
+                  label: Text(s, style: AppTypography.caption),
                   onPressed: () {
                     Navigator.of(context).pop({
                       'action': 'chat',
@@ -109,7 +112,7 @@ class ConnectedScreen extends StatelessWidget {
                     });
                   },
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
+                      borderRadius: AppRadius.xxlCircular),
                   side: BorderSide(color: Colors.grey[300]!),
                   backgroundColor: Colors.grey[50],
                 )).toList(),
@@ -121,5 +124,6 @@ class ConnectedScreen extends StatelessWidget {
         ),
       ),
     );
+
   }
 }

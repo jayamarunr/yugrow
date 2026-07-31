@@ -16,9 +16,18 @@
     "db:studio": "pnpm --filter @database exec prisma studio",
     "docker:up": "docker compose -f infrastructure/docker/docker-compose.yml up -d",
     "docker:down": "docker compose -f infrastructure/docker/docker-compose.yml down",
-    "setup": "pnpm install && pnpm db:generate && pnpm db:push"
+    "setup": "pnpm install && pnpm db:generate && pnpm db:push",
+    "qa:run": "node qa/pipeline.js",
+    "qa:headed": "node qa/pipeline.js --headed",
+    "qa:loop": "node qa/auto-fix-loop.js",
+    "qa:dashboard": "echo Open qa/dashboard.html in browser",
+    "qa:baseline": "node qa/visual-diff.js --update",
+    "qa:visual": "node qa/visual-diff.js",
+    "qa:clean": "make qa-clean",
+    "qa:install": "pnpm --filter web add -D @playwright/test && npx playwright install chromium"
   },
   "devDependencies": {
+    "@playwright/test": "^1.41.2",
     "turbo": "^2.3.0",
     "prettier": "^3.4.0",
     "typescript": "^5.7.0"

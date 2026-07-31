@@ -29,6 +29,22 @@ Thumbs.db
 *.log
 npm-debug.log*
 
+# QA artifacts
+qa/reports/
+qa/screenshots/
+qa/videos/
+qa/traces/
+qa/failures/
+qa/test-results/
+!qa/reports/.gitkeep
+!qa/screenshots/.gitkeep
+!qa/videos/.gitkeep
+!qa/traces/.gitkeep
+!qa/failures/.gitkeep
+
+# Playwright
+playwright-report/
+
 # Testing
 coverage/
 

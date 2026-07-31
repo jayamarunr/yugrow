@@ -121,12 +121,7 @@ class _FirstMessageScreenState extends State<FirstMessageScreen> {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(AppSpacing.lg),
-            margin: const EdgeInsets.fromLTRB(
-              AppSpacing.screenMobile,
-              AppSpacing.sm,
-              AppSpacing.screenMobile,
-              0,
-            ),
+            margin: const EdgeInsets.fromLTRB(AppSpacing.screenMobile, AppSpacing.sm, AppSpacing.screenMobile, AppSpacing.none, ),
             decoration: BoxDecoration(
               color: AppColors.primarySoft,
               borderRadius: AppRadius.mdCircular,
@@ -165,7 +160,7 @@ class _FirstMessageScreenState extends State<FirstMessageScreen> {
                           color: AppColors.textPrimary,
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: AppSpacing.xs),
                       Text(
                         '${p.title} · ${p.company}',
                         style: GoogleFonts.inter(
@@ -182,16 +177,11 @@ class _FirstMessageScreenState extends State<FirstMessageScreen> {
 
           // Meeting context
           Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.screenMobile,
-              AppSpacing.lg,
-              AppSpacing.screenMobile,
-              0,
-            ),
+            padding: const EdgeInsets.fromLTRB(AppSpacing.screenMobile, AppSpacing.lg, AppSpacing.screenMobile, AppSpacing.none, ),
             child: Row(
               children: [
                 const Icon(LucideIcons.map_pin, size: 14, color: AppColors.textDisabled),
-                const SizedBox(width: 6),
+                const SizedBox(width: AppSpacing.sm),
                 Text(
                   'You met at AI Summit Chennai',
                   style: GoogleFonts.inter(
@@ -204,12 +194,7 @@ class _FirstMessageScreenState extends State<FirstMessageScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.screenMobile + 20,
-              AppSpacing.xs,
-              AppSpacing.screenMobile,
-              0,
-            ),
+            padding: const EdgeInsets.fromLTRB(AppSpacing.screenMobile + 20, AppSpacing.xs, AppSpacing.screenMobile, AppSpacing.none, ),
             child: Text(
               'Today · Hall B',
               style: GoogleFonts.inter(
@@ -229,7 +214,7 @@ class _FirstMessageScreenState extends State<FirstMessageScreen> {
             child: Row(
               children: [
                 const Icon(LucideIcons.sparkles, size: 14, color: AppColors.textSecondary),
-                const SizedBox(width: 6),
+                const SizedBox(width: AppSpacing.sm),
                 Text(
                   'Conversation Starters',
                   style: GoogleFonts.inter(
@@ -258,11 +243,7 @@ class _FirstMessageScreenState extends State<FirstMessageScreen> {
               color: AppColors.surface,
               border: Border(top: BorderSide(color: AppColors.border.withValues(alpha: 0.5))),
             ),
-            padding: EdgeInsets.fromLTRB(
-              AppSpacing.screenMobile,
-              AppSpacing.sm,
-              AppSpacing.screenMobile,
-              AppSpacing.sm + MediaQuery.of(context).padding.bottom,
+            padding: EdgeInsets.fromLTRB(AppSpacing.screenMobile, AppSpacing.sm, AppSpacing.screenMobile, AppSpacing.sm + MediaQuery.of(context).padding.bottom,
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -332,12 +313,7 @@ class _SuggestionChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.screenMobile,
-        0,
-        AppSpacing.screenMobile,
-        AppSpacing.sm,
-      ),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.screenMobile, AppSpacing.none, AppSpacing.screenMobile, AppSpacing.sm, ),
       child: Material(
         color: isSelected
             ? AppColors.primary.withValues(alpha: 0.08)
@@ -365,7 +341,7 @@ class _SuggestionChip extends StatelessWidget {
                   size: 14,
                   color: isSelected ? AppColors.primary : AppColors.textDisabled,
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: AppSpacing.md),
                 Expanded(
                   child: Text(
                     text,

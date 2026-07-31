@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/api/api_client.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
 
 class EventsScreen extends StatefulWidget {
   const EventsScreen({super.key});
@@ -40,19 +41,19 @@ class _EventsScreenState extends State<EventsScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.event, size: 64, color: theme.disabledColor),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppSpacing.lg),
                       Text('No active events', style: theme.textTheme.titleLarge),
                     ],
                   ),
                 )
               : ListView.builder(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(AppSpacing.lg),
                   itemCount: _events.length,
                   itemBuilder: (_, i) {
                     final e = _events[i] as Map<String, dynamic>;
                     final venue = e['venue'] as Map<String, dynamic>?;
                     return Card(
-                      margin: const EdgeInsets.only(bottom: 12),
+                      margin: const EdgeInsets.only(bottom: AppSpacing.md),
                       child: ListTile(
                         leading: const CircleAvatar(child: Icon(Icons.event)),
                         title: Text(e['name'] ?? ''),

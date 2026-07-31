@@ -1,4 +1,4 @@
-// ─── ReleaseMessageCard ──────────────────────────────────────
+// â”€â”€â”€ ReleaseMessageCard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Renders a release note message in the conversation.
 //
 // Expected message content (JSON):
@@ -11,7 +11,11 @@
 // }
 
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_colors.dart';
 import 'dart:convert';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
+import 'package:yugrow_mobile/core/theme/app_typography.dart';
 
 class ReleaseMessageCard extends StatelessWidget {
   final Map<String, dynamic> message;
@@ -45,8 +49,8 @@ class ReleaseMessageCard extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.grey[200]!),
+          borderRadius: AppRadius.lgCircular,
+          border: Border.all(color: AppColors.border),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.04),
@@ -61,9 +65,9 @@ class ReleaseMessageCard extends StatelessWidget {
             // Header
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+              padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.md),
               decoration: BoxDecoration(
-                color: const Color(0xFF0F766E).withValues(alpha: 0.06),
+                color: AppColors.primary.withValues(alpha: 0.06),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(14),
                   topRight: Radius.circular(14),
@@ -75,12 +79,12 @@ class ReleaseMessageCard extends StatelessWidget {
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF0F766E),
-                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.primary,
+                      borderRadius: AppRadius.smCircular,
                     ),
                     child: const Icon(Icons.newspaper, size: 18, color: Colors.white),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,7 +94,7 @@ class ReleaseMessageCard extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF0F766E),
+                            color: AppColors.primary,
                           ),
                         ),
                         if (version != null)
@@ -98,7 +102,7 @@ class ReleaseMessageCard extends StatelessWidget {
                             'Version $version',
                             style: TextStyle(
                               fontSize: 11,
-                              color: Colors.grey[500],
+                              color: AppColors.textSecondary,
                             ),
                           ),
                       ],
@@ -111,12 +115,12 @@ class ReleaseMessageCard extends StatelessWidget {
             // Changes list
             if (changes.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.md),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: changes.map((change) {
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -125,16 +129,16 @@ class ReleaseMessageCard extends StatelessWidget {
                             width: 16,
                             height: 16,
                             decoration: BoxDecoration(
-                              color: const Color(0xFF16A34A).withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(4),
+                              color: AppColors.success.withValues(alpha: 0.1),
+                              borderRadius: AppRadius.xsCircular,
                             ),
-                            child: const Icon(Icons.check, size: 12, color: Color(0xFF16A34A)),
+                            child: const Icon(Icons.check, size: 12, color: AppColors.success),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: AppSpacing.sm),
                           Expanded(
                             child: Text(
                               change,
-                              style: const TextStyle(fontSize: 13, color: Color(0xFF374151), height: 1.4),
+                              style: const TextStyle(fontSize: 13, color: AppColors.textPrimary, height: 1.4),
                             ),
                           ),
                         ],
@@ -148,27 +152,28 @@ class ReleaseMessageCard extends StatelessWidget {
             if (actionLabel != null)
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 14),
+                padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.lg),
                 child: OutlinedButton(
                   onPressed: () {},
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF0F766E),
-                    side: const BorderSide(color: Color(0xFF0F766E)),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    foregroundColor: AppColors.primary,
+                    side: const BorderSide(color: AppColors.primary),
+                    shape: RoundedRectangleBorder(borderRadius: AppRadius.smCircular),
                   ),
-                  child: Text(actionLabel, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                  child: Text(actionLabel, style: AppTypography.caption.copyWith(fontWeight: FontWeight.w600)),
                 ),
               ),
 
             // Timestamp
             if (time != null)
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                child: Text(time ?? '', style: TextStyle(fontSize: 10, color: Colors.grey[400])),
+                padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.none, AppSpacing.lg, AppSpacing.md),
+                child: Text(time ?? '', style: TextStyle(fontSize: 10, color: AppColors.textDisabled)),
               ),
           ],
         ),
       ),
     );
+
   }
 }

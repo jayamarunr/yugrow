@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../api/api_client.dart';
@@ -94,7 +95,7 @@ class _GreenDot extends StatelessWidget {
             width: 10,
             height: 10,
             decoration: const BoxDecoration(
-              color: Color(0xFF16A34A),
+              color: AppColors.success,
               shape: BoxShape.circle,
             ),
           ),

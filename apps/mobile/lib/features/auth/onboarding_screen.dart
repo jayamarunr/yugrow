@@ -1,15 +1,19 @@
-// ─── OnboardingScreen ─────────────────────────────────────────
+// â”€â”€â”€ OnboardingScreen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // 3-step onboarding wizard after signup.
 // Step 1: Photo + Name (mandatory)
 // Step 2: Company + Role (mandatory)
-// Step 3: City + Interests (optional — can skip)
+// Step 3: City + Interests (optional â€” can skip)
 //
 // After completion, saves to professional identity and redirects home.
 
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/auth/auth_service.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
+import 'package:yugrow_mobile/core/theme/app_typography.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -108,19 +112,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AppSpacing.xl),
           child: Column(
             children: [
               // Progress bar
               ClipRRect(
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: AppRadius.xsCircular,
                 child: LinearProgressIndicator(
                   value: (_step + 1) / 3,
                   minHeight: 6,
-                  backgroundColor: Colors.grey[200],
+                  backgroundColor: AppColors.border,
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: AppSpacing.xxl),
 
               // Step content
               Expanded(child: _buildStep(theme)),
@@ -137,7 +141,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           : _next,
                   style: FilledButton.styleFrom(
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: AppRadius.mdCircular),
                   ),
                   child: _saving
                       ? const SizedBox(
@@ -172,7 +176,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     }
   }
 
-  // ── Step 1: Photo + Name (mandatory) ─────────────────────────
+  // â”€â”€ Step 1: Photo + Name (mandatory) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildStep1(ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,7 +184,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         Text('What should we call you?',
             style: theme.textTheme.titleMedium
                 ?.copyWith(fontWeight: FontWeight.w600)),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.xl),
         Center(
           child: GestureDetector(
             onTap: () {
@@ -192,23 +196,23 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             },
             child: CircleAvatar(
               radius: 48,
-              backgroundColor: Colors.grey[200],
+              backgroundColor: AppColors.border,
               child: _photoBase64 != null
                   ? ClipOval(
                       child: Image.network(_photoBase64!, fit: BoxFit.cover,
                           width: 96, height: 96,
                           errorBuilder: (_, __, ___) =>
-                              Icon(Icons.person, size: 40, color: Colors.grey[400])))
-                  : Icon(Icons.person_add, size: 36, color: Colors.grey[400]),
+                              Icon(Icons.person, size: 40, color: AppColors.textDisabled)))
+                  : Icon(Icons.person_add, size: 36, color: AppColors.textDisabled),
             ),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.sm),
         Center(
           child: Text('Add photo (optional)',
-              style: TextStyle(fontSize: 12, color: Colors.grey[500])),
+              style: AppTypography.caption.copyWith(color: AppColors.textSecondary)),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.xl),
         TextFormField(
           controller: _nameCtrl,
           textCapitalization: TextCapitalization.words,
@@ -216,21 +220,21 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           decoration: InputDecoration(
             labelText: 'Full Name *',
             prefixIcon: const Icon(Icons.person_outlined, size: 20),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            border: OutlineInputBorder(borderRadius: AppRadius.mdCircular),
           ),
           onChanged: (_) => setState(() {}),
         ),
         if (!_canProceedFromStep1)
           Padding(
-            padding: const EdgeInsets.only(top: 6),
+            padding: const EdgeInsets.only(top: AppSpacing.sm),
             child: Text('Name is required to continue',
-                style: TextStyle(fontSize: 11, color: Colors.grey[500])),
+                style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
           ),
       ],
     );
   }
 
-  // ── Step 2: Company + Role (mandatory) ────────────────────────
+  // â”€â”€ Step 2: Company + Role (mandatory) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildStep2(ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -238,10 +242,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         Text('Where do you work?',
             style: theme.textTheme.titleMedium
                 ?.copyWith(fontWeight: FontWeight.w600)),
-        const SizedBox(height: 6),
+        const SizedBox(height: AppSpacing.sm),
         Text('This helps people know who you are at events.',
-            style: TextStyle(color: Colors.grey[600], fontSize: 13)),
-        const SizedBox(height: 24),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+        const SizedBox(height: AppSpacing.xl),
         TextFormField(
           controller: _companyCtrl,
           textCapitalization: TextCapitalization.words,
@@ -250,11 +254,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             labelText: 'Company *',
             hintText: 'e.g. Yugrow',
             prefixIcon: const Icon(Icons.business_outlined, size: 20),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            border: OutlineInputBorder(borderRadius: AppRadius.mdCircular),
           ),
           onChanged: (_) => setState(() {}),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.lg),
         TextFormField(
           controller: _roleCtrl,
           textCapitalization: TextCapitalization.words,
@@ -262,21 +266,21 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             labelText: 'Designation *',
             hintText: 'e.g. Founder',
             prefixIcon: const Icon(Icons.work_outlined, size: 20),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            border: OutlineInputBorder(borderRadius: AppRadius.mdCircular),
           ),
           onChanged: (_) => setState(() {}),
         ),
         if (!_canProceedFromStep2)
           Padding(
-            padding: const EdgeInsets.only(top: 6),
+            padding: const EdgeInsets.only(top: AppSpacing.sm),
             child: Text('Company and designation are required to continue',
-                style: TextStyle(fontSize: 11, color: Colors.grey[500])),
+                style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
           ),
       ],
     );
   }
 
-  // ── Step 3: City + Interests (optional — skip available) ────
+  // â”€â”€ Step 3: City + Interests (optional â€” skip available) â”€â”€â”€â”€
   Widget _buildStep3(ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -284,10 +288,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         Text('Anything else?',
             style: theme.textTheme.titleMedium
                 ?.copyWith(fontWeight: FontWeight.w600)),
-        const SizedBox(height: 6),
+        const SizedBox(height: AppSpacing.sm),
         Text('These are optional. You can always update them later.',
-            style: TextStyle(color: Colors.grey[600], fontSize: 13)),
-        const SizedBox(height: 24),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+        const SizedBox(height: AppSpacing.xl),
         TextFormField(
           controller: _cityCtrl,
           textCapitalization: TextCapitalization.words,
@@ -295,14 +299,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             labelText: 'City (optional)',
             hintText: 'e.g. Chennai',
             prefixIcon: const Icon(Icons.location_city, size: 20),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            border: OutlineInputBorder(borderRadius: AppRadius.mdCircular),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.xl),
         Text('Interests (optional)',
             style: TextStyle(
-                fontSize: 13, fontWeight: FontWeight.w500, color: Colors.grey[700])),
-        const SizedBox(height: 8),
+                fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.textPrimary)),
+        const SizedBox(height: AppSpacing.sm),
         Expanded(
           child: SingleChildScrollView(
             child: Wrap(
@@ -322,13 +326,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       }
                     });
                   },
-                  selectedColor: const Color(0xFF0F766E).withValues(alpha: 0.15),
-                  checkmarkColor: const Color(0xFF0F766E),
+                  selectedColor: AppColors.primary.withValues(alpha: 0.15),
+                  checkmarkColor: AppColors.primary,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: AppRadius.xxlCircular,
                   ),
                   side: BorderSide(
-                    color: selected ? const Color(0xFF0F766E) : Colors.grey[300]!,
+                    color: selected ? AppColors.primary : AppColors.border,
                   ),
                 );
               }).toList(),
@@ -337,5 +341,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         ),
       ],
     );
+
   }
 }

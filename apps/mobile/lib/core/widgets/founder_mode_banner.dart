@@ -4,7 +4,9 @@
 // Auto-dismisses after 8 seconds. Can be manually dismissed.
 
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
 import '../api/api_client.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
 
 class FounderModeBanner extends StatefulWidget {
   const FounderModeBanner({super.key});
@@ -64,12 +66,12 @@ class _FounderModeBannerState extends State<FounderModeBanner> {
     }
 
     return MaterialBanner(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
       backgroundColor: const Color(0xFFFFF3CD),
       content: Row(
         children: [
-          const Icon(Icons.warning_amber_rounded, size: 18, color: Color(0xFFD97706)),
-          const SizedBox(width: 8),
+          const Icon(Icons.warning_amber_rounded, size: 18, color: AppColors.warning),
+          const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
               'Founder Mode · $summary',

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:yugrow_mobile/core/theme/app_spacing.dart';
+import 'package:yugrow_mobile/core/theme/app_radius.dart';
 
 class AttendeeCard extends StatelessWidget {
   final Map<String, dynamic> attendee;
@@ -21,12 +23,12 @@ class AttendeeCard extends StatelessWidget {
     final venueName = attendee['venueName'] ?? '';
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xs),
       child: InkWell(
         onTap: () => context.go('/profile'),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.mdCircular,
         child: Padding(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           child: Row(
             children: [
               CircleAvatar(
@@ -34,16 +36,16 @@ class AttendeeCard extends StatelessWidget {
                 backgroundColor: theme.primaryColor.withValues(alpha: 0.2),
                 child: Text(name.isNotEmpty ? name[0].toUpperCase() : '?', style: TextStyle(fontWeight: FontWeight.bold, color: theme.primaryColor)),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(name, style: theme.textTheme.titleMedium),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AppSpacing.xs),
                     if (venueName.isNotEmpty) Text(venueName, style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12)),
                     if (mutual > 0) ...[
-                      const SizedBox(height: 2),
+                      const SizedBox(height: AppSpacing.xs),
                       Text('$mutual mutual connection${mutual == 1 ? '' : 's'}', style: TextStyle(fontSize: 12, color: theme.primaryColor)),
                     ],
                   ],

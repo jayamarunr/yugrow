@@ -67,10 +67,10 @@ Related Documents: YUGROW-BRAND-LANGUAGE.md, YUGROW-MOTION-LANGUAGE.md, YUGROW-I
 
 | Token | Hex | Usage |
 |-------|-----|-------|
-| **Primary** | `#0F766E` | Deep Emerald — buttons, links, active states, connection moments |
+| **Primary** | `#0F8B6D` | Yugrow Emerald — buttons, links, active states, connection moments |
 | Primary Hover | `#115E59` | Button hover states |
 | Primary Soft | `#CCFBF1` | Background tints, selected states |
-| **Secondary** | `#4338CA` | Warm Indigo — AI features, technology indicators |
+| **Secondary** | `#0B755C` | Emerald Hover — hover states, secondary actions |
 | Secondary Soft | `#E0E7FF` | AI-related backgrounds |
 | **Accent** | `#F59E0B` | Amber — opportunities, broadcasts, CTAs |
 | Background | `#F8F9FB` | Page background |
